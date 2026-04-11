@@ -15,9 +15,10 @@ XPTS_URL      = "https://dataviz.theanalyst.com/project-data/soccer/bmmk637l2a33
 HISTORY_PATH  = os.path.join(os.path.dirname(__file__), "data", "history.json")
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
     "Accept": "application/json",
-    "Referer": "https://theanalyst.com/",
+    "Referer": "https://theanalyst.com/competition/english-championship/stats",
+    "x-sdapi-token": "LRkJ2MjwlC8RxUfVkne4",
 }
 
 def sf(v, fb=0.0):
