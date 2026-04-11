@@ -28,7 +28,7 @@ jobs:
         run: python scraper.py
 
       - name: Run SoccerStats halftime scraper
-        run: python scraper_halftime.py
+        run: python scraper_halftime.py || echo "Halftime scraper failed - continuing"
 
       - name: Check if data changed
         id: changed
