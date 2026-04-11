@@ -247,7 +247,7 @@ const METRICS=[
   {key:'atk_misc_pen_goals',label:'Pen Goals',cat:'Attacking',hi:true,dec:0},
   {key:'atk_misc_touches_box',label:'Box Touches',cat:'Attacking',hi:true,dec:0},
   {key:'atk_misc_offsides',label:'Offsides',cat:'Attacking',hi:false,dec:0},
-  {key:'atk_misc_fb_total',label:'Fast Breaks',cat:'Attacking',hi:true,dec:0},
+  {key:'atk_fast_break_shots',label:'Fast Breaks',cat:'Attacking',hi:true,dec:0},
   {key:'atk_misc_header_goals',label:'Header Goals',cat:'Attacking',hi:true,dec:0},
   {key:'gk_goals_conceded',label:'Goals Con',cat:'Defending',hi:false,dec:0},
   {key:'gk_xgot_conceded',label:'xGOT Con',cat:'Defending',hi:false,dec:2},
@@ -290,7 +290,7 @@ const METRICS=[
 ];
 const CATS=[...new Set(METRICS.map(m=>m.cat))];
 const CAT_DEF={
-  'Attacking':['atk_goals','atk_xg','atk_xg_per_shot','atk_shots_ot','np_xg','carry_shot_ending'],
+  'Attacking':['atk_goals','atk_xg','atk_xg_per_shot','atk_shots_ot','np_xg','atk_fast_break_shots'],
   'Defending':['gk_goals_conceded','gk_xgot_conceded','gk_saves','def_tackles','recoveries','def_clearances'],
   'Passing':['pass_passes','pass_pass_acc','pass_f3_passes','pass_crosses','pass_through_balls'],
   'Pressing':['carry_progressive','carry_shot_ending','cc_chances_created','cc_xa'],
@@ -361,7 +361,7 @@ function xbiCompute(st, mode, teamName, htData){
   metrics.sot_def_p90 = g(st.def_sot_faced||st.gk_saves||0);
   metrics.xgps_diff   = (st.atk_xg_per_shot||0) - (st.def_xga_per_shot||0);
   metrics.shot_acc    = (st.atk_shots||0)>0 ? ((st.atk_shots_ot||0)/(st.atk_shots||1))*100 : 0;
-  metrics.fb_p90      = g(st.atk_misc_fb_total||st.carry_shot_ending||0);
+  metrics.fb_p90      = g(st.atk_fast_break_shots||st.atk_misc_fb_total||0);
   metrics.rec_p90     = g(st.recoveries||0);
   metrics.sp_diff_p90 = g((st.sp_atk_xg||0)-(st.sp_def_xga||0));
   metrics.ppda        = st.press_ppda||null;
