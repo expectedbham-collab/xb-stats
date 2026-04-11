@@ -249,17 +249,17 @@ const METRICS=[
   {key:'atk_misc_offsides',label:'Offsides',cat:'Attacking',hi:false,dec:0},
   {key:'atk_misc_fb_total',label:'Fast Breaks',cat:'Attacking',hi:true,dec:0},
   {key:'atk_misc_header_goals',label:'Header Goals',cat:'Attacking',hi:true,dec:0},
-  {key:'def_goals_con',label:'Goals Con',cat:'Defending',hi:false,dec:0},
-  {key:'def_xga',label:'xGA',cat:'Defending',hi:false,dec:2},
-  {key:'def_xga_per_shot',label:'xGA/shot',cat:'Defending',hi:false,dec:3},
-  {key:'def_shots_faced',label:'Shots Faced',cat:'Defending',hi:false,dec:0},
-  {key:'def_sot_faced',label:'SOT Faced',cat:'Defending',hi:false,dec:0},
+  {key:'gk_goals_conceded',label:'Goals Con',cat:'Defending',hi:false,dec:0},
+  {key:'gk_xgot_conceded',label:'xGOT Con',cat:'Defending',hi:false,dec:2},
+  {key:'gk_saves',label:'Saves',cat:'Defending',hi:true,dec:0},
+  {key:'gk_goals_prevented',label:'Goals Prev',cat:'Defending',hi:true,dec:2},
+  {key:'def_tackles',label:'Tackles',cat:'Defending',hi:true,dec:0},
   {key:'def_np_xga',label:'NP xGA',cat:'Defending',hi:false,dec:2},
   {key:'sp_def_xga',label:'SP xGA',cat:'Defending',hi:false,dec:2},
   {key:'sp_def_goals_con',label:'SP Goals Con',cat:'Defending',hi:false,dec:0},
-  {key:'tackles',label:'Tackles',cat:'Defending',hi:true,dec:0},
-  {key:'interceptions',label:'Interceptions',cat:'Defending',hi:true,dec:0},
-  {key:'recoveries',label:'Recoveries',cat:'Defending',hi:true,dec:0},
+  {key:'def_interceptions',label:'Interceptions',cat:'Defending',hi:true,dec:0},
+  {key:'def_clearances',label:'Clearances',cat:'Defending',hi:true,dec:0},
+  {key:'def_clearances',label:'Clearances',cat:'Defending',hi:true,dec:0},
   {key:'blocks',label:'Blocks',cat:'Defending',hi:true,dec:0},
   {key:'clearances',label:'Clearances',cat:'Defending',hi:true,dec:0},
   {key:'possession',label:'Possession%',cat:'Defending',hi:true,dec:1},
@@ -270,32 +270,32 @@ const METRICS=[
   {key:'pass_f3_passes',label:'F3 Passes',cat:'Passing',hi:true,dec:0},
   {key:'pass_crosses',label:'Crosses',cat:'Passing',hi:false,dec:0},
   {key:'pass_through_balls',label:'Through Balls',cat:'Passing',hi:true,dec:0},
-  {key:'press_ppda',label:'PPDA',cat:'Pressing',hi:false,dec:1},
-  {key:'press_pressed_seqs',label:'Press Seqs',cat:'Pressing',hi:true,dec:0},
-  {key:'press_press_start_dist',label:'Press Dist',cat:'Pressing',hi:false,dec:1},
-  {key:'press_high_to',label:'High TOs',cat:'Pressing',hi:true,dec:0},
-  {key:'press_high_to_shots',label:'HTO Shots',cat:'Pressing',hi:true,dec:0},
-  {key:'seq_seqs_10plus',label:'10+ Seqs',cat:'Sequences',hi:true,dec:0},
-  {key:'seq_direct_speed',label:'Direct Speed',cat:'Sequences',hi:true,dec:2},
-  {key:'seq_passes_per_seq',label:'Pass/Seq',cat:'Sequences',hi:true,dec:2},
-  {key:'seq_buildups',label:'Build-ups',cat:'Sequences',hi:true,dec:0},
-  {key:'seq_direct_attacks',label:'Direct Attacks',cat:'Sequences',hi:true,dec:0},
+  {key:'carry_progressive',label:'Prog Carries',cat:'Pressing',hi:true,dec:0},
+  {key:'carry_shot_ending',label:'Carry→Shot',cat:'Pressing',hi:true,dec:0},
+  {key:'carry_goal_ending',label:'Carry→Goal',cat:'Pressing',hi:true,dec:0},
+  {key:'cc_chances_created',label:'Chances Created',cat:'Pressing',hi:true,dec:0},
+  {key:'cc_xa',label:'xA',cat:'Pressing',hi:true,dec:2},
+  {key:'carry_carries',label:'Carries',cat:'Sequences',hi:true,dec:0},
+  {key:'carry_progressive',label:'Prog Carries',cat:'Sequences',hi:true,dec:0},
+  {key:'carry_shot_ending',label:'Carry→Shot',cat:'Sequences',hi:true,dec:0},
+  {key:'carry_goal_ending',label:'Carry→Goal',cat:'Sequences',hi:true,dec:0},
+  {key:'cc_chances_created',label:'Chances Created',cat:'Sequences',hi:true,dec:0},
   {key:'misc_yellows',label:'Yellows',cat:'Misc',hi:false,dec:0},
   {key:'misc_reds',label:'Reds',cat:'Misc',hi:false,dec:0},
   {key:'misc_fouls',label:'Fouls',cat:'Misc',hi:false,dec:0},
-  {key:'misc_fouled',label:'Fouled',cat:'Misc',hi:true,dec:0},
-  {key:'misc_pens_won',label:'Pens Won',cat:'Misc',hi:true,dec:0},
-  {key:'misc_errors_shot',label:'Errors→Shot',cat:'Misc',hi:false,dec:0},
-  {key:'misc_errors_goal',label:'Errors→Goal',cat:'Misc',hi:false,dec:0},
+  {key:'misc_pens_conceded',label:'Pens Con',cat:'Misc',hi:false,dec:0},
+  {key:'misc_offsides',label:'Offsides',cat:'Misc',hi:false,dec:0},
+  {key:'cc_assists',label:'Assists',cat:'Misc',hi:true,dec:0},
+  {key:'cc_xa',label:'xA',cat:'Misc',hi:true,dec:2},
 ];
 const CATS=[...new Set(METRICS.map(m=>m.cat))];
 const CAT_DEF={
-  'Attacking':['atk_goals','atk_xg','atk_xg_per_shot','atk_shots_ot','np_xg','atk_misc_fb_total'],
-  'Defending':['def_goals_con','def_xga','def_xga_per_shot','tackles','interceptions','possession'],
+  'Attacking':['atk_goals','atk_xg','atk_xg_per_shot','atk_shots_ot','np_xg','carry_shot_ending'],
+  'Defending':['gk_goals_conceded','gk_xgot_conceded','gk_saves','def_tackles','recoveries','def_clearances'],
   'Passing':['pass_passes','pass_pass_acc','pass_f3_passes','pass_crosses','pass_through_balls'],
-  'Pressing':['press_ppda','press_pressed_seqs','press_high_to'],
-  'Sequences':['seq_seqs_10plus','seq_direct_speed','seq_passes_per_seq','seq_direct_attacks'],
-  'Misc':['misc_yellows','misc_fouls','misc_fouled'],
+  'Pressing':['carry_progressive','carry_shot_ending','cc_chances_created','cc_xa'],
+  'Sequences':['carry_carries','carry_progressive','carry_shot_ending','carry_goal_ending'],
+  'Misc':['misc_yellows','misc_reds','misc_fouls','misc_pens_conceded','cc_assists'],
 };
 const RATE_KEYS=new Set(['possession','pass_pass_acc','ground_duel_pct','aerial_duel_pct',
   'atk_xg_per_shot','np_xg_per_shot','def_xga_per_shot','press_ppda',
@@ -355,14 +355,15 @@ function xbiCompute(st, mode, teamName, htData){
   const pl=st.atk_played||1;
   const m90=v=>pl>0?(v/pl)*90:v;
   const metrics={};
+  // Field names match scraper output (verified 2026-04-10)
   metrics.sot_atk_p90 = mode==='p90'?m90(st.atk_shots_ot||0):(st.atk_shots_ot||0);
-  metrics.sot_def_p90 = mode==='p90'?m90(st.def_sot_faced||0):(st.def_sot_faced||0);
-  metrics.xgps_diff   = (st.atk_xg_per_shot||0)-(st.def_xga_per_shot||0);
-  metrics.shot_acc    = st.atk_shots>0?((st.atk_shots_ot||0)/st.atk_shots)*100:0;
-  metrics.fb_p90      = mode==='p90'?m90(st.atk_misc_fb_total||0):(st.atk_misc_fb_total||0);
+  metrics.sot_def_p90 = mode==='p90'?m90(st.gk_saves||0):(st.gk_saves||0);
+  metrics.xgps_diff   = (st.atk_xg_per_shot||0)-((st.gk_xgot_conceded||0)/(st.gk_saves||-1||1));
+  metrics.shot_acc    = (st.atk_shots||0)>0?((st.atk_shots_ot||0)/(st.atk_shots||1))*100:0;
+  metrics.fb_p90      = mode==='p90'?m90(st.carry_shot_ending||0):(st.carry_shot_ending||0);
   metrics.rec_p90     = mode==='p90'?m90(st.recoveries||0):(st.recoveries||0);
-  metrics.sp_diff_p90 = mode==='p90'?m90((st.sp_atk_xg||0)-(st.sp_def_xga||0)):((st.sp_atk_xg||0)-(st.sp_def_xga||0));
-  metrics.ppda        = st.press_ppda||null;
+  metrics.sp_diff_p90 = 0; // not available in this API
+  metrics.ppda        = null; // not available in this API
   metrics.tb_p90      = mode==='p90'?m90(st.pass_through_balls||0):(st.pass_through_balls||0);
   metrics.crosses_p90 = mode==='p90'?m90(st.pass_crosses||0):(st.pass_crosses||0);
   // First-half away rank from soccerstats -- look up by team name
