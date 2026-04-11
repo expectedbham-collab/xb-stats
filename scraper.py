@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """
 xB Championship Stats Scraper
-Field names verified against live API 2026-04-10.
+Uses team-level data for most metrics -- verified 2026-04-11.
 """
 
 import hashlib, json, os, sys
-from collections import defaultdict
 from datetime import date
 import requests
 
@@ -29,245 +28,302 @@ def si(v, fb=0):
     try: return int(float(v)) if v is not None else fb
     except: return fb
 
-def tname(p): return p.get("contestantName") or p.get("contestantShortName","Unknown")
-def wavg(w, s): return round(s/w,3) if w else None
-def players(raw, sec, sub):
-    try: return raw["player"][sec][sub] or []
-    except: return []
+def tname(r):
+    return r.get("contestantName") or r.get("contestantShortName", "Unknown")
 
-def agg_attack_overall(ps):
-    t = defaultdict(lambda:dict(played=0,goals=0,xg=0.0,goals_vs_xg=0.0,shots=0,shots_ot=0,_xw=0.0))
-    for p in ps:
-        n=tname(p); d=t[n]
-        apps=si(p.get("apps"))
-        if apps>d["played"]: d["played"]=apps
-        d["goals"]      +=si(p.get("goals"))
-        d["xg"]         +=sf(p.get("xg"))
-        d["goals_vs_xg"]+=sf(p.get("goals_vs_xg"))
-        d["shots"]      +=si(p.get("shots"))
-        d["shots_ot"]   +=si(p.get("shots_on_target"))
-        s=si(p.get("shots")); d["_xw"]+=sf(p.get("xg_per_shot"))*s
-    return {n:{"atk_played":d["played"],"atk_goals":d["goals"],"atk_xg":round(d["xg"],2),
-               "atk_goals_vs_xg":round(d["goals_vs_xg"],2),"atk_shots":d["shots"],
-               "atk_shots_ot":d["shots_ot"],"atk_xg_per_shot":wavg(d["shots"],d["_xw"])}
-            for n,d in t.items()}
-
-def agg_attack_np(ps):
-    t = defaultdict(lambda:dict(np_goals=0,np_xg=0.0,np_shots=0,np_shots_ot=0,_xw=0.0))
-    for p in ps:
-        n=tname(p); d=t[n]
-        d["np_goals"]   +=si(p.get("np_goals"))
-        d["np_xg"]      +=sf(p.get("np_xg"))
-        d["np_shots"]   +=si(p.get("np_shots"))
-        d["np_shots_ot"]+=si(p.get("np_shots_on_target"))
-        s=si(p.get("np_shots")); d["_xw"]+=sf(p.get("np_xg_per_shot"))*s
-    return {n:{"np_goals":d["np_goals"],"np_xg":round(d["np_xg"],2),
-               "np_shots":d["np_shots"],"np_shots_ot":d["np_shots_ot"],
-               "np_xg_per_shot":wavg(d["np_shots"],d["_xw"])}
-            for n,d in t.items()}
-
-def agg_passing(ps):
-    t = defaultdict(lambda:dict(passes=0,passes_s=0,_pw=0.0,f3=0,crosses=0,crosses_s=0,tb=0,tb_s=0))
-    for p in ps:
-        n=tname(p); d=t[n]
-        tot=si(p.get("passes"))
-        d["passes"]  +=tot; d["passes_s"]+=si(p.get("successful_passes"))
-        d["_pw"]     +=sf(p.get("pass_perc"))*tot
-        d["f3"]      +=si(p.get("total_final_third_passes"))
-        d["crosses"]  +=si(p.get("op_crosses")); d["crosses_s"]+=si(p.get("successful_op_crosses"))
-        d["tb"]      +=si(p.get("through_balls")); d["tb_s"]+=si(p.get("successful_through_balls"))
-    return {n:{"pass_passes":d["passes"],"pass_pass_acc":wavg(d["passes"],d["_pw"]),
-               "pass_f3_passes":d["f3"],"pass_crosses":d["crosses"],
-               "pass_crosses_success":d["crosses_s"],"pass_through_balls":d["tb"],
-               "pass_through_balls_success":d["tb_s"]}
-            for n,d in t.items()}
-
-def agg_chance_creation(ps):
-    t = defaultdict(lambda:dict(cc=0,xa=0.0,assists=0))
-    for p in ps:
-        n=tname(p); d=t[n]
-        d["cc"]     +=si(p.get("chances_created"))
-        d["xa"]     +=sf(p.get("xa"))
-        d["assists"]+=si(p.get("assists"))
-    return {n:{"cc_chances_created":d["cc"],"cc_xa":round(d["xa"],2),"cc_assists":d["assists"]}
-            for n,d in t.items()}
-
-def agg_carries(ps):
-    t = defaultdict(lambda:dict(carries=0,prog=0,shot_end=0,goal_end=0))
-    for p in ps:
-        n=tname(p); d=t[n]
-        d["carries"] +=si(p.get("carries"))
-        d["prog"]    +=si(p.get("progressive_carries"))
-        d["shot_end"]+=si(p.get("shot_ending"))
-        d["goal_end"]+=si(p.get("goal_ending"))
-    return {n:{"carry_carries":d["carries"],"carry_progressive":d["prog"],
-               "carry_shot_ending":d["shot_end"],"carry_goal_ending":d["goal_end"]}
-            for n,d in t.items()}
-
-def agg_defending(ps):
-    t = defaultdict(lambda:dict(tack=0,ints=0,rec=0,blk=0,clr=0,
-                                gd=0,gdw=0,ad=0,adw=0,_gn=0,_gs=0.0,_an=0,_as=0.0))
-    for p in ps:
-        n=tname(p); d=t[n]
-        d["tack"]+=si(p.get("tackles")); d["ints"]+=si(p.get("interceptions"))
-        d["rec"] +=si(p.get("recoveries")); d["blk"]+=si(p.get("blocks"))
-        d["clr"] +=si(p.get("clearances"))
-        d["gd"]  +=si(p.get("ground_duels")); d["gdw"]+=si(p.get("ground_duels_won"))
-        d["ad"]  +=si(p.get("aerial_duels")); d["adw"]+=si(p.get("aerial_duels_won"))
-        g=p.get("ground_duel_perc")
-        if g is not None: d["_gs"]+=sf(g); d["_gn"]+=1
-        a=p.get("aerial_duel_perc")
-        if a is not None: d["_as"]+=sf(a); d["_an"]+=1
-    return {n:{"def_tackles":d["tack"],"def_interceptions":d["ints"],
-               "recoveries":d["rec"],"def_blocks":d["blk"],"def_clearances":d["clr"],
-               "def_ground_duels":d["gd"],"def_ground_duels_won":d["gdw"],
-               "def_aerial_duels":d["ad"],"def_aerial_duels_won":d["adw"],
-               "ground_duel_pct":round(d["_gs"]/d["_gn"],1) if d["_gn"] else None,
-               "aerial_duel_pct":round(d["_as"]/d["_an"],1) if d["_an"] else None}
-            for n,d in t.items()}
-
-def agg_discipline(ps):
-    t = defaultdict(lambda:dict(y=0,r=0,f=0,pc=0,off=0))
-    for p in ps:
-        n=tname(p); d=t[n]
-        d["y"]  +=si(p.get("yellows")); d["r"]+=si(p.get("reds"))
-        d["f"]  +=si(p.get("fouls_commited")); d["pc"]+=si(p.get("pens_conceded"))
-        d["off"]+=si(p.get("offsides"))
-    return {n:{"misc_yellows":d["y"],"misc_reds":d["r"],"misc_fouls":d["f"],
-               "misc_pens_conceded":d["pc"],"misc_offsides":d["off"]}
-            for n,d in t.items()}
-
-def agg_goalkeeping(ps):
-    t = defaultdict(lambda:dict(gc=0,sv=0,xgot=0.0,gp=0.0))
-    for p in ps:
-        n=tname(p); d=t[n]
-        d["gc"]  +=si(p.get("goals_conceded")); d["sv"]+=si(p.get("saves_made"))
-        d["xgot"]+=sf(p.get("xgot_conceded")); d["gp"] +=sf(p.get("goals_prevented"))
-    return {n:{"gk_goals_conceded":d["gc"],"gk_saves":d["sv"],
-               "gk_xgot_conceded":round(d["xgot"],2),"gk_goals_prevented":round(d["gp"],2)}
-            for n,d in t.items()}
-
-SECTIONS=[
-    ("attack","overall",agg_attack_overall),
-    ("attack","nonPenalty",agg_attack_np),
-    ("possession","passing",agg_passing),
-    ("possession","chanceCreation",agg_chance_creation),
-    ("carries","overall",agg_carries),
-    ("defending","overall",agg_defending),
-    ("defending","discipline",agg_discipline),
-    ("goalkeeping","overall",agg_goalkeeping),
-]
+def get_section(raw, *path):
+    """Safely get raw['team'][path[0]][path[1]] etc."""
+    try:
+        d = raw["team"]
+        for p in path:
+            d = d[p]
+        return d or []
+    except:
+        return []
 
 def build_team_stats(raw):
-    merged={}; found=[]
-    for sec,sub,fn in SECTIONS:
-        ps=players(raw,sec,sub)
-        if not ps: continue
-        found.append(f"{sec}.{sub}")
-        for team,stats in fn(ps).items():
-            if team not in merged: merged[team]={}
-            merged[team].update(stats)
-    print(f"  Stats sections: {', '.join(found)}")
-    return merged
+    teams = {}
+
+    def merge(name, d):
+        if name not in teams:
+            teams[name] = {}
+        teams[name].update(d)
+
+    # ── attack.overall ──────────────────────────────────────────
+    for r in get_section(raw, "attack", "overall"):
+        n = tname(r)
+        merge(n, {
+            "atk_played":       si(r.get("played")),
+            "atk_goals":        si(r.get("goals")),
+            "atk_xg":           round(sf(r.get("xg")), 2),
+            "atk_shots":        si(r.get("total_shots")),
+            "atk_shots_ot":     si(r.get("sot")),
+            "atk_xg_per_shot":  round(sf(r.get("xg_per_shot")), 3),
+            "atk_shot_conv":    round(sf(r.get("shot_conv")), 1),
+            "atk_shots_in_box_perc": round(sf(r.get("shots_in_box_perc")), 1),
+        })
+
+    # ── attack.non_pen ──────────────────────────────────────────
+    for r in get_section(raw, "attack", "non_pen"):
+        n = tname(r)
+        merge(n, {
+            "np_goals":         si(r.get("np_goals")),
+            "np_xg":            round(sf(r.get("team_np_xG")), 2),
+            "np_shots":         si(r.get("np_shots")),
+            "np_shots_ot":      si(r.get("np_sot")),
+            "np_xg_per_shot":   round(sf(r.get("xg_per_shot")), 3),
+        })
+
+    # ── attack.set_piece ────────────────────────────────────────
+    for r in get_section(raw, "attack", "set_piece"):
+        n = tname(r)
+        merge(n, {
+            "sp_atk_goals":     si(r.get("sp_goals")),
+            "sp_atk_shots":     si(r.get("sp_shots")),
+            "sp_atk_xg":        round(sf(r.get("team_sp_xG")), 2),
+        })
+
+    # ── attack.misc (FAST BREAKS here) ──────────────────────────
+    for r in get_section(raw, "attack", "misc"):
+        n = tname(r)
+        merge(n, {
+            "atk_touches_box":      si(r.get("tch_in_box")),
+            "atk_hit_woodwork":     si(r.get("hit_woodwork")),
+            "atk_pens":             si(r.get("pens")),
+            "atk_pen_goals":        si(r.get("pen_goals")),
+            "atk_headed_goals":     si(r.get("headed_goals")),
+            "atk_fast_break_shots": si(r.get("fast_break_shots")),
+            "atk_fast_break_goals": si(r.get("fast_break_goals")),
+        })
+
+    # ── defending.overall ───────────────────────────────────────
+    for r in get_section(raw, "defending", "overall"):
+        n = tname(r)
+        merge(n, {
+            "def_goals_con":        si(r.get("goals_against")),
+            "def_xga":              round(sf(r.get("xg_against")), 2),
+            "def_shots_faced":      si(r.get("total_shots_against")),
+            "def_sot_faced":        si(r.get("sot_against")),
+            "def_xga_per_shot":     round(sf(r.get("xg_per_shot_against")), 3),
+            "def_shot_conv_against":round(sf(r.get("shot_conv_against")), 1),
+        })
+
+    # ── defending.set_piece ─────────────────────────────────────
+    for r in get_section(raw, "defending", "set_piece"):
+        n = tname(r)
+        merge(n, {
+            "sp_def_goals_con": si(r.get("sp_goals_against")),
+            "sp_def_xga":       round(sf(r.get("team_sp_xG_against")), 2),
+        })
+
+    # ── defending.misc (FAST BREAKS AGAINST) ────────────────────
+    for r in get_section(raw, "defending", "misc"):
+        n = tname(r)
+        merge(n, {
+            "def_fast_break_shots_against": si(r.get("fast_break_shots_against")),
+            "def_fast_break_goals_against": si(r.get("fast_break_goals_against")),
+            "def_opp_touches_box":          si(r.get("opp_tch_in_box")),
+        })
+
+    # ── possession.overall (CROSSES, PASSES, RECOVERIES) ────────
+    for r in get_section(raw, "possession", "overall"):
+        n = tname(r)
+        merge(n, {
+            "possession":           round(sf(r.get("pos_perc")), 1),
+            "pass_passes":          si(r.get("passes")),
+            "pass_success":         si(r.get("successful_pass")),
+            "pass_pass_acc":        round(sf(r.get("accuracy")), 1),
+            "pass_f3_passes":       si(r.get("final_third_passes")),
+            "pass_f3_success":      si(r.get("successful_final_third_passes")),
+            "pass_crosses":         si(r.get("op_crosses")),
+            "pass_crosses_success": si(r.get("successful_op_crosses")),
+            "pass_cross_acc":       round(sf(r.get("op_cross_accuracy_perc")), 1),
+            "pass_through_balls":   si(r.get("through_balls")),
+            "recoveries":           si(r.get("rec")),
+            "tackles":              si(r.get("total_tackles")),
+            "interceptions":        si(r.get("interceptions")),
+            "ground_duel_pct":      round(sf(r.get("ground_duel_success_perc")), 1),
+            "aerial_duel_pct":      round(sf(r.get("aerial_duel_success_perc")), 1),
+            "blocks":               si(r.get("blocks")),
+            "clearances":           si(r.get("clearances")),
+        })
+
+    # ── sequences.overall (PPDA, PRESSING, DIRECT ATTACKS) ──────
+    for r in get_section(raw, "sequences", "overall"):
+        n = tname(r)
+        merge(n, {
+            "press_ppda":               round(sf(r.get("ppda")), 2) if r.get("ppda") else None,
+            "press_pressed_seqs":       si(r.get("pressed_sequences")),
+            "press_high_to":            si(r.get("high_turnovers")),
+            "press_high_to_shots":      si(r.get("shot_ending_high_turnovers")),
+            "press_high_to_goals":      si(r.get("goal_ending_high_turnovers")),
+            "press_press_start_dist":   round(sf(r.get("start_distance")), 1),
+            "seq_direct_attacks":       si(r.get("direct_attacks")),
+            "seq_direct_attack_goals":  si(r.get("direct_attack_goals")),
+            "seq_buildups":             si(r.get("build_ups")),
+            "seq_buildup_goals":        si(r.get("build_up_goals")),
+            "seq_seqs_10plus":          si(r.get("ten_plus_passes")),
+            "seq_direct_speed":         round(sf(r.get("direct_speed_for")), 2),
+            "seq_passes_per_seq":       round(sf(r.get("passes_for")), 2),
+        })
+
+    # ── misc.overall (FOULS, CARDS, ERRORS) ─────────────────────
+    for r in get_section(raw, "misc", "overall"):
+        n = tname(r)
+        merge(n, {
+            "misc_yellows":         si(r.get("yellows")),
+            "misc_reds":            si(r.get("reds")),
+            "misc_fouls":           si(r.get("fouls_lost")),
+            "misc_fouled":          si(r.get("fouls_won")),
+            "misc_pens_won":        si(r.get("pens_won")),
+            "misc_pens_conceded":   si(r.get("pens_conceded")),
+            "misc_errors_shot":     si(r.get("errors_lead_to_shot")),
+            "misc_errors_goal":     si(r.get("errors_lead_to_goal")),
+        })
+
+    found = [k for k in ["attack","possession","defending","sequences","misc"] 
+             if any(k in str(list(teams.values())[:1]))]
+    print(f"  Teams captured: {len(teams)}")
+    return teams
+
 
 def parse_standings(raw):
-    result={"total":[],"home":[],"away":[]}
+    result = {"total": [], "home": [], "away": []}
     try:
         for div in raw["stage"][0]["division"]:
-            t=div.get("type")
+            t = div.get("type")
             if t not in result: continue
-            for r in div.get("ranking",[]):
+            for r in div.get("ranking", []):
                 result[t].append({
-                    "rank":r.get("rank"),"lastRank":r.get("lastRank"),
-                    "rankStatus":r.get("rankStatus",""),"name":r.get("contestantName"),
-                    "shortName":r.get("contestantShortName"),"code":r.get("contestantCode"),
-                    "points":r.get("points"),"deduction":r.get("deductionPoints",0),
-                    "played":r.get("matchesPlayed"),"won":r.get("matchesWon"),
-                    "drawn":r.get("matchesDrawn"),"lost":r.get("matchesLost"),
-                    "gf":r.get("goalsFor"),"ga":r.get("goalsAgainst"),
-                    "gd":r.get("goaldifference"),"lastSix":r.get("lastSix",""),
+                    "rank":       r.get("rank"),
+                    "lastRank":   r.get("lastRank"),
+                    "rankStatus": r.get("rankStatus", ""),
+                    "name":       r.get("contestantName"),
+                    "shortName":  r.get("contestantShortName"),
+                    "code":       r.get("contestantCode"),
+                    "points":     r.get("points"),
+                    "deduction":  r.get("deductionPoints", 0),
+                    "played":     r.get("matchesPlayed"),
+                    "won":        r.get("matchesWon"),
+                    "drawn":      r.get("matchesDrawn"),
+                    "lost":       r.get("matchesLost"),
+                    "gf":         r.get("goalsFor"),
+                    "ga":         r.get("goalsAgainst"),
+                    "gd":         r.get("goaldifference"),
+                    "lastSix":    r.get("lastSix", ""),
                 })
-    except (KeyError,IndexError) as e: print(f"  Standings parse error: {e}")
+    except (KeyError, IndexError) as e:
+        print(f"  Standings parse error: {e}")
     return result
+
 
 def parse_xpts(raw):
-    result=[]
-    for r in raw.get("data",[]):
+    result = []
+    for r in raw.get("data", []):
         result.append({
-            "name":r.get("contestantName"),"shortName":r.get("contestantShortName"),
-            "code":r.get("contestantCode"),"played":r.get("played"),
-            "pos":r.get("pos"),"xPos":r.get("xPos"),"posDiff":r.get("posDiff"),
-            "points":r.get("points"),"xPts":round(sf(r.get("xPts")),2),
-            "ptsDiff":round(sf(r.get("ptsDiff")),2),
-            "xG":round(sf(r.get("xG")),2),"xGA":round(sf(r.get("xGA")),2),
-            "xGD":round(sf(r.get("xG"))-sf(r.get("xGA")),2),
-            "deduction":r.get("points_deduction",0),
+            "name":      r.get("contestantName"),
+            "shortName": r.get("contestantShortName"),
+            "code":      r.get("contestantCode"),
+            "played":    r.get("played"),
+            "pos":       r.get("pos"),
+            "xPos":      r.get("xPos"),
+            "posDiff":   r.get("posDiff"),
+            "points":    r.get("points"),
+            "xPts":      round(sf(r.get("xPts")), 2),
+            "ptsDiff":   round(sf(r.get("ptsDiff")), 2),
+            "xG":        round(sf(r.get("xG")), 2),
+            "xGA":       round(sf(r.get("xGA")), 2),
+            "xGD":       round(sf(r.get("xG")) - sf(r.get("xGA")), 2),
+            "deduction": r.get("points_deduction", 0),
         })
-    result.sort(key=lambda x:x["xPos"] or 99)
+    result.sort(key=lambda x: x["xPos"] or 99)
     return result
 
-def snap_hash(data): return hashlib.md5(json.dumps(data,sort_keys=True).encode()).hexdigest()
 
-def infer_label(history,teams):
-    for name,stats in teams.items():
+def snap_hash(data):
+    return hashlib.md5(json.dumps(data, sort_keys=True).encode()).hexdigest()
+
+def infer_label(history, teams):
+    for name, stats in teams.items():
         if "birmingham" in name.lower():
-            p=stats.get("atk_played")
+            p = stats.get("atk_played")
             if p: return f"GW {p}"
     if not history: return "GW 1"
-    last=history[-1].get("label","GW 0")
-    try: return f"GW {int(last.split()[-1])+1}"
-    except: return f"GW {len(history)+1}"
+    last = history[-1].get("label", "GW 0")
+    try: return f"GW {int(last.split()[-1]) + 1}"
+    except: return f"GW {len(history) + 1}"
 
-def run(dry_run=False,force=False):
-    session=requests.Session(); session.headers.update(HEADERS)
+
+def run(dry_run=False, force=False):
+    session = requests.Session()
+    session.headers.update(HEADERS)
+
     print("1/3 Fetching stats...")
-    r1=session.get(STATS_URL,timeout=30); r1.raise_for_status()
+    r1 = session.get(STATS_URL, timeout=30); r1.raise_for_status()
     print("2/3 Fetching standings...")
-    r2=session.get(STANDINGS_URL,timeout=30); r2.raise_for_status()
+    r2 = session.get(STANDINGS_URL, timeout=30); r2.raise_for_status()
     print("3/3 Fetching expected points...")
-    r3=session.get(XPTS_URL,timeout=30); r3.raise_for_status()
+    r3 = session.get(XPTS_URL, timeout=30); r3.raise_for_status()
 
-    teams=build_team_stats(r1.json())
-    standings=parse_standings(r2.json())
-    xpts=parse_xpts(r3.json())
-    print(f"  Teams (stats): {len(teams)} | Standings rows: {len(standings['total'])} | xPts rows: {len(xpts)}")
+    teams     = build_team_stats(r1.json())
+    standings = parse_standings(r2.json())
+    xpts      = parse_xpts(r3.json())
 
-    payload={"teams":teams,"standings":standings,"xpts":xpts}
-    os.makedirs(os.path.dirname(HISTORY_PATH),exist_ok=True)
-    history=[]
+    print(f"  Standings rows: {len(standings['total'])} | xPts rows: {len(xpts)}")
+
+    payload = {"teams": teams, "standings": standings, "xpts": xpts}
+
+    os.makedirs(os.path.dirname(HISTORY_PATH), exist_ok=True)
+    history = []
     if os.path.exists(HISTORY_PATH):
-        with open(HISTORY_PATH) as f: history=json.load(f)
+        with open(HISTORY_PATH) as f:
+            history = json.load(f)
 
-    current_hash=snap_hash(payload)
-    if current_hash==(history[-1].get("_hash") if history else None) and not force:
+    current_hash = snap_hash(payload)
+    if current_hash == (history[-1].get("_hash") if history else None) and not force:
         print("No change since last snapshot.")
-        open("/tmp/xb_no_change","w").write("no_change"); return
+        open("/tmp/xb_no_change", "w").write("no_change")
+        return
 
-    today=date.today().isoformat()
-    label=infer_label(history,teams)
-    snapshot={"date":today,"label":label,
-              "last_updated":r1.json().get("player",{}).get("lastUpdated",""),
-              "_hash":current_hash,**payload}
+    today = date.today().isoformat()
+    label = infer_label(history, teams)
+    snapshot = {
+        "date": today,
+        "label": label,
+        "last_updated": r1.json().get("team", {}).get("lastUpdated", ""),
+        "_hash": current_hash,
+        **payload,
+    }
 
-    idx=next((i for i,s in enumerate(history) if s.get("date")==today),None)
+    idx = next((i for i, s in enumerate(history) if s.get("date") == today), None)
     if idx is not None:
-        snapshot["label"]=history[idx]["label"]; history[idx]=snapshot
+        snapshot["label"] = history[idx]["label"]
+        history[idx] = snapshot
         print(f"Updated today's snapshot ({snapshot['label']})")
     else:
-        history.append(snapshot); print(f"New snapshot: {today} ({label})")
+        history.append(snapshot)
+        print(f"New snapshot: {today} ({label})")
 
-    for name,stats in teams.items():
+    # Birmingham summary
+    for name, stats in teams.items():
         if "birmingham" in name.lower():
-            bx=next((x for x in xpts if "birmingham" in (x.get("name","")).lower()),{})
+            bx = next((x for x in xpts if "birmingham" in (x.get("name","")).lower()), {})
             print(f"\nBirmingham City:")
             print(f"  Pos: {bx.get('pos')} | xPos: {bx.get('xPos')} | Pts: {bx.get('points')} | xPts: {bx.get('xPts')}")
-            print(f"  xG: {stats.get('atk_xg')} | SOT: {stats.get('atk_shots_ot')} | Tackles: {stats.get('def_tackles')} | Recoveries: {stats.get('recoveries')}")
-            print(f"  Passes: {stats.get('pass_passes')} | Through balls: {stats.get('pass_through_balls')} | Crosses: {stats.get('pass_crosses')}")
+            print(f"  xG: {stats.get('atk_xg')} | SOT: {stats.get('atk_shots_ot')} | Fast break shots: {stats.get('atk_fast_break_shots')}")
+            print(f"  Crosses: {stats.get('pass_crosses')} | Through balls: {stats.get('pass_through_balls')}")
+            print(f"  PPDA: {stats.get('press_ppda')} | Recoveries: {stats.get('recoveries')}")
+            print(f"  SP xG: {stats.get('sp_atk_xg')} | SP xGA: {stats.get('sp_def_xga')}")
             break
 
-    if dry_run: print("\n[DRY RUN] Not writing."); return
-    with open(HISTORY_PATH,"w") as f: json.dump(history,f,indent=2)
+    if dry_run:
+        print("\n[DRY RUN] Not writing.")
+        return
+
+    with open(HISTORY_PATH, "w") as f:
+        json.dump(history, f, indent=2)
     print(f"\nDone. {len(history)} snapshots saved.")
 
-if __name__=="__main__":
-    run(dry_run="--dry-run" in sys.argv,force="--force" in sys.argv)
+
+if __name__ == "__main__":
+    run(dry_run="--dry-run" in sys.argv, force="--force" in sys.argv)
