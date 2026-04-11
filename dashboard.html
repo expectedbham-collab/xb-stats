@@ -355,19 +355,18 @@ function xbiCompute(st, mode, teamName, htData){
   const pl=st.atk_played||1;
   const m90=v=>pl>0?(v/pl)*90:v;
   const metrics={};
-  // Field names match scraper output (verified 2026-04-10)
-  // m90 divides by games played (atk_played), not minutes
-  const g90 = v => pl>0 ? (v/pl) : v;
-  metrics.sot_atk_p90 = g90(st.atk_shots_ot||0);
-  metrics.sot_def_p90 = g90(st.gk_saves||0);
-  metrics.xgps_diff   = (st.atk_xg_per_shot||0) - ((st.gk_xgot_conceded||0)/Math.max(st.gk_saves||1,1));
+  // Works with both old and new scraper field names
+  const g = v => pl>0 ? (v/pl) : v;
+  metrics.sot_atk_p90 = g(st.atk_shots_ot||0);
+  metrics.sot_def_p90 = g(st.def_sot_faced||st.gk_saves||0);
+  metrics.xgps_diff   = (st.atk_xg_per_shot||0) - (st.def_xga_per_shot||0);
   metrics.shot_acc    = (st.atk_shots||0)>0 ? ((st.atk_shots_ot||0)/(st.atk_shots||1))*100 : 0;
-  metrics.fb_p90      = g90(st.carry_shot_ending||0);
-  metrics.rec_p90     = g90(st.recoveries||0);
-  metrics.sp_diff_p90 = 0;
-  metrics.ppda        = null;
-  metrics.tb_p90      = g90(st.pass_through_balls||0);
-  metrics.crosses_p90 = g90(st.pass_crosses||0);
+  metrics.fb_p90      = g(st.atk_misc_fb_total||st.carry_shot_ending||0);
+  metrics.rec_p90     = g(st.recoveries||0);
+  metrics.sp_diff_p90 = g((st.sp_atk_xg||0)-(st.sp_def_xga||0));
+  metrics.ppda        = st.press_ppda||null;
+  metrics.tb_p90      = g(st.pass_through_balls||0);
+  metrics.crosses_p90 = g(st.pass_crosses||0);
   // First-half away rank from soccerstats -- look up by team name
   metrics.fha_rank = null;
   if(htData&&htData.first_half_away){
