@@ -3,763 +3,586 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>xB | Championship Stats</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<title>xB Stats | Championship Performance Index</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{
   --bg:#0d0f12;--s1:#13161b;--s2:#1a1e25;--brd:#252a34;
   --acc:#00e5ff;--blues:#1a6ef5;--text:#e8eaf0;--muted:#5a6070;--label:#8b92a0;
   --pos:#00c896;--neg:#ff4d6d;--draw:#f5a623;
-  --pro:#00c896;--playoff:#f5a623;--rel:#ff4d6d;
-  --font-h:'Barlow Condensed',sans-serif;--font-m:'DM Mono',monospace;--font-b:'Barlow',sans-serif;
+  --t1:#ff4d6d;--t2:#f5a623;--t3:#5a6070;
+  --font-h:'Barlow Condensed',sans-serif;
+  --font-m:'DM Mono',monospace;
+  --font-b:'Barlow',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--font-b);font-size:14px;min-height:100vh}
-header{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--brd);background:var(--s1);position:sticky;top:0;z-index:100}
+
+/* HEADER */
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--brd);background:var(--s1)}
 .logo{font-family:var(--font-h);font-weight:800;font-size:22px;letter-spacing:.04em}
 .logo span{color:var(--acc)}
-.meta{font-family:var(--font-m);font-size:11px;color:var(--muted);text-align:right;line-height:1.6}
-.meta strong{color:var(--label)}
-nav{display:flex;gap:2px;padding:0 24px;background:var(--s1);border-bottom:1px solid var(--brd);overflow-x:auto}
-.tab{font-family:var(--font-h);font-weight:700;font-size:13px;letter-spacing:.07em;text-transform:uppercase;padding:10px 18px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .15s;user-select:none;white-space:nowrap}
-.tab:hover{color:var(--text)}.tab.on{color:var(--acc);border-bottom-color:var(--acc)}
-main{padding:20px 24px}
-.pane{display:none}.pane.on{display:block}
+.meta{font-family:var(--font-m);font-size:11px;color:var(--muted);text-align:right;line-height:1.7}
+.meta strong{color:var(--label);display:block}
 
-/* controls */
-.ctrls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
-.cl{font-family:var(--font-m);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
-select{background:var(--s2);border:1px solid var(--brd);color:var(--text);font-family:var(--font-m);font-size:12px;padding:5px 9px;border-radius:4px;outline:none;cursor:pointer;transition:border-color .15s}
-select:hover,select:focus{border-color:var(--acc)}
+/* CONTROLS */
+.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px 24px;background:var(--s1);border-bottom:1px solid var(--brd)}
+.ctrl-label{font-family:var(--font-m);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+select{background:var(--s2);border:1px solid var(--brd);color:var(--text);font-family:var(--font-m);font-size:12px;padding:5px 10px;border-radius:4px;outline:none;cursor:pointer}
+select:hover{border-color:var(--acc)}
 .tog{display:flex;background:var(--s2);border:1px solid var(--brd);border-radius:4px;overflow:hidden}
-.tb{font-family:var(--font-h);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:5px 11px;cursor:pointer;color:var(--muted);transition:all .12s;user-select:none}
+.tb{font-family:var(--font-h);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;cursor:pointer;color:var(--muted);transition:all .12s;user-select:none}
 .tb.on{background:var(--acc);color:var(--bg)}
-.sub-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
-.sub-tab{font-family:var(--font-h);font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:5px 14px;cursor:pointer;color:var(--muted);border:1px solid var(--brd);border-radius:4px;transition:all .12s;user-select:none}
-.sub-tab:hover{color:var(--text);border-color:var(--label)}
-.sub-tab.on{color:var(--bg);background:var(--acc);border-color:var(--acc)}
+.hint{font-family:var(--font-m);font-size:11px;color:var(--muted);margin-left:auto}
 
-/* pills */
-.pills{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px}
-.pill{font-family:var(--font-m);font-size:11px;padding:3px 9px;border:1px solid var(--brd);border-radius:3px;cursor:pointer;color:var(--muted);transition:all .12s;user-select:none}
-.pill:hover{border-color:var(--label);color:var(--text)}
-.pill.on{border-color:var(--acc);color:var(--acc);background:rgba(0,229,255,.06)}
+/* SUMMARY CARDS */
+main{padding:20px 24px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.card{background:var(--s1);border:1px solid var(--brd);border-radius:6px;padding:14px 16px}
+.card-label{font-family:var(--font-m);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
+.card-val{font-family:var(--font-h);font-weight:800;font-size:28px;letter-spacing:-.01em;line-height:1}
+.card-sub{font-family:var(--font-m);font-size:11px;color:var(--muted);margin-top:4px}
+.card-sub b{color:var(--acc)}
+.card-trend{font-family:var(--font-m);font-size:11px;margin-top:4px}
+.up{color:var(--pos)}.dn{color:var(--neg)}.eq{color:var(--muted)}
 
-/* tables */
-.tw{overflow-x:auto;border:1px solid var(--brd);border-radius:6px;margin-bottom:12px}
-table{width:100%;border-collapse:collapse;font-size:12px}
+/* TIER LEGEND */
+.tier-legend{display:flex;gap:20px;flex-wrap:wrap;padding:10px 0;margin-bottom:14px;border-bottom:1px solid var(--brd)}
+.tl-item{display:flex;align-items:center;gap:6px;font-family:var(--font-m);font-size:11px;color:var(--muted)}
+.tl-dot{width:8px;height:8px;border-radius:50%}
+
+/* MAIN TABLE */
+.table-wrap{overflow-x:auto;border:1px solid var(--brd);border-radius:6px;margin-bottom:20px}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:900px}
 thead tr{background:var(--s2)}
-th{padding:9px 11px;text-align:right;font-family:var(--font-h);font-weight:700;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--label);white-space:nowrap;cursor:pointer;border-bottom:1px solid var(--brd);user-select:none;transition:color .12s}
-th.tl{text-align:left}th:hover{color:var(--text)}
-th.sa::after{content:" ↑";color:var(--acc)}th.sd::after{content:" ↓";color:var(--acc)}
-td{padding:8px 11px;text-align:right;border-bottom:1px solid rgba(37,42,52,.5);font-family:var(--font-m);font-size:12px;white-space:nowrap}
+th{padding:10px 11px;text-align:right;font-family:var(--font-h);font-weight:700;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--label);white-space:nowrap;cursor:pointer;border-bottom:1px solid var(--brd);user-select:none;transition:color .12s}
+th.tl{text-align:left}
+th:hover{color:var(--text)}
+th.sa::after{content:" ↑";color:var(--acc)}
+th.sd::after{content:" ↓";color:var(--acc)}
+td{padding:9px 11px;text-align:right;border-bottom:1px solid rgba(37,42,52,.5);font-family:var(--font-m);font-size:12px;white-space:nowrap}
 td.tl{text-align:left;font-family:var(--font-b);font-weight:500;font-size:13px}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(255,255,255,.02)}
 tr.bham td{background:rgba(26,110,245,.1)}
 tr.bham td.tl{border-left:3px solid var(--blues);padding-left:8px}
 tr.bham:hover td{background:rgba(26,110,245,.16)}
-tr.zpro td.tl{border-left:3px solid var(--pro)!important;padding-left:8px}
-tr.zpo td.tl{border-left:3px solid var(--playoff)!important;padding-left:8px}
-tr.zrel td.tl{border-left:3px solid var(--rel)!important;padding-left:8px}
-.rk{font-family:var(--font-m);font-size:11px;color:var(--muted);margin-right:6px}
-.fd{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;font-family:var(--font-h);font-weight:700;font-size:10px;margin:0 1px}
-.fw{background:#00c896;color:#000}.fdr{background:#2a2e38;color:#8b92a0}.fl{background:#ff4d6d;color:#fff}
+.rank-num{font-family:var(--font-m);font-size:11px;color:var(--muted);margin-right:4px}
+.bar-wrap{display:flex;align-items:center;gap:6px;justify-content:flex-end}
+.bar{height:5px;border-radius:3px;background:rgba(255,255,255,.1);min-width:2px}
+.bar.blu{background:var(--blues)}
+.xbi-val{font-family:var(--font-h);font-weight:800;font-size:14px;min-width:32px}
+.delta{font-family:var(--font-m);font-size:10px;margin-left:3px}
 
-/* stat cards */
-.scards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
-.sc{background:var(--s1);border:1px solid var(--brd);border-radius:6px;padding:12px 14px}
-.scl{font-family:var(--font-m);font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:5px}
-.scv{font-family:var(--font-h);font-weight:800;font-size:26px;letter-spacing:-.01em;line-height:1}
-.scr{font-family:var(--font-m);font-size:11px;color:var(--muted);margin-top:3px}
-.scr b{color:var(--acc)}
+/* TREND SECTION */
+.trend-section{background:var(--s1);border:1px solid var(--brd);border-radius:6px;padding:18px;margin-bottom:20px}
+.trend-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.trend-title{font-family:var(--font-h);font-weight:700;font-size:15px;letter-spacing:.05em;text-transform:uppercase;color:var(--label)}
+.trend-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.chart-wrap{position:relative;height:220px}
 
-/* trend */
-.tl-layout{display:grid;grid-template-columns:240px 1fr;gap:18px;align-items:start}
-.sidebar{background:var(--s1);border:1px solid var(--brd);border-radius:6px;padding:14px}
-.sh{font-family:var(--font-h);font-weight:700;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
-.tlist{display:flex;flex-direction:column;gap:1px;max-height:480px;overflow-y:auto}
-.ti{font-size:13px;padding:5px 9px;border-radius:3px;cursor:pointer;color:var(--label);transition:all .1s}
-.ti:hover{background:var(--s2);color:var(--text)}.ti.on{background:rgba(0,229,255,.08);color:var(--acc)}
-.ti.bhi{border-left:2px solid var(--blues);padding-left:7px}
-.tmain{display:flex;flex-direction:column;gap:14px}
-.cc{background:var(--s1);border:1px solid var(--brd);border-radius:6px;padding:18px}
-.cc h3{font-family:var(--font-h);font-weight:700;font-size:15px;margin-bottom:3px}
-.ccsub{font-family:var(--font-m);font-size:11px;color:var(--muted);margin-bottom:14px}
-.cw{position:relative;height:200px}
+/* HALF TIME TABLES */
+.ht-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.ht-box{background:var(--s1);border:1px solid var(--brd);border-radius:6px;overflow:hidden}
+.ht-head{padding:10px 14px;border-bottom:1px solid var(--brd);font-family:var(--font-h);font-weight:700;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--label);display:flex;justify-content:space-between;align-items:center}
+.ht-target{font-size:10px;color:var(--neg);font-weight:600}
+.ht-table{width:100%;border-collapse:collapse;font-size:11px}
+.ht-table th{padding:6px 10px;text-align:right;font-family:var(--font-h);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--brd);background:var(--s2)}
+.ht-table th.tl{text-align:left}
+.ht-table td{padding:6px 10px;text-align:right;border-bottom:1px solid rgba(37,42,52,.4);font-family:var(--font-m)}
+.ht-table td.tl{text-align:left;font-family:var(--font-b);font-size:12px}
+.ht-table tr:last-child td{border-bottom:none}
+.ht-table tr:hover td{background:rgba(255,255,255,.02)}
+.ht-table tr.bham td{background:rgba(26,110,245,.1)}
+.ht-table tr.bham td.tl{border-left:2px solid var(--blues);padding-left:8px}
+.target-row td{position:relative}
+.target-row td.tl::after{content:"← target";font-size:9px;color:var(--acc);margin-left:5px;font-family:var(--font-m)}
 
-/* xbi specific */
-.tier-legend{display:flex;gap:16px;flex-wrap:wrap;font-family:var(--font-m);font-size:11px;color:var(--muted);margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--brd)}
-.ht-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px}
-.sec-label{font-family:var(--font-h);font-weight:700;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--label);margin-bottom:8px}
-.note{font-family:var(--font-m);font-size:11px;color:var(--muted);line-height:1.7;margin-top:12px;padding-top:10px;border-top:1px solid var(--brd)}
+/* NOTE */
+.note{font-family:var(--font-m);font-size:11px;color:var(--muted);line-height:1.7;padding:14px 18px;background:var(--s1);border:1px solid var(--brd);border-radius:6px}
+.note strong{color:var(--label)}
 
-/* legend */
-.legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px;font-family:var(--font-m);font-size:11px;color:var(--muted)}
-.ldot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px}
-
-/* loading */
+/* LOADING */
 .loading{display:flex;align-items:center;justify-content:center;height:300px;flex-direction:column;gap:12px;font-family:var(--font-m);font-size:13px;color:var(--muted)}
 .spin{width:24px;height:24px;border:2px solid var(--brd);border-top-color:var(--acc);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.err{color:var(--neg);font-family:var(--font-m);font-size:12px;padding:18px;background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2);border-radius:6px}
+.err{color:var(--neg);font-family:var(--font-m);font-size:12px;padding:18px;background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2);border-radius:6px;margin-top:20px}
 
-::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--s1)}::-webkit-scrollbar-thumb{background:var(--brd);border-radius:3px}
-@media(max-width:900px){main{padding:14px 16px}header,nav{padding-left:16px;padding-right:16px}.tl-layout{grid-template-columns:1fr}.scards{grid-template-columns:repeat(2,1fr)}.ht-grid{grid-template-columns:1fr}}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--s1)}
+::-webkit-scrollbar-thumb{background:var(--brd);border-radius:3px}
+
+@media(max-width:768px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .ht-grid{grid-template-columns:1fr}
+  main,header,.controls{padding-left:14px;padding-right:14px}
+}
 </style>
 </head>
 <body>
 
 <header>
   <div class="logo">x<span>B</span> Stats</div>
-  <div class="meta"><strong id="gwlbl">--</strong><br>Updated <span id="upd">--</span></div>
+  <div class="meta">
+    <strong id="gw-label">--</strong>
+    <span id="updated-label">--</span>
+  </div>
 </header>
 
-<nav>
-  <div class="tab on" data-t="index">xB Index</div>
-  <div class="tab" data-t="standings">Standings</div>
-  <div class="tab" data-t="stats">Stats Table</div>
-  <div class="tab" data-t="trend">Trend Tracker</div>
-</nav>
+<div class="controls">
+  <span class="ctrl-label">Snapshot</span>
+  <select id="snap-sel"></select>
+  <span class="ctrl-label">Display</span>
+  <div class="tog">
+    <div class="tb on" data-m="p90">Per 90</div>
+    <div class="tb" data-m="total">Season</div>
+  </div>
+  <span class="hint">Green = top 30% &nbsp;·&nbsp; Red = bottom 30%</span>
+</div>
 
 <main>
 <div id="loading" class="loading"><div class="spin"></div>Loading Championship data...</div>
+<div id="content" style="display:none">
 
-<!-- ══════════════════ xB INDEX ══════════════════ -->
-<div id="pane-index" class="pane">
-  <div class="ctrls">
-    <span class="cl">Display</span>
-    <div class="tog xbi-tog">
-      <div class="tb on" data-m="p90">Per 90</div>
-      <div class="tb" data-m="total">Season total</div>
-    </div>
-    <span class="cl">Snapshot</span>
-    <select id="xbi-snap"></select>
-    <span class="cl" style="margin-left:auto;font-size:11px;color:var(--muted)">Green = top 30% · Red = bottom 30%</span>
-  </div>
-  <div class="scards" id="xbi-bham-cards"></div>
+  <!-- Birmingham summary cards -->
+  <div class="cards" id="bham-cards"></div>
+
+  <!-- Tier legend -->
   <div class="tier-legend">
-    <span><span class="ldot" style="background:var(--neg)"></span>Tier 1 ×3 — shot quality &amp; volume (Belgian Study top predictors)</span>
-    <span><span class="ldot" style="background:var(--draw)"></span>Tier 2 ×2 — fast breaks, recoveries, 1st-half away rank</span>
-    <span><span class="ldot" style="background:var(--muted)"></span>Tier 3 ×1 — set pieces, pressing, through balls, cross volume</span>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--t1)"></div>Tier 1 ×3 — shot quality &amp; volume</div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--t2)"></div>Tier 2 ×2 — fast breaks, recoveries, 1st-half away</div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--t3)"></div>Tier 3 ×1 — set pieces, pressing, through balls, crosses</div>
   </div>
-  <div class="sec-label" style="margin-bottom:8px">xB Performance Index — all Championship teams</div>
-  <div class="tw"><table><thead><tr id="xbi-head"></tr></thead><tbody id="xbi-body"></tbody></table></div>
+
+  <!-- Main index table -->
+  <div class="table-wrap">
+    <table>
+      <thead><tr id="table-head"></tr></thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+
+  <!-- Trend tracker -->
+  <div class="trend-section">
+    <div class="trend-header">
+      <div class="trend-title">xB Index trend</div>
+      <div class="trend-controls">
+        <span class="ctrl-label">Team</span>
+        <select id="trend-team-sel"></select>
+        <span class="ctrl-label">Metric</span>
+        <select id="trend-metric-sel"></select>
+        <div class="tog trend-tog">
+          <div class="tb on" data-w="all">All GWs</div>
+          <div class="tb" data-w="5">Rolling 5</div>
+        </div>
+      </div>
+    </div>
+    <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
+  </div>
+
+  <!-- Half-time tables -->
   <div class="ht-grid">
-    <div>
-      <div class="sec-label">First half away <span style="color:var(--neg);font-size:10px;margin-left:6px">Birmingham target: top 10</span></div>
-      <div class="tw"><table style="font-size:11px"><thead><tr id="fha-head"></tr></thead><tbody id="fha-body"></tbody></table></div>
+    <div class="ht-box">
+      <div class="ht-head">First half away <span class="ht-target">Birmingham target: top 10</span></div>
+      <table class="ht-table"><thead><tr id="fha-head"></tr></thead><tbody id="fha-body"></tbody></table>
     </div>
-    <div>
-      <div class="sec-label">Second half away</div>
-      <div class="tw"><table style="font-size:11px"><thead><tr id="sha-head"></tr></thead><tbody id="sha-body"></tbody></table></div>
+    <div class="ht-box">
+      <div class="ht-head">Second half away</div>
+      <table class="ht-table"><thead><tr id="sha-head"></tr></thead><tbody id="sha-body"></tbody></table>
     </div>
   </div>
+
+  <!-- Methodology note -->
   <div class="note">
-    <strong style="color:var(--label)">xB Index</strong> — composite percentile score using Belgian Study SHAP weightings.
-    Tier 1 (×3): SOT attacking &amp; defending, xG/shot differential, shot accuracy.
-    Tier 2 (×2): fast breaks/90, possession recoveries/90, first-half away rank (inverted — lower rank = higher score, target top 10).
-    Tier 3 (×1): set piece xG differential per 90, PPDA, through balls/90, cross volume/90 (negatively correlated with winning — lower is better).
-    Score 0–100, 50 = league average. Physical data (accelerations, 15km/h actions) not available from this endpoint.
-    First/second half away tables sourced from soccerstats.com (goals-based, not xG).
+    <strong>xB Index</strong> — composite percentile score using Belgian Study SHAP weightings.
+    Tier 1 (×3): SOT att/def, xG/shot differential, shot accuracy.
+    Tier 2 (×2): fast breaks/90, recoveries/90, first-half away rank.
+    Tier 3 (×1): set piece xG differential, PPDA, through balls/90, cross volume/90 (lower = better).
+    Score 0–100, 50 = league average. First/second half away from soccerstats.com (goals-based).
+    Built on publicly available Opta Championship data.
   </div>
-</div>
 
-<!-- ══════════════════ STANDINGS ══════════════════ -->
-<div id="pane-standings" class="pane">
-  <div class="sub-tabs">
-    <div class="sub-tab on" data-s="actual">Actual</div>
-    <div class="sub-tab" data-s="expected">Expected</div>
-    <div class="sub-tab" data-s="home">Home</div>
-    <div class="sub-tab" data-s="away">Away</div>
-  </div>
-  <div class="tw"><table><thead><tr id="std-head"></tr></thead><tbody id="std-body"></tbody></table></div>
-  <div class="legend">
-    <span><span class="ldot" style="background:var(--pro)"></span>Promotion</span>
-    <span><span class="ldot" style="background:var(--playoff)"></span>Play-off</span>
-    <span><span class="ldot" style="background:var(--rel)"></span>Relegation</span>
-    <span style="color:var(--neg)">* points deduction applied</span>
-  </div>
-</div>
-
-<!-- ══════════════════ STATS TABLE ══════════════════ -->
-<div id="pane-stats" class="pane">
-  <div class="ctrls">
-    <span class="cl">Category</span><select id="catsel"></select>
-    <span class="cl">Display</span>
-    <div class="tog stats-tog">
-      <div class="tb on" data-m="total">Season total</div>
-      <div class="tb" data-m="pm">Per match</div>
-    </div>
-    <span class="cl">Snapshot</span><select id="snapsel"></select>
-  </div>
-  <div class="pills" id="pills"></div>
-  <div class="tw"><table><thead><tr id="thead"></tr></thead><tbody id="tbody"></tbody></table></div>
-</div>
-
-<!-- ══════════════════ TREND TRACKER ══════════════════ -->
-<div id="pane-trend" class="pane">
-  <div class="ctrls">
-    <span class="cl">Metric</span><select id="tmsel"></select>
-    <span class="cl">Display</span>
-    <div class="tog trend-tog">
-      <div class="tb on" data-m="total">Season total</div>
-      <div class="tb" data-m="pm">Per match</div>
-    </div>
-  </div>
-  <div class="tl-layout">
-    <div class="sidebar">
-      <div class="sh">Select team</div>
-      <div class="tlist" id="tlist"></div>
-    </div>
-    <div class="tmain">
-      <div class="scards" id="trend-stat-cards"></div>
-      <div class="cc">
-        <h3 id="trend-chart-title">--</h3>
-        <div class="ccsub">Season per-match average</div>
-        <div class="cw"><canvas id="trend-line-chart"></canvas></div>
-      </div>
-      <div class="cc">
-        <h3>Match-by-match form</h3>
-        <div class="ccsub">Per-match delta — last 10 snapshots</div>
-        <div class="cw"><canvas id="trend-bar-chart"></canvas></div>
-      </div>
-    </div>
-  </div>
 </div>
 </main>
 
 <script>
-// ─── Metric definitions ───────────────────────────────────────────────────────
-const METRICS=[
-  {key:'atk_goals',label:'Goals',cat:'Attacking',hi:true,dec:0},
-  {key:'atk_xg',label:'xG',cat:'Attacking',hi:true,dec:2},
-  {key:'atk_xg_per_shot',label:'xG/shot',cat:'Attacking',hi:true,dec:3},
-  {key:'atk_shots_ot',label:'SOT',cat:'Attacking',hi:true,dec:0},
-  {key:'atk_shots',label:'Shots',cat:'Attacking',hi:true,dec:0},
-  {key:'atk_goals_vs_xg',label:'Goals vs xG',cat:'Attacking',hi:true,dec:2},
-  {key:'np_xg',label:'npxG',cat:'Attacking',hi:true,dec:2},
-  {key:'np_xg_per_shot',label:'NP xG/shot',cat:'Attacking',hi:true,dec:3},
-  {key:'np_shots_ot',label:'NP SOT',cat:'Attacking',hi:true,dec:0},
-  {key:'sp_atk_xg',label:'SP xG',cat:'Attacking',hi:true,dec:2},
-  {key:'sp_atk_goals',label:'SP Goals',cat:'Attacking',hi:true,dec:0},
-  {key:'atk_misc_pen_goals',label:'Pen Goals',cat:'Attacking',hi:true,dec:0},
-  {key:'atk_misc_touches_box',label:'Box Touches',cat:'Attacking',hi:true,dec:0},
-  {key:'atk_misc_offsides',label:'Offsides',cat:'Attacking',hi:false,dec:0},
-  {key:'atk_fast_break_shots',label:'Fast Breaks',cat:'Attacking',hi:true,dec:0},
-  {key:'atk_misc_header_goals',label:'Header Goals',cat:'Attacking',hi:true,dec:0},
-  {key:'gk_goals_conceded',label:'Goals Con',cat:'Defending',hi:false,dec:0},
-  {key:'gk_xgot_conceded',label:'xGOT Con',cat:'Defending',hi:false,dec:2},
-  {key:'gk_saves',label:'Saves',cat:'Defending',hi:true,dec:0},
-  {key:'gk_goals_prevented',label:'Goals Prev',cat:'Defending',hi:true,dec:2},
-  {key:'def_tackles',label:'Tackles',cat:'Defending',hi:true,dec:0},
-  {key:'def_np_xga',label:'NP xGA',cat:'Defending',hi:false,dec:2},
-  {key:'sp_def_xga',label:'SP xGA',cat:'Defending',hi:false,dec:2},
-  {key:'sp_def_goals_con',label:'SP Goals Con',cat:'Defending',hi:false,dec:0},
-  {key:'def_interceptions',label:'Interceptions',cat:'Defending',hi:true,dec:0},
-  {key:'def_clearances',label:'Clearances',cat:'Defending',hi:true,dec:0},
-  {key:'def_clearances',label:'Clearances',cat:'Defending',hi:true,dec:0},
-  {key:'blocks',label:'Blocks',cat:'Defending',hi:true,dec:0},
-  {key:'clearances',label:'Clearances',cat:'Defending',hi:true,dec:0},
-  {key:'possession',label:'Possession%',cat:'Defending',hi:true,dec:1},
-  {key:'ground_duel_pct',label:'Ground Duel%',cat:'Defending',hi:true,dec:1},
-  {key:'aerial_duel_pct',label:'Aerial Duel%',cat:'Defending',hi:true,dec:1},
-  {key:'pass_passes',label:'Passes',cat:'Passing',hi:true,dec:0},
-  {key:'pass_pass_acc',label:'Pass Acc%',cat:'Passing',hi:true,dec:1},
-  {key:'pass_f3_passes',label:'F3 Passes',cat:'Passing',hi:true,dec:0},
-  {key:'pass_crosses',label:'Crosses',cat:'Passing',hi:false,dec:0},
-  {key:'pass_through_balls',label:'Through Balls',cat:'Passing',hi:true,dec:0},
-  {key:'carry_progressive',label:'Prog Carries',cat:'Pressing',hi:true,dec:0},
-  {key:'carry_shot_ending',label:'Carry→Shot',cat:'Pressing',hi:true,dec:0},
-  {key:'carry_goal_ending',label:'Carry→Goal',cat:'Pressing',hi:true,dec:0},
-  {key:'cc_chances_created',label:'Chances Created',cat:'Pressing',hi:true,dec:0},
-  {key:'cc_xa',label:'xA',cat:'Pressing',hi:true,dec:2},
-  {key:'carry_carries',label:'Carries',cat:'Sequences',hi:true,dec:0},
-  {key:'carry_progressive',label:'Prog Carries',cat:'Sequences',hi:true,dec:0},
-  {key:'carry_shot_ending',label:'Carry→Shot',cat:'Sequences',hi:true,dec:0},
-  {key:'carry_goal_ending',label:'Carry→Goal',cat:'Sequences',hi:true,dec:0},
-  {key:'cc_chances_created',label:'Chances Created',cat:'Sequences',hi:true,dec:0},
-  {key:'misc_yellows',label:'Yellows',cat:'Misc',hi:false,dec:0},
-  {key:'misc_reds',label:'Reds',cat:'Misc',hi:false,dec:0},
-  {key:'misc_fouls',label:'Fouls',cat:'Misc',hi:false,dec:0},
-  {key:'misc_pens_conceded',label:'Pens Con',cat:'Misc',hi:false,dec:0},
-  {key:'misc_offsides',label:'Offsides',cat:'Misc',hi:false,dec:0},
-  {key:'cc_assists',label:'Assists',cat:'Misc',hi:true,dec:0},
-  {key:'cc_xa',label:'xA',cat:'Misc',hi:true,dec:2},
+// ── Helpers ─────────────────────────────────────────────────────────────────
+function isB(n){return n&&n.toLowerCase().includes('birmingham')}
+
+function britishDate(iso){
+  if(!iso) return '--';
+  const [y,m,d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+// ── xB Index metrics ─────────────────────────────────────────────────────────
+const XBI = [
+  {key:'sot_atk',   label:'SOT Atk',   tier:1, hi:true,  dec:1, fn:(t,g)=>g>0?(t.atk_shots_ot||0)/g:0},
+  {key:'sot_def',   label:'SOT Def',   tier:1, hi:false, dec:1, fn:(t,g)=>g>0?(t.def_sot_faced||0)/g:0},
+  {key:'xgsh_diff', label:'xG/sh Δ',  tier:1, hi:true,  dec:3, fn:(t)=>(t.atk_xg_per_shot||0)-(t.def_xga_per_shot||0)},
+  {key:'shot_acc',  label:'Shot Acc%', tier:1, hi:true,  dec:1, fn:(t)=>(t.atk_shots||0)>0?((t.atk_shots_ot||0)/(t.atk_shots||1))*100:0},
+  {key:'fb',        label:'FB/90',     tier:2, hi:true,  dec:2, fn:(t,g)=>g>0?(t.atk_fast_break_shots||0)/g:0},
+  {key:'rec',       label:'Rec/90',    tier:2, hi:true,  dec:1, fn:(t,g)=>g>0?(t.recoveries||0)/g:0},
+  {key:'fha_rank',  label:'1H Away',   tier:2, hi:false, dec:0, fn:null}, // special
+  {key:'sp_diff',   label:'SP xGΔ',   tier:3, hi:true,  dec:2, fn:(t,g)=>g>0?((t.sp_atk_xg||0)-(t.sp_def_xga||0))/g:0},
+  {key:'ppda',      label:'PPDA',      tier:3, hi:false, dec:1, fn:(t)=>t.press_ppda||null},
+  {key:'tb',        label:'TBall/90',  tier:3, hi:true,  dec:2, fn:(t,g)=>g>0?(t.pass_through_balls||0)/g:0},
+  {key:'crosses',   label:'Cross/90',  tier:3, hi:false, dec:1, fn:(t,g)=>g>0?(t.pass_crosses||0)/g:0},
 ];
-const CATS=[...new Set(METRICS.map(m=>m.cat))];
-const CAT_DEF={
-  'Attacking':['atk_goals','atk_xg','atk_xg_per_shot','atk_shots_ot','np_xg','atk_fast_break_shots'],
-  'Defending':['gk_goals_conceded','gk_xgot_conceded','gk_saves','def_tackles','recoveries','def_clearances'],
-  'Passing':['pass_passes','pass_pass_acc','pass_f3_passes','pass_crosses','pass_through_balls'],
-  'Pressing':['carry_progressive','carry_shot_ending','cc_chances_created','cc_xa'],
-  'Sequences':['carry_carries','carry_progressive','carry_shot_ending','carry_goal_ending'],
-  'Misc':['misc_yellows','misc_reds','misc_fouls','misc_pens_conceded','cc_assists'],
-};
-const RATE_KEYS=new Set(['possession','pass_pass_acc','ground_duel_pct','aerial_duel_pct',
-  'atk_xg_per_shot','np_xg_per_shot','def_xga_per_shot','press_ppda',
-  'press_press_start_dist','seq_direct_speed','seq_passes_per_seq']);
+const TW={1:3,2:2,3:1};
 
-// ─── xB Index metric definitions ─────────────────────────────────────────────
-const XBI_METRICS=[
-  // Tier 1 ×3 — Belgian Study top predictors
-  {key:'sot_atk_p90',   label:'SOT Atk',   tier:1, hi:true,  dec:1, desc:'Shots on target per 90 (attacking)'},
-  {key:'sot_def_p90',   label:'SOT Def',   tier:1, hi:false, dec:1, desc:'Shots on target conceded per 90'},
-  {key:'xgps_diff',     label:'xG/sh Δ',  tier:1, hi:true,  dec:3, desc:'xG per shot created minus conceded'},
-  {key:'shot_acc',      label:'Shot Acc%', tier:1, hi:true,  dec:1, desc:'Shot accuracy % attacking'},
-  // Tier 2 ×2
-  {key:'fb_p90',        label:'FB/90',     tier:2, hi:true,  dec:2, desc:'Fast breaks per 90'},
-  {key:'rec_p90',       label:'Rec/90',    tier:2, hi:true,  dec:1, desc:'Possession recoveries per 90'},
-  {key:'fha_rank',      label:'1H Away',   tier:2, hi:false, dec:0, desc:'First-half away rank — lower is better (target top 10)'},
-  // Tier 3 ×1
-  {key:'sp_diff_p90',   label:'SP xGΔ',   tier:3, hi:true,  dec:2, desc:'Set piece xG for minus against per 90'},
-  {key:'ppda',          label:'PPDA',      tier:3, hi:false, dec:1, desc:'Passes per def. action (lower = press harder)'},
-  {key:'tb_p90',        label:'TBall/90',  tier:3, hi:true,  dec:2, desc:'Through balls per 90'},
-  {key:'crosses_p90',   label:'Cross/90',  tier:3, hi:false, dec:1, desc:'Crosses per 90 (high volume negatively correlated with winning)'},
+// Trend metric options (subset of XBI + composite)
+const TREND_METRICS = [
+  {key:'xbi',      label:'xB Index (composite)'},
+  {key:'sot_atk',  label:'SOT Attacking'},
+  {key:'sot_def',  label:'SOT Defensive'},
+  {key:'xgsh_diff',label:'xG/shot differential'},
+  {key:'shot_acc', label:'Shot accuracy %'},
+  {key:'fb',       label:'Fast breaks / 90'},
+  {key:'rec',      label:'Recoveries / 90'},
+  {key:'sp_diff',  label:'Set piece xG differential'},
+  {key:'ppda',     label:'PPDA'},
+  {key:'tb',       label:'Through balls / 90'},
+  {key:'crosses',  label:'Crosses / 90'},
 ];
-const XBI_TIER_W={1:3,2:2,3:1};
 
-// ─── State ────────────────────────────────────────────────────────────────────
-let HIST=[], HALFTIME=[], S={
-  tab:'index', stdSub:'actual', stdSnap:-1,
-  cat:'Attacking', active:[...CAT_DEF['Attacking']], sk:'atk_xg', sd:'desc',
-  mode:'total', snap:-1,
-  tteam:null, tmet:'atk_xg', tmode:'total',
-  xbiMode:'p90', xbiSnap:-1, xbiSort:{k:'xbi',d:'desc'},
-};
-let LC=null, BC=null;
-
-function snapD(idx){ return HIST[idx===-1?HIST.length-1:idx]; }
-function isB(n){ return n&&n.toLowerCase().includes('birmingham'); }
-function gv(st,k,played,mode){
-  let v=st[k]; if(v==null)return null;
-  v=parseFloat(v); if(isNaN(v))return null;
-  if(mode==='pm'&&!RATE_KEYS.has(k)&&played>0) v=v/played;
-  return v;
-}
-function fmt(v,dec,mode,k){
-  if(v==null)return'—';
-  const d=mode==='pm'&&!RATE_KEYS.has(k)?Math.min(dec+1,2):dec;
-  return v.toFixed(d);
-}
-function formDots(s){
-  return(s||'').split('').map(c=>{
-    const cls=c==='W'?'fw':c==='D'?'fdr':'fl';
-    return`<span class="fd ${cls}">${c}</span>`;
-  }).join('');
+function pct(v, all, hi){
+  if(v==null||all.length<2) return 50;
+  const s=[...all].sort((a,b)=>a-b);
+  const r=s.filter(x=>x<v).length;
+  const p=(r/(s.length-1))*100;
+  return hi?p:100-p;
 }
 
-// ─── xB Index ─────────────────────────────────────────────────────────────────
-function xbiCompute(st, mode, teamName, htData){
-  const pl=st.atk_played||1;
-  const m90=v=>pl>0?(v/pl)*90:v;
-  const metrics={};
-  // Works with both old and new scraper field names
-  const g = v => pl>0 ? (v/pl) : v;
-  metrics.sot_atk_p90 = g(st.atk_shots_ot||0);
-  metrics.sot_def_p90 = g(st.def_sot_faced||st.gk_saves||0);
-  metrics.xgps_diff   = (st.atk_xg_per_shot||0) - (st.def_xga_per_shot||0);
-  metrics.shot_acc    = (st.atk_shots||0)>0 ? ((st.atk_shots_ot||0)/(st.atk_shots||1))*100 : 0;
-  metrics.fb_p90      = g(st.atk_fast_break_shots||st.atk_misc_fb_total||0);
-  metrics.rec_p90     = g(st.recoveries||0);
-  metrics.sp_diff_p90 = g((st.sp_atk_xg||0)-(st.sp_def_xga||0));
-  metrics.ppda        = st.press_ppda||null;
-  metrics.tb_p90      = g(st.pass_through_balls||0);
-  metrics.crosses_p90 = g(st.pass_crosses||0);
-  // First-half away rank from soccerstats -- look up by team name
-  metrics.fha_rank = null;
-  if(htData&&htData.first_half_away){
-    const match=htData.first_half_away.find(r=>
-      r.name.toLowerCase().includes(teamName.toLowerCase().split(' ')[0]) ||
-      teamName.toLowerCase().includes(r.name.toLowerCase().split(' ')[0])
-    );
-    if(match) metrics.fha_rank = match.rank;
-  }
-  if(metrics.fha_rank===null) metrics.fha_rank=12; // default mid-table
-  return metrics;
+function computeTeam(t, htSnap){
+  const g=t.atk_played||1;
+  const m={};
+  XBI.forEach(md=>{
+    if(md.key==='fha_rank'){
+      // look up from halftime data
+      if(htSnap&&htSnap.first_half_away){
+        const name=Object.keys(HIST[0].teams).find(n=>n===t._name)||'';
+        const row=htSnap.first_half_away.find(r=>
+          r.name.toLowerCase().includes((t._name||'').toLowerCase().split(' ')[0])||
+          (t._name||'').toLowerCase().includes(r.name.toLowerCase().split(' ')[0])
+        );
+        m[md.key]=row?row.rank:12;
+      } else {
+        m[md.key]=12;
+      }
+    } else {
+      const v=md.fn(t,g);
+      m[md.key]=v;
+    }
+  });
+  return m;
 }
 
-function xbiPct(val,allVals,hi){
-  if(val==null||allVals.length<2) return 50;
-  const sorted=[...allVals].sort((a,b)=>a-b);
-  const rank=sorted.filter(v=>v<val).length;
-  const pct=(rank/(sorted.length-1))*100;
-  return hi?pct:100-pct;
+function xbiScore(metrics, allMetrics){
+  let s=0,w=0;
+  XBI.forEach(md=>{
+    const v=metrics[md.key];
+    if(v==null) return;
+    const av=allMetrics.map(m=>m[md.key]).filter(x=>x!=null);
+    if(av.length<2) return;
+    s+=pct(v,av,md.hi)*TW[md.tier];
+    w+=TW[md.tier]*100;
+  });
+  return w>0?(s/w)*100:0;
 }
 
-function getXBIData(snapIdx){
-  const sn=snapD(snapIdx); if(!sn)return{};
+function getXBIData(snapIdx, htSnap){
+  const sn=HIST[snapIdx===-1?HIST.length-1:snapIdx];
+  if(!sn) return[];
+  const computed=Object.entries(sn.teams).map(([name,t])=>{
+    const tc={...t,_name:name};
+    const m=computeTeam(tc,htSnap);
+    return{name,t,m};
+  });
+  const allM=computed.map(c=>c.m);
+  return computed.map(c=>({
+    name:c.name,t:c.t,...c.m,
+    xbi:xbiScore(c.m,allM),
+  }));
+}
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let HIST=[], HALFTIME=[];
+let snapIdx=-1, mode='p90';
+let trendTeam='Birmingham City FC', trendMetric='xbi', trendWindow='all';
+let sortKey='xbi', sortDir='desc';
+let CHART=null;
+
+// ── Render index table ────────────────────────────────────────────────────────
+function renderTable(){
   const htSnap=HALFTIME.length?HALFTIME[HALFTIME.length-1]:null;
-  const computed={};
-  Object.keys(sn.teams).forEach(name=>{
-    computed[name]=xbiCompute(sn.teams[name],S.xbiMode,name,htSnap);
-  });
-  const allMetrics=Object.values(computed);
-  const result={};
-  Object.entries(computed).forEach(([name,metrics])=>{
-    let score=0,totalW=0;
-    XBI_METRICS.forEach(md=>{
-      const v=metrics[md.key]; if(v==null)return;
-      const allV=allMetrics.map(m=>m[md.key]).filter(x=>x!=null);
-      if(allV.length<2)return;
-      score+=xbiPct(v,allV,md.hi)*XBI_TIER_W[md.tier];
-      totalW+=XBI_TIER_W[md.tier]*100;
-    });
-    result[name]={...metrics, xbi:totalW>0?(score/totalW)*100:0};
-  });
-  return result;
-}
+  const rows=getXBIData(snapIdx,htSnap);
+  if(!rows.length) return;
 
-function renderXBI(){
-  const data=getXBIData(S.xbiSnap); if(!Object.keys(data).length)return;
-  const rows=Object.entries(data).map(([name,d])=>({name,...d}));
+  // Sort
   rows.sort((a,b)=>{
-    const av=a[S.xbiSort.k]??-Infinity,bv=b[S.xbiSort.k]??-Infinity;
-    return S.xbiSort.d==='desc'?bv-av:av-bv;
+    const av=a[sortKey]??-Infinity, bv=b[sortKey]??-Infinity;
+    return sortDir==='desc'?bv-av:av-bv;
   });
   const maxXBI=Math.max(...rows.map(r=>r.xbi));
 
-  // Birmingham summary cards
-  const bhamRow=rows.find(r=>isB(r.name));
-  const bhamRank=rows.indexOf(bhamRow)+1;
-  if(bhamRow){
-    document.getElementById('xbi-bham-cards').innerHTML=`
-      <div class="sc"><div class="scl">xB Index</div><div class="scv">${bhamRow.xbi.toFixed(1)}</div><div class="scr">Rank <b>${bhamRank}/${rows.length}</b></div></div>
-      <div class="sc"><div class="scl">xG/shot Δ</div><div class="scv" style="color:${bhamRow.xgps_diff>=0?'var(--pos)':'var(--neg)'}">${bhamRow.xgps_diff>=0?'+':''}${bhamRow.xgps_diff.toFixed(3)}</div><div class="scr">Created vs conceded</div></div>
-      <div class="sc"><div class="scl">1st half away</div><div class="scv" style="color:var(--neg)">${bhamRow.fha_rank}th</div><div class="scr" style="color:var(--neg)">Target: top 10</div></div>
-      <div class="sc"><div class="scl">Crosses / 90</div><div class="scv">${bhamRow.crosses_p90.toFixed(1)}</div><div class="scr" style="color:var(--neg)">High volume = warning signal</div></div>`;
+  // Previous snapshot for deltas
+  const prevIdx=snapIdx===-1?HIST.length-2:snapIdx-1;
+  const prevRows=prevIdx>=0?getXBIData(prevIdx,htSnap):[];
+  const prevMap={};
+  prevRows.forEach(r=>{prevMap[r.name]=r});
+
+  // Birmingham cards
+  const bR=rows.find(r=>isB(r.name));
+  if(bR){
+    const bRank=rows.indexOf(bR)+1;
+    const prev=prevMap[bR.name];
+    const xbiDelta=prev?(bR.xbi-prev.xbi):null;
+    const rankDelta=prev?(prevRows.findIndex(r=>isB(r.name))+1-bRank):null;
+
+    document.getElementById('bham-cards').innerHTML=`
+      <div class="card">
+        <div class="card-label">xB Index</div>
+        <div class="card-val">${bR.xbi.toFixed(1)}</div>
+        <div class="card-sub">Rank <b>${bRank}/${rows.length}</b></div>
+        ${xbiDelta!=null?`<div class="card-trend ${xbiDelta>=0?'up':'dn'}">${xbiDelta>=0?'▲':'▼'} ${Math.abs(xbiDelta).toFixed(1)} vs prev GW</div>`:''}
+      </div>
+      <div class="card">
+        <div class="card-label">xG/shot differential</div>
+        <div class="card-val" style="color:${bR.xgsh_diff>=0?'var(--pos)':'var(--neg)'}">${bR.xgsh_diff>=0?'+':''}${bR.xgsh_diff.toFixed(3)}</div>
+        <div class="card-sub">Created vs conceded</div>
+      </div>
+      <div class="card">
+        <div class="card-label">1st half away rank</div>
+        <div class="card-val" style="color:var(--neg)">${bR.fha_rank || '—'}${bR.fha_rank===24?'th':bR.fha_rank===1?'st':bR.fha_rank===2?'nd':bR.fha_rank===3?'rd':'th'}</div>
+        <div class="card-sub" style="color:var(--neg)">Target: top 10</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Crosses / 90</div>
+        <div class="card-val">${bR.crosses.toFixed(1)}</div>
+        <div class="card-sub" style="color:var(--neg)">Highest in Championship</div>
+      </div>`;
   }
 
-  // Main xBI table
-  const thead=document.getElementById('xbi-head');
-  thead.innerHTML=`<th class="tl">#</th><th class="tl" data-xk="name">Club</th>
-    <th data-xk="xbi" class="${S.xbiSort.k==='xbi'?'s'+S.xbiSort.d:''}">xB Index</th>
-    ${XBI_METRICS.map(m=>`<th data-xk="${m.key}" class="${S.xbiSort.k===m.key?'s'+S.xbiSort.d:''}" title="${m.desc}">
-      <span style="font-size:9px;color:${m.tier===1?'var(--neg)':m.tier===2?'var(--draw)':'var(--muted)'}">T${m.tier}</span> ${m.label}</th>`).join('')}`;
+  // Table headers
+  const head=document.getElementById('table-head');
+  head.innerHTML=`<th class="tl">#</th><th class="tl" data-k="name">Club</th>
+    <th data-k="xbi" class="${sortKey==='xbi'?'s'+sortDir:''}">xB Index</th>
+    ${XBI.map(m=>`<th data-k="${m.key}" class="${sortKey===m.key?'s'+sortDir:''}" title="${m.label}">
+      <span style="font-size:9px;color:${m.tier===1?'var(--t1)':m.tier===2?'var(--t2)':'var(--t3)'}">T${m.tier}</span> ${m.label}
+    </th>`).join('')}`;
 
-  document.getElementById('xbi-body').innerHTML=rows.map((r,i)=>{
+  // Table rows
+  document.getElementById('table-body').innerHTML=rows.map((r,i)=>{
     const b=isB(r.name);
-    const barW=Math.round((r.xbi/maxXBI)*72);
-    const allMetrics=rows;
-    const metCells=XBI_METRICS.map(md=>{
-      const v=r[md.key]; if(v==null)return'<td>—</td>';
-      const allV=allMetrics.map(x=>x[md.key]).filter(x=>x!=null);
-      const pct=xbiPct(v,allV,md.hi);
-      const col=pct>=70?'var(--pos)':pct<=30?'var(--neg)':'var(--text)';
+    const bw=Math.round((r.xbi/maxXBI)*72);
+    const prev=prevMap[r.name];
+    const delta=prev?(r.xbi-prev.xbi):null;
+    const deltaHtml=delta!=null?`<span class="delta ${delta>=0?'up':'dn'}">${delta>=0?'▲':'▼'}${Math.abs(delta).toFixed(1)}</span>`:'';
+
+    const cells=XBI.map(md=>{
+      const v=r[md.key];
+      if(v==null) return'<td>—</td>';
+      const av=rows.map(x=>x[md.key]).filter(x=>x!=null);
+      const p=pct(v,av,md.hi);
+      const col=p>=70?'var(--pos)':p<=30?'var(--neg)':'var(--text)';
       return`<td style="color:${col}">${v.toFixed(md.dec)}</td>`;
     }).join('');
+
     return`<tr class="${b?'bham':''}">
-      <td style="font-family:var(--font-m);font-size:11px;color:var(--muted)">${i+1}</td>
+      <td style="font-size:11px;color:var(--muted)">${i+1}</td>
       <td class="tl">${r.name}</td>
-      <td><div style="display:flex;align-items:center;gap:5px;justify-content:flex-end">
-        <div style="width:${barW}px;height:5px;border-radius:3px;background:${b?'var(--blues)':'rgba(255,255,255,.12)'}"></div>
-        <span style="font-family:var(--font-m);font-size:12px;font-weight:500;min-width:30px">${r.xbi.toFixed(1)}</span>
+      <td><div class="bar-wrap">
+        <div class="bar${b?' blu':''}" style="width:${bw}px"></div>
+        <span class="xbi-val">${r.xbi.toFixed(1)}</span>${deltaHtml}
       </div></td>
-      ${metCells}
+      ${cells}
     </tr>`;
   }).join('');
 
-  thead.querySelectorAll('th[data-xk]').forEach(th=>th.addEventListener('click',()=>{
-    const k=th.dataset.xk;
-    S.xbiSort.k===k?(S.xbiSort.d=S.xbiSort.d==='desc'?'asc':'desc'):(S.xbiSort.k=k,S.xbiSort.d='desc');
-    renderXBI();
+  head.querySelectorAll('th[data-k]').forEach(th=>th.addEventListener('click',()=>{
+    const k=th.dataset.k;
+    sortKey===k?(sortDir=sortDir==='desc'?'asc':'desc'):(sortKey=k,sortDir='desc');
+    renderTable();
   }));
+}
 
-  // Half-time tables
+// ── Render trend chart ────────────────────────────────────────────────────────
+function renderTrend(){
+  if(!HIST.length) return;
   const htSnap=HALFTIME.length?HALFTIME[HALFTIME.length-1]:null;
-  renderHTTable('fha','first_half_away',htSnap);
-  renderHTTable('sha','second_half_away',htSnap);
-}
 
-function renderHTTable(prefix,key,htSnap){
-  const rows=htSnap?htSnap[key]||[]:[];
-  const hEl=document.getElementById(prefix+'-head');
-  const bEl=document.getElementById(prefix+'-body');
-  if(!hEl||!bEl)return;
-  hEl.innerHTML='<th class="tl">#</th><th class="tl">Club</th><th>GP</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th>';
-  if(!rows.length){
-    bEl.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:12px">No data — run scraper first</td></tr>';
-    return;
+  // Build series across all snapshots
+  const allSnaps=HIST.map((sn,i)=>{
+    const rows=getXBIData(i,htSnap);
+    const r=rows.find(r=>r.name===trendTeam);
+    if(!r) return null;
+    let val;
+    if(trendMetric==='xbi'){
+      val=r.xbi;
+    } else {
+      val=r[trendMetric];
+    }
+    return{label:sn.label, date:sn.date, val:val!=null?parseFloat(val.toFixed(3)):null};
+  }).filter(Boolean);
+
+  if(!allSnaps.length) return;
+
+  // Apply rolling average if selected
+  let series=allSnaps;
+  if(trendWindow==='5'&&allSnaps.length>=2){
+    series=allSnaps.map((s,i)=>{
+      const window=allSnaps.slice(Math.max(0,i-4),i+1);
+      const vals=window.map(w=>w.val).filter(v=>v!=null);
+      return{...s,val:vals.length?parseFloat((vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(3)):null};
+    });
   }
-  bEl.innerHTML=rows.map(r=>{
-    const b=isB(r.name);const isTarget=r.rank===10;
-    const gd=String(r.gd);const gdCol=gd.startsWith('+')?'var(--pos)':gd==='0'?'var(--muted)':'var(--neg)';
-    return`<tr class="${b?'bham':''}">
-      <td style="font-family:var(--font-m);font-size:10px;color:var(--muted)">${r.rank}</td>
-      <td class="tl">${r.name}${isTarget?`<span style="font-size:9px;color:var(--acc);margin-left:4px">← target</span>`:''}</td>
-      <td>${r.gp}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td>
-      <td style="color:var(--pos)">${r.gf}</td>
-      <td style="color:var(--neg)">${r.ga}</td>
-      <td style="color:${gdCol}">${r.gd}</td>
-      <td style="font-weight:500">${r.pts}</td>
-    </tr>`;
-  }).join('');
+
+  const col=isB(trendTeam)?'#1a6ef5':'#00e5ff';
+  const mdef=XBI.find(m=>m.key===trendMetric);
+  const dec=trendMetric==='xbi'?1:(mdef?mdef.dec:2);
+
+  if(CHART) CHART.destroy();
+  CHART=new Chart(document.getElementById('trend-chart').getContext('2d'),{
+    type:'line',
+    data:{
+      labels:series.map(s=>s.label||britishDate(s.date)),
+      datasets:[{
+        data:series.map(s=>s.val),
+        borderColor:col,
+        backgroundColor:col+'15',
+        borderWidth:2,
+        pointRadius:series.length<=10?4:2,
+        pointBackgroundColor:col,
+        tension:0.3,
+        fill:true,
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'#1a1e25',
+          borderColor:'#252a34',
+          borderWidth:1,
+          titleColor:'#8b92a0',
+          bodyColor:'#e8eaf0',
+          titleFont:{family:'DM Mono',size:11},
+          bodyFont:{family:'DM Mono',size:12},
+          callbacks:{
+            label:c=>` ${c.parsed.y!=null?c.parsed.y.toFixed(dec):'—'}`,
+          }
+        }
+      },
+      scales:{
+        x:{grid:{color:'rgba(37,42,52,.6)'},ticks:{color:'#5a6070',font:{family:'DM Mono',size:10}}},
+        y:{grid:{color:'rgba(37,42,52,.6)'},ticks:{color:'#5a6070',font:{family:'DM Mono',size:10}}},
+      }
+    }
+  });
 }
 
-// ─── Standings ────────────────────────────────────────────────────────────────
-function renderStandings(){
-  const sn=snapD(S.stdSnap); if(!sn)return;
-  const sub=S.stdSub;
-  if(sub==='actual'||sub==='home'||sub==='away'){
-    const rows=sn.standings[sub==='actual'?'total':sub]||[];
-    const isT=sub==='actual';
-    document.getElementById('std-head').innerHTML=`
-      <th class="tl">Pos</th><th class="tl">Club</th>
-      <th>Pl</th><th>W</th><th>D</th><th>L</th>
-      <th>GF</th><th>GA</th><th>GD</th><th>Pts</th>
-      ${isT?'<th>Form</th>':''}`;
-    document.getElementById('std-body').innerHTML=rows.map(r=>{
+// ── Render half-time tables ───────────────────────────────────────────────────
+function renderHT(){
+  const htSnap=HALFTIME.length?HALFTIME[HALFTIME.length-1]:null;
+  const headHtml='<th class="tl">#</th><th class="tl">Club</th><th>GP</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th>';
+
+  ['fha','sha'].forEach((pfx,i)=>{
+    const key=i===0?'first_half_away':'second_half_away';
+    const rows=htSnap?htSnap[key]||[]:[];
+    document.getElementById(pfx+'-head').innerHTML=headHtml;
+    if(!rows.length){
+      document.getElementById(pfx+'-body').innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:12px;font-family:var(--font-m);font-size:11px">No data — run scraper first</td></tr>';
+      return;
+    }
+    document.getElementById(pfx+'-body').innerHTML=rows.map(r=>{
       const b=isB(r.name);
-      const mv=r.lastRank?(r.rank<r.lastRank?`<span style="color:var(--pos);font-size:10px">▲${r.lastRank-r.rank}</span>`:r.rank>r.lastRank?`<span style="color:var(--neg);font-size:10px">▼${r.rank-r.lastRank}</span>`:`<span style="color:var(--muted);font-size:10px">—</span>`):'';
-      const zc=r.rankStatus==='Promotion'?'zpro':r.rankStatus&&r.rankStatus.includes('Play')?'zpo':r.rankStatus==='Relegation'?'zrel':'';
-      const ded=r.deduction?`<span style="font-size:10px;color:var(--neg)"> -${r.deduction}</span>`:'';
-      const gd=String(r.gd);const gdCol=gd.startsWith('+')?'var(--pos)':gd==='+0'||gd==='0'?'var(--muted)':'var(--neg)';
-      return`<tr class="${b?'bham':''} ${zc}">
-        <td style="font-family:var(--font-m);font-size:11px">${r.rank} ${mv}</td>
-        <td class="tl">${r.shortName||r.name}${ded}</td>
-        <td>${r.played}</td><td>${r.won}</td><td>${r.drawn}</td><td>${r.lost}</td>
+      const isTarget=r.rank===10&&i===0;
+      const gd=String(r.gd);
+      const gdCol=gd.startsWith('+')?'var(--pos)':gd==='0'?'var(--muted)':'var(--neg)';
+      return`<tr class="${b?'bham':''}${isTarget?' target-row':''}">
+        <td style="color:var(--muted)">${r.rank}</td>
+        <td class="tl">${r.name}</td>
+        <td>${r.gp}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td>
         <td style="color:var(--pos)">${r.gf}</td>
         <td style="color:var(--neg)">${r.ga}</td>
         <td style="color:${gdCol}">${r.gd}</td>
-        <td style="font-weight:500;color:var(--text)">${r.points}</td>
-        ${isT?`<td>${formDots(r.lastSix)}</td>`:''}
+        <td style="font-weight:700">${r.pts}</td>
       </tr>`;
     }).join('');
-  } else {
-    // Expected table
-    const rows=[...(sn.xpts||[])].sort((a,b)=>(a.xPos||99)-(b.xPos||99));
-    document.getElementById('std-head').innerHTML=`
-      <th class="tl">xPos</th><th class="tl">Club</th>
-      <th>Pl</th><th>Act Pos</th><th>Pos Δ</th>
-      <th>xGF</th><th>xGA</th><th>xGD</th>
-      <th style="color:var(--acc)">xPts</th><th>Pts</th><th>Pts Δ</th>`;
-    document.getElementById('std-body').innerHTML=rows.map(r=>{
-      const b=isB(r.name);
-      const pd=r.posDiff||0; const ptsd=r.ptsDiff||0;
-      const pdCol=pd<0?'var(--pos)':pd>0?'var(--neg)':'var(--muted)';
-      const ptCol=ptsd>=0?'var(--pos)':'var(--neg)';
-      const xgdCol=r.xGD>0?'var(--pos)':r.xGD<0?'var(--neg)':'var(--muted)';
-      const zc=r.xPos<=2?'zpro':r.xPos<=6?'zpo':r.xPos>=22?'zrel':'';
-      return`<tr class="${b?'bham':''} ${zc}">
-        <td style="font-family:var(--font-m);font-size:11px">${r.xPos}</td>
-        <td class="tl">${r.shortName||r.name}</td>
-        <td>${r.played}</td><td style="font-family:var(--font-m)">${r.pos}</td>
-        <td style="color:${pdCol};font-family:var(--font-m)">${pd>0?'+'+pd:pd}</td>
-        <td>${r.xG!=null?r.xG.toFixed(1):'—'}</td>
-        <td>${r.xGA!=null?r.xGA.toFixed(1):'—'}</td>
-        <td style="color:${xgdCol}">${r.xGD!=null?r.xGD.toFixed(1):'—'}</td>
-        <td style="font-weight:500;color:var(--acc)">${r.xPts!=null?r.xPts.toFixed(1):'—'}</td>
-        <td style="font-family:var(--font-m)">${r.points}</td>
-        <td style="color:${ptCol};font-family:var(--font-m)">${ptsd>=0?'+'+ptsd.toFixed(1):ptsd.toFixed(1)}</td>
-      </tr>`;
-    }).join('');
-  }
+  });
 }
 
-// ─── Stats Table ──────────────────────────────────────────────────────────────
-function renderStatsTable(){
-  const sn=snapD(S.snap); if(!sn)return;
-  const teams=sn.teams;
-  const ms=S.active.map(k=>METRICS.find(m=>m.key===k)).filter(Boolean);
-  const th=document.getElementById('thead');
-  th.innerHTML=`<th class="tl" data-k="name">Club</th>`+
-    ms.map(m=>`<th data-k="${m.key}" class="${S.sk===m.key?'s'+S.sd:''}">${m.label}</th>`).join('');
-  const rows=Object.entries(teams).map(([n,st])=>{
-    const p=st.atk_played||1; const vals={};
-    ms.forEach(m=>{vals[m.key]=gv(st,m.key,p,S.mode)});
-    return{n,st,p,vals};
+// ── Build trend selects ───────────────────────────────────────────────────────
+function buildTrendSelects(){
+  const sn=HIST[HIST.length-1];
+  const teams=Object.keys(sn.teams).sort((a,b)=>{
+    if(isB(a))return-1;if(isB(b))return 1;return a.localeCompare(b);
   });
-  if(S.sk==='name')rows.sort((a,b)=>S.sd==='asc'?a.n.localeCompare(b.n):b.n.localeCompare(a.n));
-  else rows.sort((a,b)=>{const av=a.vals[S.sk]??-Infinity,bv=b.vals[S.sk]??-Infinity;return S.sd==='desc'?bv-av:av-bv});
-  document.getElementById('tbody').innerHTML=rows.map((r,i)=>`
-    <tr class="${isB(r.n)?'bham':''}">
-      <td class="tl"><span class="rk">${i+1}</span>${r.n}</td>
-      ${ms.map(m=>`<td>${fmt(r.vals[m.key],m.dec,S.mode,m.key)}</td>`).join('')}
-    </tr>`).join('');
-  th.querySelectorAll('th').forEach(th=>th.addEventListener('click',()=>{
-    const k=th.dataset.k;
-    S.sk===k?(S.sd=S.sd==='desc'?'asc':'desc'):(S.sk=k,S.sd='desc');
-    renderStatsTable();
+  const teamSel=document.getElementById('trend-team-sel');
+  teamSel.innerHTML=teams.map(n=>`<option value="${n}"${n===trendTeam?' selected':''}>${n}</option>`).join('');
+  teamSel.addEventListener('change',()=>{trendTeam=teamSel.value;renderTrend()});
+
+  const metSel=document.getElementById('trend-metric-sel');
+  metSel.innerHTML=TREND_METRICS.map(m=>`<option value="${m.key}"${m.key===trendMetric?' selected':''}>${m.label}</option>`).join('');
+  metSel.addEventListener('change',()=>{trendMetric=metSel.value;renderTrend()});
+
+  document.querySelectorAll('.trend-tog .tb').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('.trend-tog .tb').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');trendWindow=b.dataset.w;renderTrend();
   }));
 }
 
-function buildPills(){
-  const catMetrics=METRICS.filter(m=>m.cat===S.cat);
-  document.getElementById('pills').innerHTML=catMetrics.map(m=>
-    `<div class="pill${S.active.includes(m.key)?' on':''}" data-key="${m.key}">${m.label}</div>`).join('');
-  document.querySelectorAll('.pill').forEach(pill=>pill.addEventListener('click',()=>{
-    const k=pill.dataset.key;
-    if(S.active.includes(k)){if(S.active.length>1){S.active=S.active.filter(x=>x!==k);if(S.sk===k)S.sk=S.active[0]}}
-    else S.active.push(k);
-    buildPills();renderStatsTable();
-  }));
-}
-
-// ─── Trend Tracker ────────────────────────────────────────────────────────────
-function renderTrend(){
-  const mDef=METRICS.find(m=>m.key===S.tmet); if(!mDef)return;
-  const tm=S.tteam;
-  const series=HIST.map(h=>{
-    const st=h.teams[tm]; if(!st)return null;
-    const p=st.atk_played||1;
-    return{label:h.label,val:gv(st,S.tmet,p,S.tmode),played:p};
-  }).filter(Boolean);
-  if(!series.length)return;
-  const latest=series[series.length-1];
-  const sn=snapD(-1);
-  const allVals=Object.entries(sn.teams).map(([n,st])=>({n,v:gv(st,S.tmet,st.atk_played||1,S.tmode)})).filter(x=>x.v!=null);
-  allVals.sort((a,b)=>mDef.hi?b.v-a.v:a.v-b.v);
-  const rk=allVals.findIndex(x=>x.n===tm)+1;
-  const hi=Math.max(...series.map(s=>s.val));
-  const lo=Math.min(...series.map(s=>s.val));
-  document.getElementById('trend-stat-cards').innerHTML=`
-    <div class="sc"><div class="scl">Current ${mDef.label}</div><div class="scv">${latest.val!=null?latest.val.toFixed(mDef.dec):'—'}</div><div class="scr">Rank <b>${rk}/${allVals.length}</b></div></div>
-    <div class="sc"><div class="scl">Season high</div><div class="scv">${hi.toFixed(mDef.dec)}</div><div class="scr">${S.tmode==='pm'?'per match':'cumulative'}</div></div>
-    <div class="sc"><div class="scl">Season low</div><div class="scv">${lo.toFixed(mDef.dec)}</div><div class="scr">${S.tmode==='pm'?'per match':'cumulative'}</div></div>
-    <div class="sc"><div class="scl">Snapshots</div><div class="scv">${series.length}</div><div class="scr">data points</div></div>`;
-  document.getElementById('trend-chart-title').textContent=`${tm} — ${mDef.label}`;
-  const col=isB(tm)?'#1a6ef5':'#00e5ff';
-  const pmSeries=series.map(s=>RATE_KEYS.has(S.tmet)?s.val:(s.played>0?s.val/s.played:s.val));
-  if(LC)LC.destroy();
-  LC=new Chart(document.getElementById('trend-line-chart').getContext('2d'),{
-    type:'line',
-    data:{labels:series.map(s=>s.label),datasets:[{
-      data:pmSeries.map(v=>v!=null?parseFloat(v.toFixed(mDef.dec+1)):null),
-      borderColor:col,backgroundColor:col+'18',borderWidth:2,
-      pointRadius:3,pointBackgroundColor:col,tension:0.3,fill:true,
-    }]},
-    options:chartOpts(mDef.dec),
-  });
-  const recent=series.slice(-10);
-  const deltas=recent.map((s,i)=>{
-    if(i===0)return{label:s.label,v:RATE_KEYS.has(S.tmet)?s.val:(s.played>0?s.val/s.played:s.val)};
-    const prev=recent[i-1],dv=s.val-prev.val,dp=Math.max(s.played-prev.played,1);
-    return{label:s.label,v:RATE_KEYS.has(S.tmet)?s.val:dv/dp};
-  });
-  if(BC)BC.destroy();
-  BC=new Chart(document.getElementById('trend-bar-chart').getContext('2d'),{
-    type:'bar',
-    data:{labels:deltas.map(d=>d.label),datasets:[{
-      data:deltas.map(d=>d.v!=null?parseFloat(d.v.toFixed(mDef.dec+1)):null),
-      backgroundColor:deltas.map((_,i)=>i===deltas.length-1?col:col+'33'),
-      borderColor:col,borderWidth:1,borderRadius:3,
-    }]},
-    options:chartOpts(mDef.dec),
-  });
-}
-
-function chartOpts(dec){
-  return{
-    responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false},tooltip:{
-      backgroundColor:'#1a1e25',borderColor:'#252a34',borderWidth:1,
-      titleColor:'#8b92a0',bodyColor:'#e8eaf0',
-      titleFont:{family:'DM Mono',size:11},bodyFont:{family:'DM Mono',size:12},
-      callbacks:{label:c=>` ${c.parsed.y!=null?c.parsed.y.toFixed(dec):'—'}`}
-    }},
-    scales:{
-      x:{grid:{color:'rgba(37,42,52,.6)'},ticks:{color:'#5a6070',font:{family:'DM Mono',size:10}}},
-      y:{grid:{color:'rgba(37,42,52,.6)'},ticks:{color:'#5a6070',font:{family:'DM Mono',size:10}}},
-    }
-  };
-}
-
-function buildTeamList(){
-  const sn=snapD(-1); if(!sn)return;
-  const teams=Object.keys(sn.teams).sort((a,b)=>{if(isB(a))return-1;if(isB(b))return 1;return a.localeCompare(b)});
-  if(!S.tteam) S.tteam=teams.find(isB)||teams[0];
-  document.getElementById('tlist').innerHTML=teams.map(n=>
-    `<div class="ti${S.tteam===n?' on':''}${isB(n)?' bhi':''}" data-n="${n}">${n}</div>`).join('');
-  document.querySelectorAll('.ti').forEach(t=>t.addEventListener('click',()=>{
-    S.tteam=t.dataset.n;
-    document.querySelectorAll('.ti').forEach(x=>x.classList.remove('on'));
-    t.classList.add('on'); renderTrend();
-  }));
-}
-
-// ─── Init controls ────────────────────────────────────────────────────────────
+// ── Init ──────────────────────────────────────────────────────────────────────
 async function init(){
   try{
     const r=await fetch('data/history.json');
     if(!r.ok) throw new Error(`HTTP ${r.status}`);
     HIST=await r.json();
-    if(!HIST.length) throw new Error('No snapshots yet -- run the scraper first.');
+    if(!HIST.length) throw new Error('No snapshots yet. Run the scraper first.');
 
     try{
       const r2=await fetch('data/halftime.json');
       if(r2.ok) HALFTIME=await r2.json();
-    }catch(e){ console.log('halftime.json not found -- half-time tables empty until scraper runs'); }
+    }catch(e){console.log('halftime.json not found')}
 
+    // Update header
     const latest=HIST[HIST.length-1];
-    document.getElementById('gwlbl').textContent=latest.label;
-    document.getElementById('upd').textContent=(latest.last_updated||latest.date).split(' ')[0];
+    document.getElementById('gw-label').textContent=latest.label||'--';
+    document.getElementById('updated-label').textContent=
+      'Updated '+britishDate((latest.last_updated||latest.date||'').split(' ')[0]);
 
-    document.getElementById('loading').style.display='none';
-    document.getElementById('pane-index').classList.add('on');
-
-    // Snapshot selects
-    const xbiSnap=document.getElementById('xbi-snap');
-    const stdSnap=document.getElementById('std-snap'); // may not exist
-    const snapsel=document.getElementById('snapsel');
-    const snapsHtml=[...HIST].reverse().map((h,i)=>`<option value="${HIST.length-1-i}">${h.label} (${h.date})</option>`).join('');
-    xbiSnap.innerHTML=snapsHtml;
-    if(snapsel) snapsel.innerHTML=snapsHtml;
-    xbiSnap.addEventListener('change',()=>{S.xbiSnap=parseInt(xbiSnap.value);renderXBI()});
-    if(snapsel) snapsel.addEventListener('change',()=>{S.snap=parseInt(snapsel.value);renderStatsTable()});
-
-    // Category select
-    const catsel=document.getElementById('catsel');
-    catsel.innerHTML=CATS.map(c=>`<option>${c}</option>`).join('');
-    catsel.addEventListener('change',()=>{
-      S.cat=catsel.value;
-      S.active=[...(CAT_DEF[S.cat]||[METRICS.find(m=>m.cat===S.cat)?.key])];
-      S.sk=S.active[0]; S.sd='desc';
-      buildPills(); renderStatsTable();
+    // Snapshot select
+    const snapSel=document.getElementById('snap-sel');
+    snapSel.innerHTML=[...HIST].reverse().map((h,i)=>{
+      const idx=HIST.length-1-i;
+      return`<option value="${idx}"${i===0?' selected':''}>${h.label} (${britishDate(h.date)})</option>`;
+    }).join('');
+    snapSel.addEventListener('change',()=>{
+      snapIdx=parseInt(snapSel.value);
+      renderTable();
     });
 
-    // Trend metric select
-    const tmsel=document.getElementById('tmsel');
-    tmsel.innerHTML=CATS.map(cat=>`<optgroup label="${cat}">${METRICS.filter(m=>m.cat===cat).map(m=>`<option value="${m.key}">${m.label}</option>`).join('')}</optgroup>`).join('');
-    tmsel.addEventListener('change',()=>{S.tmet=tmsel.value;renderTrend()});
-
-    // Tab switching
-    document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
-      S.tab=t.dataset.t;
-      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on')); t.classList.add('on');
-      document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
-      document.getElementById('pane-'+S.tab).classList.add('on');
-      if(S.tab==='trend'){buildTeamList();renderTrend();}
+    // Mode toggle
+    document.querySelectorAll('.tog:not(.trend-tog) .tb').forEach(b=>b.addEventListener('click',()=>{
+      document.querySelectorAll('.tog:not(.trend-tog) .tb').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');mode=b.dataset.m;renderTable();
     }));
 
-    // Standings sub-tabs
-    document.querySelectorAll('[data-s]').forEach(t=>t.addEventListener('click',()=>{
-      S.stdSub=t.dataset.s;
-      document.querySelectorAll('[data-s]').forEach(x=>x.classList.remove('on')); t.classList.add('on');
-      renderStandings();
-    }));
+    buildTrendSelects();
 
-    // Mode toggles
-    document.querySelectorAll('.stats-tog .tb').forEach(b=>b.addEventListener('click',()=>{
-      document.querySelectorAll('.stats-tog .tb').forEach(x=>x.classList.remove('on'));
-      b.classList.add('on'); S.mode=b.dataset.m; renderStatsTable();
-    }));
-    document.querySelectorAll('.trend-tog .tb').forEach(b=>b.addEventListener('click',()=>{
-      document.querySelectorAll('.trend-tog .tb').forEach(x=>x.classList.remove('on'));
-      b.classList.add('on'); S.tmode=b.dataset.m; renderTrend();
-    }));
-    document.querySelectorAll('.xbi-tog .tb').forEach(b=>b.addEventListener('click',()=>{
-      document.querySelectorAll('.xbi-tog .tb').forEach(x=>x.classList.remove('on'));
-      b.classList.add('on'); S.xbiMode=b.dataset.m; renderXBI();
-    }));
+    document.getElementById('loading').style.display='none';
+    document.getElementById('content').style.display='block';
 
-    buildPills();
-    renderXBI();
-    renderStandings();
-    renderStatsTable();
+    renderTable();
+    renderTrend();
+    renderHT();
 
   }catch(err){
-    document.getElementById('loading').innerHTML=`<div class="err">Failed to load: ${err.message}</div>`;
+    document.getElementById('loading').innerHTML=`<div class="err">Failed to load data: ${err.message}</div>`;
   }
 }
 
