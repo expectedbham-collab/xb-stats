@@ -218,17 +218,17 @@ function britishDate(iso){
 
 // ── xB Index metrics ─────────────────────────────────────────────────────────
 const XBI = [
-  {key:'sot_atk',   label:'SOT Atk',   tier:1, hi:true,  dec:1, fn:(t,g)=>g>0?(t.atk_shots_ot||0)/g:0},
-  {key:'sot_def',   label:'SOT Def',   tier:1, hi:false, dec:1, fn:(t,g)=>g>0?(t.def_sot_faced||0)/g:0},
-  {key:'xgsh_diff', label:'xG/sh Δ',  tier:1, hi:true,  dec:3, fn:(t)=>(t.atk_xg_per_shot||0)-(t.def_xga_per_shot||0)},
-  {key:'shot_acc',  label:'Shot Acc%', tier:1, hi:true,  dec:1, fn:(t)=>(t.atk_shots||0)>0?((t.atk_shots_ot||0)/(t.atk_shots||1))*100:0},
-  {key:'fb',        label:'FB/90',     tier:2, hi:true,  dec:2, fn:(t,g)=>g>0?(t.atk_fast_break_shots||0)/g:0},
-  {key:'rec',       label:'Rec/90',    tier:2, hi:true,  dec:1, fn:(t,g)=>g>0?(t.recoveries||0)/g:0},
-  {key:'fha_rank',  label:'1H Away',   tier:2, hi:false, dec:0, fn:null}, // special
-  {key:'sp_diff',   label:'SP xGΔ',   tier:3, hi:true,  dec:2, fn:(t,g)=>g>0?((t.sp_atk_xg||0)-(t.sp_def_xga||0))/g:0},
-  {key:'ppda',      label:'PPDA',      tier:3, hi:false, dec:1, fn:(t)=>t.press_ppda||null},
-  {key:'tb',        label:'TBall/90',  tier:3, hi:true,  dec:2, fn:(t,g)=>g>0?(t.pass_through_balls||0)/g:0},
-  {key:'crosses',   label:'Cross/90',  tier:3, hi:false, dec:1, fn:(t,g)=>g>0?(t.pass_crosses||0)/g:0},
+  {key:'sot_atk',   label:'SOT Atk',   tier:1, hi:true,  dec:1, desc:'Shots on target per 90 — attacking. The single strongest predictor of winning in the Belgian Study. Higher is better.',                                              fn:(t,g)=>g>0?(t.atk_shots_ot||0)/g:0},
+  {key:'sot_def',   label:'SOT Def',   tier:1, hi:false, dec:1, desc:'Shots on target conceded per 90. Lower is better — fewer shots on target means the defence is limiting genuine danger.',                                           fn:(t,g)=>g>0?(t.def_sot_faced||0)/g:0},
+  {key:'xgsh_diff', label:'xG/sh Δ',  tier:1, hi:true,  dec:3, desc:'xG per shot created minus xG per shot conceded. Measures shot quality gap. Positive = creating better chances than conceding. Higher is better.',                  fn:(t)=>(t.atk_xg_per_shot||0)-(t.def_xga_per_shot||0)},
+  {key:'shot_acc',  label:'Shot Acc%', tier:1, hi:true,  dec:1, desc:'Percentage of shots that hit the target. Championship average ~33%. Teams below this are wasting attacking moments through poor positioning or finishing.',          fn:(t)=>(t.atk_shots||0)>0?((t.atk_shots_ot||0)/(t.atk_shots||1))*100:0},
+  {key:'fb',        label:'FB/90',     tier:2, hi:true,  dec:2, desc:'Fast break shots per 90. Attacks launched before the opposition can reorganise. Produces high-quality chances against disorganised defences. Higher is better.',    fn:(t,g)=>g>0?(t.atk_fast_break_shots||0)/g:0},
+  {key:'rec',       label:'Rec/90',    tier:2, hi:true,  dec:1, desc:'Possession recoveries per 90. How actively a team wins the ball back in open play. Higher = more active defending and pressing. Higher is better.',                fn:(t,g)=>g>0?(t.recoveries||0)/g:0},
+  {key:'fha_rank',  label:'1H Away',   tier:2, hi:false, dec:0, desc:'First-half away rank (goals-based, from soccerstats.com). Position in the Championship if only counting mins 1-45 of away fixtures. Lower rank = better.',        fn:null},
+  {key:'sp_diff',   label:'SP xGΔ',   tier:3, hi:true,  dec:2, desc:'Set piece xG created minus conceded per 90. Set pieces account for ~1/3 of Championship goals. Positive = winning the dead ball battle. Higher is better.',        fn:(t,g)=>g>0?((t.sp_atk_xg||0)-(t.sp_def_xga||0))/g:0},
+  {key:'ppda',      label:'PPDA',      tier:3, hi:false, dec:1, desc:'Passes Per Defensive Action. How many passes the opposition completes before the team makes a challenge. Lower = harder, higher-intensity press.',                  fn:(t)=>t.press_ppda||null},
+  {key:'tb',        label:'TBall/90',  tier:3, hi:true,  dec:2, desc:'Through balls per 90. Passes played into space behind the defensive line. High through ball volume indicates progressive, penetrative play. Higher is better.',    fn:(t,g)=>g>0?(t.pass_through_balls||0)/g:0},
+  {key:'crosses',   label:'Cross/90',  tier:3, hi:false, dec:1, desc:'Crosses per 90. High crossing volume is negatively correlated with winning — it signals the team cannot find central routes to goal. Lower is better.',           fn:(t,g)=>g>0?(t.pass_crosses||0)/g:0},
 ];
 const TW={1:3,2:2,3:1};
 
@@ -369,7 +369,7 @@ function renderTable(){
   const head=document.getElementById('table-head');
   head.innerHTML=`<th class="tl">#</th><th class="tl" data-k="name">Club</th>
     <th data-k="xbi" class="${sortKey==='xbi'?'s'+sortDir:''}">xB Index</th>
-    ${XBI.map(m=>`<th data-k="${m.key}" class="${sortKey===m.key?'s'+sortDir:''}" title="${m.label}">
+    ${XBI.map(m=>`<th data-k="${m.key}" class="${sortKey===m.key?'s'+sortDir:''}" title="${m.desc}">
       <span style="font-size:9px;color:${m.tier===1?'var(--t1)':m.tier===2?'var(--t2)':'var(--t3)'}">T${m.tier}</span> ${m.label}
     </th>`).join('')}`;
 
