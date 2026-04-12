@@ -542,7 +542,7 @@ async function init(){
     const r=await fetch('data/history.json');
     if(!r.ok) throw new Error(`HTTP ${r.status}`);
     HIST=await r.json();
-    if(!HIST.length) throw new Error('No snapshots yet. Run the scraper first.');
+    if(!HIST.length) throw new Error('No data yet. Run the scraper workflow from the GitHub Actions tab.');
 
     try{
       const r2=await fetch('data/halftime.json');
@@ -582,7 +582,14 @@ async function init(){
     renderHT();
 
   }catch(err){
-    document.getElementById('loading').innerHTML=`<div class="err">Failed to load data: ${err.message}</div>`;
+    const isNoData = err.message.includes('No data yet');
+    document.getElementById('loading').innerHTML = isNoData
+      ? `<div style="text-align:center;font-family:var(--font-m);font-size:13px;color:var(--muted);padding:40px 20px;line-height:2.2">
+           <div style="font-size:32px;margin-bottom:16px">📊</div>
+           <div style="color:var(--label);font-size:15px;margin-bottom:10px">Waiting for first snapshot</div>
+           <div>Go to the <strong style="color:var(--acc)">Actions tab</strong> on GitHub and run <strong style="color:var(--acc)">xB Stats Scraper</strong> manually.</div>
+         </div>`
+      : `<div class="err">Failed to load: ${err.message}</div>`;
   }
 }
 
