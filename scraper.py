@@ -181,6 +181,8 @@ def build_team_stats(raw):
             "misc_errors_goal":     si(r.get("errors_lead_to_goal")),
         })
 
+    found = [k for k in ["attack","possession","defending","sequences","misc"] 
+             if any(k in str(list(teams.values())[:1]))]
     print(f"  Teams captured: {len(teams)}")
     return teams
 
@@ -242,14 +244,19 @@ def snap_hash(data):
     return hashlib.md5(json.dumps(data, sort_keys=True).encode()).hexdigest()
 
 def infer_label(history, teams):
-    for name, stats in teams.items():
-        if "birmingham" in name.lower():
-            p = stats.get("atk_played")
-            if p: return f"GW {p}"
-    if not history: return "GW 1"
-    last = history[-1].get("label", "GW 0")
-    try: return f"GW {int(last.split()[-1]) + 1}"
-    except: return f"GW {len(history) + 1}"
+    """Label by date only -- GW numbers are unreliable with staggered fixtures."""
+    return date.today().isoformat()
+
+
+def meets_threshold(teams, min_teams=20):
+    """Only save snapshot when at least min_teams share the same games-played count.
+    Prevents saving mid-round when only some teams have played."""
+    from collections import Counter
+    played_counts = [t.get("atk_played", 0) for t in teams.values() if t.get("atk_played")]
+    if not played_counts:
+        return False
+    most_common_count = Counter(played_counts).most_common(1)[0][1]
+    return most_common_count >= min_teams
 
 
 def run(dry_run=False, force=False):
@@ -283,11 +290,19 @@ def run(dry_run=False, force=False):
         open("/tmp/xb_no_change", "w").write("no_change")
         return
 
+    if not force and not meets_threshold(teams):
+        from collections import Counter
+        played_counts = [t.get("atk_played", 0) for t in teams.values() if t.get("atk_played")]
+        dist = Counter(played_counts).most_common(3)
+        print(f"Threshold not met -- games played distribution: {dist}")
+        print("Fewer than 20 teams share the same games-played count. Skipping snapshot.")
+        open("/tmp/xb_no_change", "w").write("no_change")
+        return
+
     today = date.today().isoformat()
-    label = infer_label(history, teams)
     snapshot = {
         "date": today,
-        "label": label,
+        "label": today,
         "last_updated": r1.json().get("team", {}).get("lastUpdated", ""),
         "_hash": current_hash,
         **payload,
@@ -295,12 +310,11 @@ def run(dry_run=False, force=False):
 
     idx = next((i for i, s in enumerate(history) if s.get("date") == today), None)
     if idx is not None:
-        snapshot["label"] = history[idx]["label"]
         history[idx] = snapshot
-        print(f"Updated today's snapshot ({snapshot['label']})")
+        print(f"Updated today's snapshot ({today})")
     else:
         history.append(snapshot)
-        print(f"New snapshot: {today} ({label})")
+        print(f"New snapshot: {today}")
 
     # Birmingham summary
     for name, stats in teams.items():

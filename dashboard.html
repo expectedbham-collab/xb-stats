@@ -54,15 +54,15 @@ main{padding:20px 24px}
 
 /* MAIN TABLE */
 .table-wrap{overflow-x:auto;border:1px solid var(--brd);border-radius:6px;margin-bottom:20px}
-table{width:100%;border-collapse:collapse;font-size:12px;min-width:900px}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:820px}
 thead tr{background:var(--s2)}
 th{padding:10px 11px;text-align:right;font-family:var(--font-h);font-weight:700;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--label);white-space:nowrap;cursor:pointer;border-bottom:1px solid var(--brd);user-select:none;transition:color .12s}
-th.tl{text-align:left}
+th.tl{text-align:left;width:160px}
 th:hover{color:var(--text)}
 th.sa::after{content:" ↑";color:var(--acc)}
 th.sd::after{content:" ↓";color:var(--acc)}
 td{padding:9px 11px;text-align:right;border-bottom:1px solid rgba(37,42,52,.5);font-family:var(--font-m);font-size:12px;white-space:nowrap}
-td.tl{text-align:left;font-family:var(--font-b);font-weight:500;font-size:13px}
+td.tl{text-align:left;font-family:var(--font-b);font-weight:500;font-size:13px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(255,255,255,.02)}
 tr.bham td{background:rgba(26,110,245,.1)}
@@ -89,7 +89,7 @@ tr.bham:hover td{background:rgba(26,110,245,.16)}
 .ht-target{font-size:10px;color:var(--neg);font-weight:600}
 .ht-table{width:100%;border-collapse:collapse;font-size:11px}
 .ht-table th{padding:6px 10px;text-align:right;font-family:var(--font-h);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--brd);background:var(--s2)}
-.ht-table th.tl{text-align:left}
+.ht-table th.tl{text-align:left;width:160px}
 .ht-table td{padding:6px 10px;text-align:right;border-bottom:1px solid rgba(37,42,52,.4);font-family:var(--font-m)}
 .ht-table td.tl{text-align:left;font-family:var(--font-b);font-size:12px}
 .ht-table tr:last-child td{border-bottom:none}
@@ -179,6 +179,21 @@ tr.bham:hover td{background:rgba(26,110,245,.16)}
       </div>
     </div>
     <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
+  </div>
+
+
+  <!-- Expected Points table -->
+  <div class="trend-section" style="margin-bottom:20px">
+    <div class="trend-header" style="margin-bottom:14px">
+      <div class="trend-title">Expected Points vs Actual</div>
+      <div style="font-family:var(--font-m);font-size:11px;color:var(--muted)">Over/underperforming process quality</div>
+    </div>
+    <div class="table-wrap" style="margin-bottom:0;border:none">
+      <table id="xpts-table" style="min-width:600px">
+        <thead><tr id="xpts-head"></tr></thead>
+        <tbody id="xpts-body"></tbody>
+      </table>
+    </div>
   </div>
 
   <!-- Half-time tables -->
@@ -485,6 +500,47 @@ function renderTrend(){
   });
 }
 
+// ── Render xPts table ────────────────────────────────────────────────────────
+function renderXPts(){
+  const sn = HIST[snapIdx===-1?HIST.length-1:snapIdx];
+  if(!sn||!sn.xpts||!sn.xpts.length){
+    document.getElementById('xpts-head').innerHTML='';
+    document.getElementById('xpts-body').innerHTML=
+      '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:12px;font-family:var(--font-m);font-size:11px">No expected points data</td></tr>';
+    return;
+  }
+
+  const rows=[...sn.xpts].sort((a,b)=>(b.ptsDiff||0)-(a.ptsDiff||0));
+
+  document.getElementById('xpts-head').innerHTML=`
+    <th class="tl" style="width:160px">Club</th>
+    <th title="Actual league position">Pos</th>
+    <th title="Expected position based on xG">xPos</th>
+    <th title="Position difference: positive = overperforming">Pos Δ</th>
+    <th title="Actual points">Pts</th>
+    <th title="Expected points based on xG">xPts</th>
+    <th title="Points difference: positive = overperforming actual vs expected">Pts Δ</th>
+    <th title="Expected goals scored minus expected goals conceded">xGD</th>`;
+
+  document.getElementById('xpts-body').innerHTML=rows.map(r=>{
+    const b=r.name&&r.name.toLowerCase().includes('birmingham');
+    const pd=r.ptsDiff||0;
+    const posd=(r.pos&&r.xPos)?(r.xPos-r.pos):null;
+    const pdCol=pd>2?'var(--neg)':pd<-2?'var(--pos)':'var(--text)';
+    const posdCol=posd===null?'var(--muted)':posd>2?'var(--neg)':posd<-2?'var(--pos)':'var(--text)';
+    return`<tr class="${b?'bham':''}">
+      <td class="tl">${r.name||r.shortName||'—'}</td>
+      <td style="color:var(--muted)">${r.pos||'—'}</td>
+      <td>${r.xPos||'—'}</td>
+      <td style="color:${posdCol}">${posd!==null?(posd>0?'+':'')+posd:'—'}</td>
+      <td style="font-weight:700">${r.points||'—'}</td>
+      <td>${r.xPts?r.xPts.toFixed(1):'—'}</td>
+      <td style="color:${pdCol};font-weight:600">${pd?(pd>0?'+':'')+pd.toFixed(1):'—'}</td>
+      <td style="color:${r.xGD>0?'var(--pos)':r.xGD<0?'var(--neg)':'var(--muted)'}">${r.xGD?(r.xGD>0?'+':'')+r.xGD.toFixed(1):'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
 // ── Render half-time tables ───────────────────────────────────────────────────
 function renderHT(){
   const htSnap=HALFTIME.length?HALFTIME[HALFTIME.length-1]:null;
@@ -551,15 +607,16 @@ async function init(){
 
     // Update header
     const latest=HIST[HIST.length-1];
-    document.getElementById('gw-label').textContent=latest.label||'--';
-    document.getElementById('updated-label').textContent=
-      'Updated '+britishDate((latest.last_updated||latest.date||'').split(' ')[0]);
+    const latestDate = britishDate((latest.date||'').split(' ')[0]);
+    document.getElementById('gw-label').textContent=latestDate;
+    document.getElementById('updated-label').textContent='Updated '+latestDate;
 
     // Snapshot select
     const snapSel=document.getElementById('snap-sel');
     snapSel.innerHTML=[...HIST].reverse().map((h,i)=>{
       const idx=HIST.length-1-i;
-      return`<option value="${idx}"${i===0?' selected':''}>${h.label} (${britishDate(h.date)})</option>`;
+      const snapDate = britishDate(h.date||h.label);
+      return`<option value="${idx}"${i===0?' selected':''}>${snapDate}</option>`;
     }).join('');
     snapSel.addEventListener('change',()=>{
       snapIdx=parseInt(snapSel.value);
@@ -579,6 +636,7 @@ async function init(){
 
     renderTable();
     renderTrend();
+    renderXPts();
     renderHT();
 
   }catch(err){
