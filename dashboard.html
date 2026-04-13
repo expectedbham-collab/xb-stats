@@ -342,11 +342,12 @@ function renderTable(){
   });
   const maxXBI=Math.max(...rows.map(r=>r.xbi));
 
-  // Previous snapshot for deltas
+  // Previous snapshot for deltas -- always sorted by xbi desc for rank comparison
   const prevIdx=snapIdx===-1?HIST.length-2:snapIdx-1;
-  const prevRows=prevIdx>=0?getXBIData(prevIdx,htSnap):[];
+  const prevRowsRaw=prevIdx>=0?getXBIData(prevIdx,htSnap):[];
+  const prevRows=[...prevRowsRaw].sort((a,b)=>b.xbi-a.xbi);
   const prevMap={};
-  prevRows.forEach(r=>{prevMap[r.name]=r});
+  prevRowsRaw.forEach(r=>{prevMap[r.name]=r});
 
   // Birmingham cards
   const bR=rows.find(r=>isB(r.name));
