@@ -181,8 +181,6 @@ def build_team_stats(raw):
             "misc_errors_goal":     si(r.get("errors_lead_to_goal")),
         })
 
-    found = [k for k in ["attack","possession","defending","sequences","misc"] 
-             if any(k in str(list(teams.values())[:1]))]
     print(f"  Teams captured: {len(teams)}")
     return teams
 
