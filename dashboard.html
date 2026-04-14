@@ -151,7 +151,7 @@ tr.bham:hover td{background:rgba(26,110,245,.16)}
   <!-- Tier legend -->
   <div class="tier-legend">
     <div class="tl-item"><div class="tl-dot" style="background:var(--t1)"></div>Tier 1 ×3 — shot quality &amp; volume</div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--t2)"></div>Tier 2 ×2 — fast breaks, direct attacks, build-ups, recoveries, 1st-half away</div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--t2)"></div>Tier 2 ×2 — fast breaks, direct attacks, build-ups, 1st-half away</div>
     <div class="tl-item"><div class="tl-dot" style="background:var(--t3)"></div>Tier 3 ×1 — set pieces, pressing, through balls, crosses</div>
   </div>
 
@@ -212,7 +212,7 @@ tr.bham:hover td{background:rgba(26,110,245,.16)}
   <div class="note">
     <strong>xB Index</strong> — composite percentile score using Belgian Study SHAP weightings.
     Tier 1 (×3): SOT att/def, xG/shot differential, shot accuracy.
-    Tier 2 (×2): fast breaks/90, direct attacks/90, build-ups/90, recoveries/90, first-half away rank.
+    Tier 2 (×2): fast breaks/90, direct attacks/90, build-ups/90, first-half away rank.
     Tier 3 (×1): set piece xG differential, PPDA, through balls/90, cross volume/90 (lower = better).
     Score 0–100, 50 = league average. First/second half away from soccerstats.com (goals-based).
     Built on publicly available Opta Championship data.
@@ -240,7 +240,7 @@ const XBI = [
   {key:'fb',        label:'FB/90',     tier:2, hi:true,  dec:2, desc:'Fast break shots per 90. Attacks launched before the opposition can reorganise. Produces high-quality chances against disorganised defences. Higher is better.',    fn:(t,g)=>g>0?(t.atk_fast_break_shots||0)/g:0},
   {key:'da',        label:'DA/90',      tier:2, hi:true,  dec:2, desc:'Direct attacks per 90. Quick vertical progressions from defence into the final third. One of three attack types alongside fast breaks and build-ups. Higher is better.',  fn:(t,g)=>g>0?(t.seq_direct_attacks||0)/g:0},
   {key:'bu',        label:'BU/90',      tier:2, hi:true,  dec:2, desc:'Build-up sequences per 90. Patient possession-based attacks progressing into the final third. Combined with fast breaks and direct attacks, measures variety and unpredictability of attacking play. Higher is better.',  fn:(t,g)=>g>0?(t.seq_buildups||0)/g:0},
-  {key:'rec',       label:'Rec/90',    tier:2, hi:true,  dec:1, desc:'Possession recoveries per 90. How actively a team wins the ball back in open play. Higher = more active defending and pressing. Higher is better.',                fn:(t,g)=>g>0?(t.recoveries||0)/g:0},
+
   {key:'fha_rank',  label:'1H Away',   tier:2, hi:false, dec:0, desc:'First-half away rank (goals-based, from soccerstats.com). Position in the Championship if only counting mins 1-45 of away fixtures. Lower rank = better.',        fn:null},
   {key:'sp_diff',   label:'SP xGΔ',   tier:3, hi:true,  dec:2, desc:'Set piece xG created minus conceded per 90. Set pieces account for ~1/3 of Championship goals. Positive = winning the dead ball battle. Higher is better.',        fn:(t,g)=>g>0?((t.sp_atk_xg||0)-(t.sp_def_xga||0))/g:0},
   {key:'ppda',      label:'PPDA',      tier:3, hi:false, dec:1, desc:'Passes Per Defensive Action. How many passes the opposition completes before the team makes a challenge. Lower = harder, higher-intensity press.',                  fn:(t)=>t.press_ppda||null},
@@ -259,7 +259,6 @@ const TREND_METRICS = [
   {key:'fb',       label:'Fast breaks / 90'},
   {key:'da',       label:'Direct attacks / 90'},
   {key:'bu',       label:'Build-ups / 90'},
-  {key:'rec',      label:'Recoveries / 90'},
   {key:'sp_diff',  label:'Set piece xG differential'},
   {key:'ppda',     label:'PPDA'},
   {key:'tb',       label:'Through balls / 90'},
