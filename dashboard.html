@@ -325,6 +325,17 @@ function getXBIData(snapIdx, htSnap){
   }));
 }
 
+// ── Financial ranks (combined squad value + wages, 1=highest spending) ──────
+const FIN_RANK = {
+  "Ipswich Town FC":1,"Southampton FC":3,"Leicester City FC":3,"Sheffield United FC":4,
+  "Birmingham City FC":6,"Norwich City FC":6,"Coventry City FC":8,"Middlesbrough FC":8,
+  "Stoke City FC":10,"Hull City AFC":11,"West Bromwich Albion FC":11,"Millwall FC":12,
+  "Watford FC":12,"Swansea City AFC":14,"Wrexham FC":15,"Bristol City FC":16,
+  "Derby County FC":16,"Preston North End FC":17,"Blackburn Rovers FC":18,
+  "Queens Park Rangers FC":20,"Oxford United FC":21,"Portsmouth FC":22,
+  "Charlton Athletic FC":23,"Sheffield Wednesday FC":24,
+};
+
 // ── State ─────────────────────────────────────────────────────────────────────
 let HIST=[], HALFTIME=[];
 let snapIdx=-1, mode='p90';
@@ -388,6 +399,7 @@ function renderTable(){
   const head=document.getElementById('table-head');
   head.innerHTML=`<th class="tl" style="width:52px">#</th><th class="tl" data-k="name">Club</th>
     <th data-k="xbi" class="${sortKey==='xbi'?'s'+sortDir:''}" style="color:var(--acc)" title="xB Performance Index — composite score 0-100. Higher is better. 50 = Championship average.">xB Index</th>
+    <th data-k="fin_rank" class="${sortKey==='fin_rank'?'s'+sortDir:''}" title="Combined financial rank based on squad value and wages (1=highest spending). Gap shows whether the club is over or underperforming their investment." style="font-size:10px">Fin Rank</th>
     ${XBI.map(m=>`<th data-k="${m.key}" class="${sortKey===m.key?'s'+sortDir:''}" title="${m.desc}">
       <span style="font-size:9px;color:${m.tier===1?'var(--t1)':m.tier===2?'var(--t2)':'var(--t3)'}">T${m.tier}</span> ${m.label}
     </th>`).join('')}`;
@@ -429,6 +441,15 @@ function renderTable(){
         <div class="bar${b?' blu':''}" style="width:${bw}px"></div>
         <span class="xbi-val">${r.xbi.toFixed(1)}</span>${deltaHtml}
       </div></td>
+      ${(()=>{
+        const fr = FIN_RANK[r.name];
+        if(!fr) return '<td style="color:var(--muted);font-size:11px">—</td>';
+        const xbiR = rows.indexOf(r)+1;
+        const gap = fr - xbiR;
+        const gapCol = gap>=5?'var(--pos)':gap<=-5?'var(--neg)':'var(--muted)';
+        const gapStr = gap>0?'+'+gap:String(gap);
+        return '<td style="font-family:var(--font-m);font-size:11px"><span style="color:var(--muted)">'+fr+'</span> <span style="color:'+gapCol+';font-size:10px">('+gapStr+')</span></td>';
+      })()}
       ${cells}
     </tr>`;
   }).join('');
