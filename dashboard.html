@@ -351,17 +351,17 @@ function renderTable(){
   if(!rows.length) return;
 
   // Sort
-  // For fin_rank, sort by gap (fin_rank minus xbi_rank) so overperformers appear first
+  // Pre-compute xbi ranks for gap calculation
+  const xbiSorted=[...rows].sort((x,y)=>y.xbi-x.xbi);
+  rows.forEach(r=>{
+    const xbiR=xbiSorted.findIndex(x=>x.name===r.name)+1;
+    r._fin_gap = r.fin_rank!=null ? r.fin_rank - xbiR : null;
+  });
   rows.sort((a,b)=>{
     let av,bv;
     if(sortKey==='fin_rank'){
-      const aXR=rows.indexOf(a)+1, bXR=rows.indexOf(b)+1;
-      // Pre-sort by xbi to get stable ranks
-      const sortedByXbi=[...rows].sort((x,y)=>y.xbi-x.xbi);
-      const aR=sortedByXbi.findIndex(r=>r.name===a.name)+1;
-      const bR=sortedByXbi.findIndex(r=>r.name===b.name)+1;
-      av = a.fin_rank!=null ? a.fin_rank - aR : -Infinity;
-      bv = b.fin_rank!=null ? b.fin_rank - bR : -Infinity;
+      av = a._fin_gap!=null ? a._fin_gap : -Infinity;
+      bv = b._fin_gap!=null ? b._fin_gap : -Infinity;
     } else {
       av=a[sortKey]??-Infinity;
       bv=b[sortKey]??-Infinity;
@@ -438,17 +438,17 @@ function renderTable(){
     }).join('');
 
     return`<tr class="${b?'bham':''}">
-      <td style="font-size:11px;min-width:36px">
-        <span style="color:var(--muted)">${i+1}</span>
-        ${(()=>{
-          if(!prev) return '';
+      <td style="font-size:11px;width:52px;white-space:nowrap">
+        <span style="color:var(--muted);display:inline-block;min-width:18px;text-align:right">${i+1}</span>
+        <span style="display:inline-block;width:24px;text-align:left;margin-left:2px;font-size:10px">${(()=>{
+          if(!prev) return '<span style="color:var(--muted)">&#8211;</span>';
           const prevRank = prevRows.findIndex(pr=>pr.name===r.name)+1;
-          if(prevRank===0) return '';
+          if(prevRank===0) return '<span style="color:var(--muted)">&#8211;</span>';
           const diff = prevRank - (i+1);
-          if(diff>0) return '<span style="color:var(--pos);font-size:10px;margin-left:2px">&#9650;'+diff+'</span>';
-          if(diff<0) return '<span style="color:var(--neg);font-size:10px;margin-left:2px">&#9660;'+Math.abs(diff)+'</span>';
-          return '<span style="color:var(--muted);font-size:10px;margin-left:2px;opacity:0.4">&#8212;</span>';
-        })()}
+          if(diff>0) return '<span style="color:var(--pos)">&#9650;'+diff+'</span>';
+          if(diff<0) return '<span style="color:var(--neg)">&#9660;'+Math.abs(diff)+'</span>';
+          return '<span style="color:var(--muted)">&#8211;</span>';
+        })()}</span>
       </td>
       <td class="tl">${r.name}</td>
       <td><div class="bar-wrap">
@@ -456,13 +456,12 @@ function renderTable(){
         <span class="xbi-val">${r.xbi.toFixed(1)}</span>${deltaHtml}
       </div></td>
       ${(()=>{
-        const fr = FIN_RANK[r.name];
-        if(!fr) return '<td style="color:var(--muted);font-size:11px">—</td>';
-        const xbiR = rows.indexOf(r)+1;
-        const gap = fr - xbiR;
-        const gapCol = gap>=5?'var(--pos)':gap<=-5?'var(--neg)':gap>0?'var(--pos)':gap<0?'var(--neg)':'var(--muted)';
-        const gapStr = gap>0?'+'+gap:gap<0?String(gap):'0';
-        return '<td style="font-family:var(--font-m);font-size:11px;text-align:right"><span style="color:'+gapCol+';font-weight:600">('+gapStr+')</span><span style="color:var(--muted);margin-left:4px;font-size:10px">'+fr+'</span></td>';
+        const fr = r.fin_rank;
+        if(!fr) return '<td style="color:var(--muted);font-size:11px;font-family:var(--font-m)">—</td>';
+        const gap = r._fin_gap!=null ? r._fin_gap : 0;
+        const gapCol = gap>0?'var(--pos)':gap<0?'var(--neg)':'var(--muted)';
+        const gapStr = gap>0?'+'+gap:String(gap);
+        return '<td style="font-family:var(--font-m);font-size:11px;white-space:nowrap"><span style="color:'+gapCol+';font-weight:600;min-width:32px;display:inline-block;text-align:right">('+gapStr+')</span> <span style="color:var(--muted);font-size:10px">'+fr+'</span></td>';
       })()}
       ${cells}
     </tr>`;
