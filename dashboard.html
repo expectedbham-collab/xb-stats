@@ -54,7 +54,7 @@ main{padding:20px 24px}
 
 /* MAIN TABLE */
 .table-wrap{overflow-x:auto;border:1px solid var(--brd);border-radius:6px;margin-bottom:20px}
-table{width:100%;border-collapse:collapse;font-size:12px;min-width:820px;table-layout:fixed}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:900px}
 thead tr{background:var(--s2)}
 th{padding:10px 11px;text-align:right;font-family:var(--font-h);font-weight:700;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--label);white-space:nowrap;cursor:pointer;border-bottom:1px solid var(--brd);user-select:none;transition:color .12s}
 th.tl{text-align:left;width:160px}
@@ -411,8 +411,8 @@ function renderTable(){
 
   // Table headers
   const head=document.getElementById('table-head');
-  head.innerHTML=`<th class="tl" style="width:56px;min-width:56px;max-width:56px">#</th><th class="tl" data-k="name" style="width:180px">Club</th>
-    <th data-k="xbi" class="${sortKey==='xbi'?'s'+sortDir:''}" style="color:var(--acc)" title="xB Performance Index — composite score 0-100. Higher is better. 50 = Championship average.">xB Index</th>
+  head.innerHTML=`<th class="tl" style="width:56px;min-width:56px;max-width:56px">#</th><th class="tl" data-k="name">Club</th>
+    <th data-k="xbi" class="${sortKey==='xbi'?'s'+sortDir:''}" style="color:var(--acc);min-width:120px" title="xB Performance Index — composite score 0-100. Higher is better. 50 = Championship average.">xB Index</th>
     <th data-k="fin_rank" class="${sortKey==='fin_rank'?'s'+sortDir:''}" title="Combined financial rank based on squad value and wages (1=highest spending). Gap shows whether the club is over or underperforming their investment." style="font-size:10px">Fin Rank</th>
     ${XBI.map(m=>`<th data-k="${m.key}" class="${sortKey===m.key?'s'+sortDir:''}" title="${m.desc}">
       <span style="font-size:9px;color:${m.tier===1?'var(--t1)':m.tier===2?'var(--t2)':'var(--t3)'}">T${m.tier}</span> ${m.label}
