@@ -450,10 +450,12 @@ function renderTable(){
         })()}</span>
       </td>
       <td class="tl">${r.name}</td>
-      <td><div class="bar-wrap">
-        <div class="bar${b?' blu':''}" style="width:${bw}px"></div>
-        <span class="xbi-val">${r.xbi.toFixed(1)}</span>${deltaHtml}
-      </div></td>
+      <td style="white-space:nowrap">
+        <div class="bar-wrap" style="display:inline-flex">
+          <div class="bar${b?' blu':''}" style="width:${bw}px"></div>
+          <span class="xbi-val" style="min-width:36px;text-align:right">${r.xbi.toFixed(1)}</span>
+        </div><span style="display:inline-block;width:14px;text-align:left;margin-left:2px;font-size:10px">${deltaHtml}</span>
+      </td>
       ${(()=>{
         const fr = r.fin_rank;
         if(!fr) return '<td style="color:var(--muted);font-size:11px;font-family:var(--font-m)">—</td>';
