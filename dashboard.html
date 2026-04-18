@@ -440,7 +440,7 @@ function renderTable(){
     return`<tr class="${b?'bham':''}">
       <td style="font-size:11px;width:56px;min-width:56px;max-width:56px;white-space:nowrap;overflow:hidden">
         <span style="color:var(--muted);display:inline-block;width:20px;text-align:right">${i+1}</span><span style="display:inline-block;width:28px;text-align:left;padding-left:3px;font-size:10px">${(()=>{
-          if(sortKey!=='xbi') return '';
+          if(sortKey!=='xbi'||sortDir!=='desc') return '';
           if(!prev) return '<span style="color:var(--muted);opacity:.5">&#8211;</span>';
           const prevRank = prevRows.findIndex(pr=>pr.name===r.name)+1;
           if(prevRank===0) return '<span style="color:var(--muted);opacity:.5">&#8211;</span>';
