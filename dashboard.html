@@ -4,329 +4,126 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>xB Stats | Championship Performance Index</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Libre+Baskerville:wght@400;700&family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{
-  /* xB Brand palette — cream/navy */
-  --bg:#f5f1eb;
-  --s1:#ffffff;
-  --s2:#ede9e2;
-  --brd:#ddd9d0;
-  --brd-light:#e8e4dc;
-
-  /* Core navy */
-  --navy:#1a3056;
-  --navy-mid:#1e3d6e;
-  --navy-light:#2a5298;
-  --navy-xlight:#e8edf6;
-
-  /* Text */
-  --text:#1a1a2e;
-  --muted:#6b7280;
-  --label:#4b5563;
-
-  /* Status */
-  --pos:#1a6b3a;
-  --pos-bg:#e6f4ec;
-  --neg:#c0392b;
-  --neg-bg:#fce8e6;
-  --draw:#7c5a00;
-  --draw-bg:#fdf3d8;
-
-  /* Tier colours — editorial palette */
-  --t1:#c0392b;
-  --t2:#7c5a00;
-  --t3:#6b7280;
-
-  /* Accent — xB blue */
-  --acc:#1a6ef5;
-  --acc-light:#e8effd;
-
+  --bg:#0d0f12;--s1:#13161b;--s2:#1a1e25;--brd:#252a34;
+  --acc:#00e5ff;--blues:#1a6ef5;--text:#e8eaf0;--muted:#5a6070;--label:#8b92a0;
+  --pos:#00c896;--neg:#ff4d6d;--draw:#f5a623;
+  --t1:#ff4d6d;--t2:#f5a623;--t3:#5a6070;
   --font-h:'Barlow Condensed',sans-serif;
   --font-m:'DM Mono',monospace;
   --font-b:'Barlow',sans-serif;
-  --font-serif:'Libre Baskerville',serif;
-
-  --radius:4px;
-  --shadow:0 1px 3px rgba(26,48,86,.08), 0 1px 2px rgba(26,48,86,.05);
-  --shadow-md:0 4px 12px rgba(26,48,86,.10), 0 2px 4px rgba(26,48,86,.06);
 }
-
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--font-b);font-size:14px;min-height:100vh}
 
-/* ── HEADER ─────────────────────────────────────────────── */
-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 28px;height:56px;
-  background:var(--navy);
-  border-bottom:3px solid var(--acc);
-  position:sticky;top:0;z-index:100;
-}
+/* HEADER */
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--brd);background:var(--s1)}
+.logo{font-family:var(--font-h);font-weight:800;font-size:22px;letter-spacing:.04em}
+.logo span{color:var(--acc)}
+.meta{font-family:var(--font-m);font-size:11px;color:var(--muted);text-align:right;line-height:1.7}
+.meta strong{color:var(--label);display:block}
 
-.logo-area{display:flex;align-items:baseline;gap:10px}
-.logo-mark{
-  font-family:var(--font-serif);font-weight:700;font-size:22px;
-  color:#ffffff;letter-spacing:-.02em;line-height:1;
-}
-.logo-mark .x{color:#ffffff;opacity:.85}
-.logo-mark .B{color:#ffffff}
-.logo-divider{width:1px;height:18px;background:rgba(255,255,255,.2)}
-.logo-full{
-  font-family:var(--font-b);font-weight:400;font-size:13px;
-  color:rgba(255,255,255,.65);letter-spacing:.02em;
-}
+/* CONTROLS */
+.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px 24px;background:var(--s1);border-bottom:1px solid var(--brd)}
+.ctrl-label{font-family:var(--font-m);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+select{background:var(--s2);border:1px solid var(--brd);color:var(--text);font-family:var(--font-m);font-size:12px;padding:5px 10px;border-radius:4px;outline:none;cursor:pointer}
+select:hover{border-color:var(--acc)}
+.tog{display:flex;background:var(--s2);border:1px solid var(--brd);border-radius:4px;overflow:hidden}
+.tb{font-family:var(--font-h);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;cursor:pointer;color:var(--muted);transition:all .12s;user-select:none}
+.tb.on{background:var(--acc);color:var(--bg)}
+.hint{font-family:var(--font-m);font-size:11px;color:var(--muted);margin-left:auto}
 
-.meta{
-  font-family:var(--font-m);font-size:11px;
-  color:rgba(255,255,255,.5);text-align:right;line-height:1.8;
-}
-.meta strong{color:rgba(255,255,255,.8);display:block;font-weight:500}
-
-/* ── CONTROLS ────────────────────────────────────────────── */
-.controls{
-  display:flex;gap:16px;align-items:center;flex-wrap:wrap;
-  padding:10px 28px;
-  background:var(--s1);
-  border-bottom:1px solid var(--brd);
-  box-shadow:var(--shadow);
-}
-.ctrl-label{
-  font-family:var(--font-m);font-size:10px;text-transform:uppercase;
-  letter-spacing:.1em;color:var(--muted);
-}
-select{
-  background:var(--bg);border:1px solid var(--brd);
-  color:var(--text);font-family:var(--font-m);font-size:12px;
-  padding:5px 10px;border-radius:var(--radius);outline:none;cursor:pointer;
-  transition:border-color .15s;
-}
-select:hover,select:focus{border-color:var(--navy-light)}
-.tog{
-  display:flex;background:var(--bg);
-  border:1px solid var(--brd);border-radius:var(--radius);overflow:hidden;
-}
-.tb{
-  font-family:var(--font-h);font-weight:700;font-size:11px;
-  letter-spacing:.06em;text-transform:uppercase;
-  padding:5px 12px;cursor:pointer;color:var(--muted);
-  transition:all .15s;user-select:none;
-}
-.tb.on{background:var(--navy);color:#ffffff}
-.tb:not(.on):hover{background:var(--s2);color:var(--text)}
-.hint{
-  font-family:var(--font-m);font-size:11px;color:var(--muted);
-  margin-left:auto;
-}
-
-/* ── MAIN ────────────────────────────────────────────────── */
-main{padding:24px 28px}
-
-/* ── SUMMARY CARDS ───────────────────────────────────────── */
-.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
-.card{
-  background:var(--s1);border:1px solid var(--brd);
-  border-radius:var(--radius);padding:16px 18px;
-  box-shadow:var(--shadow);
-  border-top:3px solid var(--brd);
-  transition:box-shadow .15s;
-}
-.card:hover{box-shadow:var(--shadow-md)}
-.card.accent{border-top-color:var(--navy)}
-.card-label{
-  font-family:var(--font-m);font-size:10px;text-transform:uppercase;
-  letter-spacing:.1em;color:var(--muted);margin-bottom:8px;
-}
-.card-val{
-  font-family:var(--font-h);font-weight:800;font-size:32px;
-  letter-spacing:-.01em;line-height:1;color:var(--navy);
-}
-.card-sub{
-  font-family:var(--font-m);font-size:11px;color:var(--muted);margin-top:5px;
-}
-.card-sub b{color:var(--navy-light)}
-.card-trend{font-family:var(--font-m);font-size:11px;margin-top:5px;font-weight:500}
+/* SUMMARY CARDS */
+main{padding:20px 24px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.card{background:var(--s1);border:1px solid var(--brd);border-radius:6px;padding:14px 16px}
+.card-label{font-family:var(--font-m);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
+.card-val{font-family:var(--font-h);font-weight:800;font-size:28px;letter-spacing:-.01em;line-height:1}
+.card-sub{font-family:var(--font-m);font-size:11px;color:var(--muted);margin-top:4px}
+.card-sub b{color:var(--acc)}
+.card-trend{font-family:var(--font-m);font-size:11px;margin-top:4px}
 .up{color:var(--pos)}.dn{color:var(--neg)}.eq{color:var(--muted)}
 
-/* ── TIER LEGEND ─────────────────────────────────────────── */
-.tier-legend{
-  display:flex;gap:24px;flex-wrap:wrap;
-  padding:10px 0;margin-bottom:16px;
-  border-bottom:1px solid var(--brd);
-}
-.tl-item{
-  display:flex;align-items:center;gap:7px;
-  font-family:var(--font-m);font-size:11px;color:var(--muted);
-}
+/* TIER LEGEND */
+.tier-legend{display:flex;gap:20px;flex-wrap:wrap;padding:10px 0;margin-bottom:14px;border-bottom:1px solid var(--brd)}
+.tl-item{display:flex;align-items:center;gap:6px;font-family:var(--font-m);font-size:11px;color:var(--muted)}
 .tl-dot{width:8px;height:8px;border-radius:50%}
 
-/* ── MAIN TABLE ──────────────────────────────────────────── */
-.table-wrap{
-  overflow-x:auto;border:1px solid var(--brd);
-  border-radius:var(--radius);margin-bottom:24px;
-  box-shadow:var(--shadow);background:var(--s1);
-}
+/* MAIN TABLE */
+.table-wrap{overflow-x:auto;border:1px solid var(--brd);border-radius:6px;margin-bottom:20px}
 table{width:100%;border-collapse:collapse;font-size:12px;min-width:900px}
-thead tr{background:var(--navy)}
-th{
-  padding:10px 11px;text-align:right;
-  font-family:var(--font-h);font-weight:700;font-size:11px;
-  letter-spacing:.08em;text-transform:uppercase;
-  color:rgba(255,255,255,.6);
-  white-space:nowrap;cursor:pointer;
-  border-bottom:1px solid rgba(255,255,255,.1);
-  user-select:none;transition:color .12s;
-}
+thead tr{background:var(--s2)}
+th{padding:10px 11px;text-align:right;font-family:var(--font-h);font-weight:700;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--label);white-space:nowrap;cursor:pointer;border-bottom:1px solid var(--brd);user-select:none;transition:color .12s}
 th.tl{text-align:left;width:160px}
-th:hover{color:#ffffff}
+th:hover{color:var(--text)}
 th.sa::after{content:" ↑";color:var(--acc)}
 th.sd::after{content:" ↓";color:var(--acc)}
-
-td{
-  padding:9px 11px;text-align:right;
-  border-bottom:1px solid var(--brd-light);
-  font-family:var(--font-m);font-size:12px;white-space:nowrap;
-  color:var(--text);
-}
-td.tl{
-  text-align:left;font-family:var(--font-b);font-weight:500;font-size:13px;
-  max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  color:var(--text);
-}
+td{padding:9px 11px;text-align:right;border-bottom:1px solid rgba(37,42,52,.5);font-family:var(--font-m);font-size:12px;white-space:nowrap}
+td.tl{text-align:left;font-family:var(--font-b);font-weight:500;font-size:13px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:var(--navy-xlight)}
-tr.bham td{background:#eef2fb}
-tr.bham td.tl{border-left:3px solid var(--navy);padding-left:8px;font-weight:600}
-tr.bham:hover td{background:#e4ebf8}
-
+tr:hover td{background:rgba(255,255,255,.02)}
+tr.bham td{background:rgba(26,110,245,.1)}
+tr.bham td.tl{border-left:3px solid var(--blues);padding-left:8px}
+tr.bham:hover td{background:rgba(26,110,245,.16)}
 .rank-num{font-family:var(--font-m);font-size:11px;color:var(--muted);margin-right:4px}
 .bar-wrap{display:flex;align-items:center;gap:6px;justify-content:flex-end}
-.bar{height:5px;border-radius:3px;background:var(--brd);min-width:2px}
-.bar.blu{background:var(--navy)}
-.xbi-val{font-family:var(--font-h);font-weight:800;font-size:14px;min-width:32px;color:var(--navy)}
+.bar{height:5px;border-radius:3px;background:rgba(255,255,255,.1);min-width:2px}
+.bar.blu{background:var(--blues)}
+.xbi-val{font-family:var(--font-h);font-weight:800;font-size:14px;min-width:32px}
 .delta{font-family:var(--font-m);font-size:10px;margin-left:3px}
 
-/* ── TREND SECTION ───────────────────────────────────────── */
-.trend-section{
-  background:var(--s1);border:1px solid var(--brd);
-  border-radius:var(--radius);padding:20px;margin-bottom:24px;
-  box-shadow:var(--shadow);
-}
-.trend-header{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:16px;flex-wrap:wrap;gap:8px;
-}
-.trend-title{
-  font-family:var(--font-h);font-weight:700;font-size:14px;
-  letter-spacing:.08em;text-transform:uppercase;color:var(--navy);
-}
-.trend-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+/* TREND SECTION */
+.trend-section{background:var(--s1);border:1px solid var(--brd);border-radius:6px;padding:18px;margin-bottom:20px}
+.trend-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.trend-title{font-family:var(--font-h);font-weight:700;font-size:15px;letter-spacing:.05em;text-transform:uppercase;color:var(--label)}
+.trend-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .chart-wrap{position:relative;height:220px}
 
-/* ── HALF TIME TABLES ────────────────────────────────────── */
-.ht-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
-.ht-box{
-  background:var(--s1);border:1px solid var(--brd);
-  border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);
-}
-.ht-head{
-  padding:11px 16px;border-bottom:1px solid var(--brd);
-  font-family:var(--font-h);font-weight:700;font-size:12px;
-  letter-spacing:.08em;text-transform:uppercase;
-  color:var(--navy);background:var(--navy-xlight);
-  display:flex;justify-content:space-between;align-items:center;
-}
-.ht-target{font-size:10px;color:var(--neg);font-weight:600;font-family:var(--font-m)}
+/* HALF TIME TABLES */
+.ht-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.ht-box{background:var(--s1);border:1px solid var(--brd);border-radius:6px;overflow:hidden}
+.ht-head{padding:10px 14px;border-bottom:1px solid var(--brd);font-family:var(--font-h);font-weight:700;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--label);display:flex;justify-content:space-between;align-items:center}
+.ht-target{font-size:10px;color:var(--neg);font-weight:600}
 .ht-table{width:100%;border-collapse:collapse;font-size:11px}
-.ht-table th{
-  padding:7px 10px;text-align:right;
-  font-family:var(--font-h);font-size:10px;font-weight:700;
-  letter-spacing:.07em;text-transform:uppercase;
-  color:rgba(255,255,255,.6);
-  border-bottom:1px solid rgba(255,255,255,.1);
-  background:var(--navy);
-}
+.ht-table th{padding:6px 10px;text-align:right;font-family:var(--font-h);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--brd);background:var(--s2)}
 .ht-table th.tl{text-align:left;width:160px}
-.ht-table td{
-  padding:7px 10px;text-align:right;
-  border-bottom:1px solid var(--brd-light);
-  font-family:var(--font-m);color:var(--text);
-}
+.ht-table td{padding:6px 10px;text-align:right;border-bottom:1px solid rgba(37,42,52,.4);font-family:var(--font-m)}
 .ht-table td.tl{text-align:left;font-family:var(--font-b);font-size:12px}
 .ht-table tr:last-child td{border-bottom:none}
-.ht-table tr:hover td{background:var(--navy-xlight)}
-.ht-table tr.bham td{background:#eef2fb}
-.ht-table tr.bham td.tl{border-left:2px solid var(--navy);padding-left:8px;font-weight:600}
+.ht-table tr:hover td{background:rgba(255,255,255,.02)}
+.ht-table tr.bham td{background:rgba(26,110,245,.1)}
+.ht-table tr.bham td.tl{border-left:2px solid var(--blues);padding-left:8px}
+.target-row td{position:relative}
 .target-row td.tl::after{content:"← target";font-size:9px;color:var(--acc);margin-left:5px;font-family:var(--font-m)}
 
-/* ── NOTE ────────────────────────────────────────────────── */
-.note{
-  font-family:var(--font-m);font-size:11px;color:var(--muted);
-  line-height:1.8;padding:16px 20px;
-  background:var(--s1);border:1px solid var(--brd);
-  border-radius:var(--radius);box-shadow:var(--shadow);
-  border-left:3px solid var(--navy);
-}
-.note strong{color:var(--navy)}
+/* NOTE */
+.note{font-family:var(--font-m);font-size:11px;color:var(--muted);line-height:1.7;padding:14px 18px;background:var(--s1);border:1px solid var(--brd);border-radius:6px}
+.note strong{color:var(--label)}
 
-/* ── FOOTER ──────────────────────────────────────────────── */
-footer{
-  margin-top:32px;padding:16px 28px;
-  border-top:1px solid var(--brd);
-  display:flex;align-items:center;justify-content:space-between;
-  flex-wrap:wrap;gap:8px;
-}
-.footer-brand{
-  font-family:var(--font-serif);font-weight:700;font-size:15px;
-  color:var(--navy);letter-spacing:-.01em;
-}
-.footer-brand span{color:var(--muted);font-weight:400;font-size:12px;font-family:var(--font-m);margin-left:8px}
-.footer-links{font-family:var(--font-m);font-size:11px;color:var(--muted)}
-.footer-links a{color:var(--navy-light);text-decoration:none}
-.footer-links a:hover{text-decoration:underline}
-
-/* ── LOADING / ERROR ─────────────────────────────────────── */
-.loading{
-  display:flex;align-items:center;justify-content:center;
-  height:300px;flex-direction:column;gap:14px;
-  font-family:var(--font-m);font-size:13px;color:var(--muted);
-}
-.spin{
-  width:24px;height:24px;
-  border:2px solid var(--brd);border-top-color:var(--navy);
-  border-radius:50%;animation:spin .7s linear infinite;
-}
+/* LOADING */
+.loading{display:flex;align-items:center;justify-content:center;height:300px;flex-direction:column;gap:12px;font-family:var(--font-m);font-size:13px;color:var(--muted)}
+.spin{width:24px;height:24px;border:2px solid var(--brd);border-top-color:var(--acc);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.err{
-  color:var(--neg);font-family:var(--font-m);font-size:12px;
-  padding:18px;background:var(--neg-bg);
-  border:1px solid rgba(192,57,43,.2);border-radius:var(--radius);margin-top:20px;
-}
+.err{color:var(--neg);font-family:var(--font-m);font-size:12px;padding:18px;background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2);border-radius:6px;margin-top:20px}
 
-/* ── SCROLLBAR ───────────────────────────────────────────── */
 ::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-track{background:var(--s1)}
 ::-webkit-scrollbar-thumb{background:var(--brd);border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:var(--navy-light)}
 
-/* ── RESPONSIVE ──────────────────────────────────────────── */
 @media(max-width:768px){
   .cards{grid-template-columns:repeat(2,1fr)}
   .ht-grid{grid-template-columns:1fr}
-  main,header,.controls,footer{padding-left:16px;padding-right:16px}
-  header{padding-left:16px;padding-right:16px}
+  main,header,.controls{padding-left:14px;padding-right:14px}
 }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo-area">
-    <div class="logo-mark"><span class="x">x</span><span class="B">B</span></div>
-    <div class="logo-divider"></div>
-    <div class="logo-full">Expected Birmingham · Championship Stats</div>
-  </div>
+  <div class="logo">x<span>B</span> Stats</div>
   <div class="meta">
     <strong id="gw-label">--</strong>
     <span id="updated-label">--</span>
@@ -369,7 +166,7 @@ footer{
   <!-- Trend tracker -->
   <div class="trend-section">
     <div class="trend-header">
-      <div class="trend-title">xB Index Trend</div>
+      <div class="trend-title">xB Index trend</div>
       <div class="trend-controls">
         <span class="ctrl-label">Team</span>
         <select id="trend-team-sel"></select>
@@ -383,6 +180,7 @@ footer{
     </div>
     <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
   </div>
+
 
   <!-- Half-time tables -->
   <div class="ht-grid">
@@ -409,15 +207,6 @@ footer{
 </div>
 </main>
 
-<footer>
-  <div class="footer-brand">xB <span>Expected Birmingham · expectedbirmingham@gmail.com</span></div>
-  <div class="footer-links">
-    <a href="https://expectedbirmingham.substack.com" target="_blank">Substack</a>
-    &nbsp;·&nbsp;
-    <a href="https://x.com/ExpectedBham" target="_blank">@ExpectedBham</a>
-  </div>
-</footer>
-
 <script>
 // ── Helpers ─────────────────────────────────────────────────────────────────
 function isB(n){return n&&n.toLowerCase().includes('birmingham')}
@@ -435,16 +224,18 @@ const XBI = [
   {key:'xgsh_diff', label:'xG/sh Δ',  tier:1, hi:true,  dec:3, desc:'xG per shot created minus xG per shot conceded. Measures shot quality gap. Positive = creating better chances than conceding. Higher is better.',                  fn:(t)=>(t.atk_xg_per_shot||0)-(t.def_xga_per_shot||0)},
   {key:'shot_acc',  label:'Shot Acc%', tier:1, hi:true,  dec:1, desc:'Percentage of shots that hit the target. Championship average ~33%. Teams below this are wasting attacking moments through poor positioning or finishing.',          fn:(t)=>(t.atk_shots||0)>0?((t.atk_shots_ot||0)/(t.atk_shots||1))*100:0},
   {key:'fb',        label:'FB/90',     tier:2, hi:true,  dec:2, desc:'Fast break shots per 90. Attacks launched before the opposition can reorganise. Produces high-quality chances against disorganised defences. Higher is better.',    fn:(t,g)=>g>0?(t.atk_fast_break_shots||0)/g:0},
-  {key:'da',        label:'DA/90',      tier:2, hi:true,  dec:2, desc:'Direct attacks per 90. Quick vertical progressions from defence into the final third. Higher is better.',  fn:(t,g)=>g>0?(t.seq_direct_attacks||0)/g:0},
-  {key:'bu',        label:'BU/90',      tier:2, hi:true,  dec:2, desc:'Build-up sequences per 90. Patient possession-based attacks progressing into the final third. Higher is better.',  fn:(t,g)=>g>0?(t.seq_buildups||0)/g:0},
-  {key:'fha_rank',  label:'1H Away',   tier:2, hi:false, dec:0, desc:'First-half away rank (goals-based, from soccerstats.com). Lower rank = better.',        fn:null},
-  {key:'sp_diff',   label:'SP xGΔ',   tier:3, hi:true,  dec:2, desc:'Set piece xG created minus conceded per 90. Higher is better.',        fn:(t,g)=>g>0?((t.sp_atk_xg||0)-(t.sp_def_xga||0))/g:0},
-  {key:'ppda',      label:'PPDA',      tier:3, hi:false, dec:1, desc:'Passes Per Defensive Action. Lower = harder press.',                  fn:(t)=>t.press_ppda||null},
-  {key:'tb',        label:'TBall/90',  tier:3, hi:true,  dec:2, desc:'Through balls per 90. Higher is better.',    fn:(t,g)=>g>0?(t.pass_through_balls||0)/g:0},
-  {key:'crosses',   label:'Cross/90',  tier:3, hi:false, dec:1, desc:'Crosses per 90. Lower is better — high crossing volume negatively correlates with winning.',           fn:(t,g)=>g>0?(t.pass_crosses||0)/g:0},
+  {key:'da',        label:'DA/90',      tier:2, hi:true,  dec:2, desc:'Direct attacks per 90. Quick vertical progressions from defence into the final third. One of three attack types alongside fast breaks and build-ups. Higher is better.',  fn:(t,g)=>g>0?(t.seq_direct_attacks||0)/g:0},
+  {key:'bu',        label:'BU/90',      tier:2, hi:true,  dec:2, desc:'Build-up sequences per 90. Patient possession-based attacks progressing into the final third. Combined with fast breaks and direct attacks, measures variety and unpredictability of attacking play. Higher is better.',  fn:(t,g)=>g>0?(t.seq_buildups||0)/g:0},
+
+  {key:'fha_rank',  label:'1H Away',   tier:2, hi:false, dec:0, desc:'First-half away rank (goals-based, from soccerstats.com). Position in the Championship if only counting mins 1-45 of away fixtures. Lower rank = better.',        fn:null},
+  {key:'sp_diff',   label:'SP xGΔ',   tier:3, hi:true,  dec:2, desc:'Set piece xG created minus conceded per 90. Set pieces account for ~1/3 of Championship goals. Positive = winning the dead ball battle. Higher is better.',        fn:(t,g)=>g>0?((t.sp_atk_xg||0)-(t.sp_def_xga||0))/g:0},
+  {key:'ppda',      label:'PPDA',      tier:3, hi:false, dec:1, desc:'Passes Per Defensive Action. How many passes the opposition completes before the team makes a challenge. Lower = harder, higher-intensity press.',                  fn:(t)=>t.press_ppda||null},
+  {key:'tb',        label:'TBall/90',  tier:3, hi:true,  dec:2, desc:'Through balls per 90. Passes played into space behind the defensive line. High through ball volume indicates progressive, penetrative play. Higher is better.',    fn:(t,g)=>g>0?(t.pass_through_balls||0)/g:0},
+  {key:'crosses',   label:'Cross/90',  tier:3, hi:false, dec:1, desc:'Crosses per 90. High crossing volume is negatively correlated with winning — it signals the team cannot find central routes to goal. Lower is better.',           fn:(t,g)=>g>0?(t.pass_crosses||0)/g:0},
 ];
 const TW={1:3,2:2,3:1};
 
+// Trend metric options (subset of XBI + composite)
 const TREND_METRICS = [
   {key:'xbi',      label:'xB Index (composite)'},
   {key:'sot_atk',  label:'SOT Attacking'},
@@ -473,7 +264,9 @@ function computeTeam(t, htSnap){
   const m={};
   XBI.forEach(md=>{
     if(md.key==='fha_rank'){
+      // look up from halftime data
       if(htSnap&&htSnap.first_half_away){
+        const name=Object.keys(HIST[0].teams).find(n=>n===t._name)||'';
         const row=htSnap.first_half_away.find(r=>
           r.name.toLowerCase().includes((t._name||'').toLowerCase().split(' ')[0])||
           (t._name||'').toLowerCase().includes(r.name.toLowerCase().split(' ')[0])
@@ -512,13 +305,14 @@ function getXBIData(snapIdx, htSnap){
     return{name,t,m};
   });
   const allM=computed.map(c=>c.m);
-  return computed.map((c)=>{
+  return computed.map((c,idx)=>{
     const xbi=xbiScore(c.m,allM);
     const fr=FIN_RANK[c.name]||null;
     return {name:c.name,t:c.t,...c.m,xbi,fin_rank:fr};
   });
 }
 
+// ── Financial ranks (combined squad value + wages, 1=highest spending) ──────
 const FIN_RANK = {
   "Ipswich Town FC":1,"Southampton FC":3,"Leicester City FC":3,"Sheffield United FC":4,
   "Birmingham City FC":6,"Norwich City FC":6,"Coventry City FC":8,"Middlesbrough FC":8,
@@ -529,17 +323,21 @@ const FIN_RANK = {
   "Charlton Athletic FC":23,"Sheffield Wednesday FC":24,
 };
 
+// ── State ─────────────────────────────────────────────────────────────────────
 let HIST=[], HALFTIME=[];
 let snapIdx=-1, mode='p90';
 let trendTeam='Birmingham City FC', trendMetric='xbi', trendWindow='all';
 let sortKey='xbi', sortDir='desc';
 let CHART=null;
 
+// ── Render index table ────────────────────────────────────────────────────────
 function renderTable(){
   const htSnap=HALFTIME.length?HALFTIME[HALFTIME.length-1]:null;
   const rows=getXBIData(snapIdx,htSnap);
   if(!rows.length) return;
 
+  // Sort
+  // Pre-compute xbi ranks for gap calculation
   const xbiSorted=[...rows].sort((x,y)=>y.xbi-x.xbi);
   rows.forEach(r=>{
     const xbiR=xbiSorted.findIndex(x=>x.name===r.name)+1;
@@ -558,12 +356,14 @@ function renderTable(){
   });
   const maxXBI=Math.max(...rows.map(r=>r.xbi));
 
+  // Previous snapshot for deltas -- always sorted by xbi desc for rank comparison
   const prevIdx=snapIdx===-1?HIST.length-2:snapIdx-1;
   const prevRowsRaw=prevIdx>=0?getXBIData(prevIdx,htSnap):[];
   const prevRows=[...prevRowsRaw].sort((a,b)=>b.xbi-a.xbi);
   const prevMap={};
   prevRowsRaw.forEach(r=>{prevMap[r.name]=r});
 
+  // Birmingham cards
   const bR=rows.find(r=>isB(r.name));
   if(bR){
     const bRank=rows.indexOf(bR)+1;
@@ -572,7 +372,7 @@ function renderTable(){
     const rankDelta=prev?(prevRows.findIndex(r=>isB(r.name))+1-bRank):null;
 
     document.getElementById('bham-cards').innerHTML=`
-      <div class="card accent">
+      <div class="card">
         <div class="card-label">xB Index</div>
         <div class="card-val">${bR.xbi.toFixed(1)}</div>
         <div class="card-sub">Rank <b>${bRank}/${rows.length}</b></div>
@@ -595,14 +395,16 @@ function renderTable(){
       </div>`;
   }
 
+  // Table headers
   const head=document.getElementById('table-head');
   head.innerHTML=`<th class="tl" style="width:56px;min-width:56px;max-width:56px">#</th><th class="tl" data-k="name">Club</th>
-    <th data-k="xbi" class="${sortKey==='xbi'?'s'+sortDir:''}" style="color:rgba(255,255,255,.9);min-width:120px" title="xB Performance Index — composite score 0-100. Higher is better. 50 = Championship average.">xB Index</th>
-    <th data-k="fin_rank" class="${sortKey==='fin_rank'?'s'+sortDir:''}" title="Combined financial rank based on squad value and wages. Gap shows over/underperformance." style="font-size:10px">Fin Rank</th>
+    <th data-k="xbi" class="${sortKey==='xbi'?'s'+sortDir:''}" style="color:var(--acc);min-width:120px" title="xB Performance Index — composite score 0-100. Higher is better. 50 = Championship average.">xB Index</th>
+    <th data-k="fin_rank" class="${sortKey==='fin_rank'?'s'+sortDir:''}" title="Combined financial rank based on squad value and wages (1=highest spending). Gap shows whether the club is over or underperforming their investment." style="font-size:10px">Fin Rank</th>
     ${XBI.map(m=>`<th data-k="${m.key}" class="${sortKey===m.key?'s'+sortDir:''}" title="${m.desc}">
-      <span style="font-size:9px;color:${m.tier===1?'var(--t1)':m.tier===2?'var(--t2)':'rgba(255,255,255,.4)'}">T${m.tier}</span> ${m.label}
+      <span style="font-size:9px;color:${m.tier===1?'var(--t1)':m.tier===2?'var(--t2)':'var(--t3)'}">T${m.tier}</span> ${m.label}
     </th>`).join('')}`;
 
+  // Table rows
   document.getElementById('table-body').innerHTML=rows.map((r,i)=>{
     const b=isB(r.name);
     const bw=Math.round((r.xbi/maxXBI)*72);
@@ -614,17 +416,19 @@ function renderTable(){
 
     const cells=XBI.map(md=>{
       const v=r[md.key];
-      if(v==null) return'<td style="color:var(--muted)">—</td>';
+      if(v==null) return'<td>—</td>';
       const av=rows.map(x=>x[md.key]).filter(x=>x!=null);
       const p=pct(v,av,md.hi);
       const col=p>=70?'var(--pos)':p<=30?'var(--neg)':'var(--text)';
-      const bg=p>=70?'var(--pos-bg)':p<=30?'var(--neg-bg)':'transparent';
-      return`<td style="color:${col};background:${bg}">${v.toFixed(md.dec)}</td>`;
+      return`<td style="color:${col}">${v.toFixed(md.dec)}</td>`;
     }).join('');
 
     return`<tr class="${b?'bham':''}">
       <td style="font-size:11px;width:56px;min-width:56px;max-width:56px;white-space:nowrap;overflow:hidden">
-        <span style="color:var(--muted);display:inline-block;width:20px;text-align:right">${i+1}</span><span style="display:inline-block;width:28px;text-align:left;padding-left:3px;font-size:10px">${(()=>{
+        <span style="color:var(--muted);display:inline-block;width:20px;text-align:right">${(()=>{
+          const trueRank = rows.filter(x=>x.xbi>r.xbi).length+1;
+          return trueRank;
+        })()}</span><span style="display:inline-block;width:28px;text-align:left;padding-left:3px;font-size:10px">${(()=>{
           if(sortKey!=='xbi'||sortDir!=='desc') return '';
           if(!prev) return '<span style="color:var(--muted);opacity:.5">&#8211;</span>';
           const prevRank = prevRows.findIndex(pr=>pr.name===r.name)+1;
@@ -661,10 +465,12 @@ function renderTable(){
   }));
 }
 
+// ── Render trend chart ────────────────────────────────────────────────────────
 function renderTrend(){
   if(!HIST.length) return;
   const htSnap=HALFTIME.length?HALFTIME[HALFTIME.length-1]:null;
 
+  // Build series across all snapshots
   const allSnaps=HIST.map((sn,i)=>{
     const rows=getXBIData(i,htSnap);
     const r=rows.find(r=>r.name===trendTeam);
@@ -680,6 +486,7 @@ function renderTrend(){
 
   if(!allSnaps.length) return;
 
+  // Apply rolling average if selected
   let series=allSnaps;
   if(trendWindow==='5'&&allSnaps.length>=2){
     series=allSnaps.map((s,i)=>{
@@ -689,7 +496,7 @@ function renderTrend(){
     });
   }
 
-  const col=isB(trendTeam)?'#1a3056':'#1a6ef5';
+  const col=isB(trendTeam)?'#1a6ef5':'#00e5ff';
   const mdef=XBI.find(m=>m.key===trendMetric);
   const dec=trendMetric==='xbi'?1:(mdef?mdef.dec:2);
 
@@ -701,12 +508,10 @@ function renderTrend(){
       datasets:[{
         data:series.map(s=>s.val),
         borderColor:col,
-        backgroundColor:col+'18',
+        backgroundColor:col+'15',
         borderWidth:2,
         pointRadius:series.length<=10?4:2,
         pointBackgroundColor:col,
-        pointBorderColor:'#ffffff',
-        pointBorderWidth:1.5,
         tension:0.3,
         fill:true,
       }]
@@ -717,11 +522,11 @@ function renderTrend(){
       plugins:{
         legend:{display:false},
         tooltip:{
-          backgroundColor:'#ffffff',
-          borderColor:'#ddd9d0',
+          backgroundColor:'#1a1e25',
+          borderColor:'#252a34',
           borderWidth:1,
-          titleColor:'#6b7280',
-          bodyColor:'#1a1a2e',
+          titleColor:'#8b92a0',
+          bodyColor:'#e8eaf0',
           titleFont:{family:'DM Mono',size:11},
           bodyFont:{family:'DM Mono',size:12},
           callbacks:{
@@ -730,19 +535,14 @@ function renderTrend(){
         }
       },
       scales:{
-        x:{
-          grid:{color:'rgba(221,217,208,.6)'},
-          ticks:{color:'#6b7280',font:{family:'DM Mono',size:10}}
-        },
-        y:{
-          grid:{color:'rgba(221,217,208,.6)'},
-          ticks:{color:'#6b7280',font:{family:'DM Mono',size:10}}
-        },
+        x:{grid:{color:'rgba(37,42,52,.6)'},ticks:{color:'#5a6070',font:{family:'DM Mono',size:10}}},
+        y:{grid:{color:'rgba(37,42,52,.6)'},ticks:{color:'#5a6070',font:{family:'DM Mono',size:10}}},
       }
     }
   });
 }
 
+// ── Render half-time tables ───────────────────────────────────────────────────
 function renderHT(){
   const htSnap=HALFTIME.length?HALFTIME[HALFTIME.length-1]:null;
   const headHtml='<th class="tl" style="width:56px;min-width:56px;max-width:56px">#</th><th class="tl">Club</th><th>GP</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th>';
@@ -773,6 +573,7 @@ function renderHT(){
   });
 }
 
+// ── Build trend selects ───────────────────────────────────────────────────────
 function buildTrendSelects(){
   const sn=HIST[HIST.length-1];
   const teams=Object.keys(sn.teams).sort((a,b)=>{
@@ -792,6 +593,7 @@ function buildTrendSelects(){
   }));
 }
 
+// ── Init ──────────────────────────────────────────────────────────────────────
 async function init(){
   try{
     const r=await fetch('data/history.json');
@@ -804,11 +606,13 @@ async function init(){
       if(r2.ok) HALFTIME=await r2.json();
     }catch(e){console.log('halftime.json not found')}
 
+    // Update header
     const latest=HIST[HIST.length-1];
     const latestDate = britishDate((latest.date||'').split(' ')[0]);
     document.getElementById('gw-label').textContent=latestDate;
     document.getElementById('updated-label').textContent='Updated '+latestDate;
 
+    // Snapshot select
     const snapSel=document.getElementById('snap-sel');
     snapSel.innerHTML=[...HIST].reverse().map((h,i)=>{
       const idx=HIST.length-1-i;
@@ -820,6 +624,7 @@ async function init(){
       renderTable();
     });
 
+    // Mode toggle
     document.querySelectorAll('.tog:not(.trend-tog) .tb').forEach(b=>b.addEventListener('click',()=>{
       document.querySelectorAll('.tog:not(.trend-tog) .tb').forEach(x=>x.classList.remove('on'));
       b.classList.add('on');mode=b.dataset.m;renderTable();
@@ -839,8 +644,8 @@ async function init(){
     document.getElementById('loading').innerHTML = isNoData
       ? `<div style="text-align:center;font-family:var(--font-m);font-size:13px;color:var(--muted);padding:40px 20px;line-height:2.2">
            <div style="font-size:32px;margin-bottom:16px">📊</div>
-           <div style="color:var(--navy);font-size:15px;margin-bottom:10px;font-family:var(--font-h);font-weight:700;letter-spacing:.05em;text-transform:uppercase">Waiting for first snapshot</div>
-           <div>Go to the <strong style="color:var(--navy-light)">Actions tab</strong> on GitHub and run <strong style="color:var(--navy-light)">xB Stats Scraper</strong> manually.</div>
+           <div style="color:var(--label);font-size:15px;margin-bottom:10px">Waiting for first snapshot</div>
+           <div>Go to the <strong style="color:var(--acc)">Actions tab</strong> on GitHub and run <strong style="color:var(--acc)">xB Stats Scraper</strong> manually.</div>
          </div>`
       : `<div class="err">Failed to load: ${err.message}</div>`;
   }
