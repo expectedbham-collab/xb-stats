@@ -426,7 +426,7 @@ function renderTable(){
     return`<tr class="${b?'bham':''}">
       <td style="font-size:11px;width:56px;min-width:56px;max-width:56px;white-space:nowrap;overflow:hidden">
         <span style="color:var(--muted);display:inline-block;width:20px;text-align:right">${(()=>{
-          const trueRank = rows.filter(x=>x.xbi>r.xbi).length+1;
+          const trueRank = rows.filter(x=>Math.round(x.xbi*10)>Math.round(r.xbi*10)).length+1;
           return trueRank;
         })()}</span><span style="display:inline-block;width:28px;text-align:left;padding-left:3px;font-size:10px">${(()=>{
           if(sortKey!=='xbi'||sortDir!=='desc') return '';
