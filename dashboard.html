@@ -3,655 +3,1099 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>xB Stats | Championship Performance Index</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<title>xB Index — Championship Process Quality Rankings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#f5f0e8;--s1:#ffffff;--s2:#ede8df;--brd:#d4cdc0;
-  --acc:#1a3a6b;--blues:#1a3a6b;--text:#1a1a2e;--muted:#8a8070;--label:#6a6050;
-  --pos:#1a7a4a;--neg:#c0392b;--draw:#c07a00;
-  --t1:#c0392b;--t2:#c07a00;--t3:#8a8070;
-  --font-h:'Barlow Condensed',sans-serif;
-  --font-m:'DM Mono',monospace;
-  --font-b:'Barlow',sans-serif;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream: #f5f0e8;
+  --navy: #1a3a6b;
+  --navy-light: #243f72;
+  --amber: #c8902a;
+  --amber-light: #d9a84a;
+  --green: #6b7c45;
+  --neutral: #d4cfc7;
+  --red: #8b4040;
+  --border: #ddd8cf;
+  --text-primary: #1a1a1a;
+  --text-secondary: #5a5550;
+  --row-alt: #f0ebe2;
+  --row-hover: #ede7dc;
+  --bham-border: var(--amber);
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--font-b);font-size:14px;min-height:100vh}
 
-/* HEADER */
-header{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--brd);background:var(--s1)}
-.logo{font-family:var(--font-h);font-weight:800;font-size:22px;letter-spacing:.04em}
-.logo span{color:var(--acc)}
-.meta{font-family:var(--font-m);font-size:11px;color:var(--muted);text-align:right;line-height:1.7}
-.meta strong{color:var(--label);display:block}
+body {
+  background: var(--cream);
+  color: var(--text-primary);
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  min-height: 100vh;
+}
 
-/* CONTROLS */
-.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px 24px;background:var(--s1);border-bottom:1px solid var(--brd)}
-.ctrl-label{font-family:var(--font-m);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
-select{background:var(--s2);border:1px solid var(--brd);color:var(--text);font-family:var(--font-m);font-size:12px;padding:5px 10px;border-radius:4px;outline:none;cursor:pointer}
-select:hover{border-color:var(--acc)}
-.tog{display:flex;background:var(--s2);border:1px solid var(--brd);border-radius:4px;overflow:hidden}
-.tb{font-family:var(--font-h);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;cursor:pointer;color:var(--muted);transition:all .12s;user-select:none}
-.tb.on{background:var(--acc);color:var(--bg)}
-.hint{font-family:var(--font-m);font-size:11px;color:var(--muted);margin-left:auto}
+/* ── HEADER ── */
+.site-header {
+  background: var(--navy);
+  color: var(--cream);
+  padding: 28px 32px 24px;
+  position: relative;
+}
 
-/* SUMMARY CARDS */
-main{padding:20px 24px}
-.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-.card{background:var(--s1);border:1px solid var(--brd);border-radius:6px;padding:14px 16px}
-.card-label{font-family:var(--font-m);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
-.card-val{font-family:var(--font-h);font-weight:800;font-size:28px;letter-spacing:-.01em;line-height:1}
-.card-sub{font-family:var(--font-m);font-size:11px;color:var(--muted);margin-top:4px}
-.card-sub b{color:var(--acc)}
-.card-trend{font-family:var(--font-m);font-size:11px;margin-top:4px}
-.up{color:var(--pos)}.dn{color:var(--neg)}.eq{color:var(--muted)}
+.header-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+}
 
-/* TIER LEGEND */
-.tier-legend{display:flex;gap:20px;flex-wrap:wrap;padding:10px 0;margin-bottom:14px;border-bottom:1px solid var(--brd)}
-.tl-item{display:flex;align-items:center;gap:6px;font-family:var(--font-m);font-size:11px;color:var(--muted)}
-.tl-dot{width:8px;height:8px;border-radius:50%}
+.header-kicker {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 8px;
+}
 
-/* MAIN TABLE */
-.table-wrap{overflow-x:auto;border:1px solid var(--brd);border-radius:6px;margin-bottom:20px}
-table{width:100%;border-collapse:collapse;font-size:12px;min-width:900px}
-thead tr{background:var(--s2)}
-th{padding:10px 11px;text-align:right;font-family:var(--font-h);font-weight:700;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--label);white-space:nowrap;cursor:pointer;border-bottom:1px solid var(--brd);user-select:none;transition:color .12s}
-th.tl{text-align:left;width:160px}
-th:hover{color:var(--text)}
-th.sa::after{content:" ↑";color:var(--acc)}
-th.sd::after{content:" ↓";color:var(--acc)}
-td{padding:9px 11px;text-align:right;border-bottom:1px solid rgba(37,42,52,.5);font-family:var(--font-m);font-size:12px;white-space:nowrap}
-td.tl{text-align:left;font-family:var(--font-b);font-weight:500;font-size:13px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(255,255,255,.02)}
-tr.bham td{background:rgba(26,110,245,.1)}
-tr.bham td.tl{border-left:3px solid var(--blues);padding-left:8px}
-tr.bham:hover td{background:rgba(26,110,245,.16)}
-.rank-num{font-family:var(--font-m);font-size:11px;color:var(--muted);margin-right:4px}
-.bar-wrap{display:flex;align-items:center;gap:6px;justify-content:flex-end}
-.bar{height:5px;border-radius:3px;background:rgba(255,255,255,.1);min-width:2px}
-.bar.blu{background:var(--blues)}
-.xbi-val{font-family:var(--font-h);font-weight:800;font-size:14px;min-width:32px}
-.delta{font-family:var(--font-m);font-size:10px;margin-left:3px}
+.header-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.1;
+  color: var(--cream);
+  letter-spacing: -0.01em;
+}
 
-/* TREND SECTION */
-.trend-section{background:var(--s1);border:1px solid var(--brd);border-radius:6px;padding:18px;margin-bottom:20px}
-.trend-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
-.trend-title{font-family:var(--font-h);font-weight:700;font-size:15px;letter-spacing:.05em;text-transform:uppercase;color:var(--label)}
-.trend-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.chart-wrap{position:relative;height:220px}
+.header-title em {
+  font-style: italic;
+  color: var(--amber-light);
+}
 
-/* HALF TIME TABLES */
-.ht-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
-.ht-box{background:var(--s1);border:1px solid var(--brd);border-radius:6px;overflow:hidden}
-.ht-head{padding:10px 14px;border-bottom:1px solid var(--brd);font-family:var(--font-h);font-weight:700;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--label);display:flex;justify-content:space-between;align-items:center}
-.ht-target{font-size:10px;color:var(--neg);font-weight:600}
-.ht-table{width:100%;border-collapse:collapse;font-size:11px}
-.ht-table th{padding:6px 10px;text-align:right;font-family:var(--font-h);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--brd);background:var(--s2)}
-.ht-table th.tl{text-align:left;width:160px}
-.ht-table td{padding:6px 10px;text-align:right;border-bottom:1px solid rgba(37,42,52,.4);font-family:var(--font-m)}
-.ht-table td.tl{text-align:left;font-family:var(--font-b);font-size:12px}
-.ht-table tr:last-child td{border-bottom:none}
-.ht-table tr:hover td{background:rgba(255,255,255,.02)}
-.ht-table tr.bham td{background:rgba(26,110,245,.1)}
-.ht-table tr.bham td.tl{border-left:2px solid var(--blues);padding-left:8px}
-.target-row td{position:relative}
-.target-row td.tl::after{content:"← target";font-size:9px;color:var(--acc);margin-left:5px;font-family:var(--font-m)}
+.header-meta-row {
+  display: flex;
+  align-items: baseline;
+  gap: 24px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
 
-/* NOTE */
-.note{font-family:var(--font-m);font-size:11px;color:var(--muted);line-height:1.7;padding:14px 18px;background:var(--s1);border:1px solid var(--brd);border-radius:6px}
-.note strong{color:var(--label)}
+.header-desc {
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  color: rgba(245, 240, 232, 0.75);
+  letter-spacing: 0.01em;
+}
 
-/* LOADING */
-.loading{display:flex;align-items:center;justify-content:center;height:300px;flex-direction:column;gap:12px;font-family:var(--font-m);font-size:13px;color:var(--muted)}
-.spin{width:24px;height:24px;border:2px solid var(--brd);border-top-color:var(--acc);border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.err{color:var(--neg);font-family:var(--font-m);font-size:12px;padding:18px;background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2);border-radius:6px;margin-top:20px}
+.header-timestamp {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: rgba(245, 240, 232, 0.45);
+  letter-spacing: 0.06em;
+}
 
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:var(--s1)}
-::-webkit-scrollbar-thumb{background:var(--brd);border-radius:3px}
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
 
-@media(max-width:768px){
-  .cards{grid-template-columns:repeat(2,1fr)}
-  .ht-grid{grid-template-columns:1fr}
-  main,header,.controls{padding-left:14px;padding-right:14px}
+.methodology-btn {
+  font-family: 'Barlow', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--amber);
+  background: transparent;
+  border: 1px solid rgba(200, 144, 42, 0.4);
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.methodology-btn:hover { background: rgba(200, 144, 42, 0.12); border-color: var(--amber); }
+
+.club-select-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.club-select-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(245, 240, 232, 0.5);
+}
+.club-select {
+  font-family: 'Barlow', sans-serif;
+  font-size: 12px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: var(--cream);
+  padding: 5px 10px;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c8902a'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 26px;
+}
+.club-select option { background: var(--navy); color: var(--cream); }
+
+/* ── METHODOLOGY PANEL ── */
+.methodology-panel {
+  background: #162f58;
+  border-top: 1px solid rgba(200, 144, 42, 0.3);
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+.methodology-panel.open {
+  max-height: 300px;
+}
+.methodology-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 20px 32px 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.methodology-inner p {
+  font-family: 'Barlow', sans-serif;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: rgba(245, 240, 232, 0.75);
+}
+.methodology-inner strong { color: var(--amber-light); font-weight: 600; }
+@media (max-width: 680px) { .methodology-inner { grid-template-columns: 1fr; } }
+
+/* ── TIER LEGEND ── */
+.tier-legend {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 10px 32px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.tier-legend-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.tier-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.tier-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  padding: 2px 5px;
+  border: 1px solid currentColor;
+}
+.t1 { color: var(--navy); border-color: var(--navy); }
+.t2 { color: #5a6e3a; border-color: #5a6e3a; }
+.t3 { color: var(--text-secondary); border-color: var(--text-secondary); }
+
+.tier-item span:last-child {
+  font-family: 'Barlow', sans-serif;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.legend-divider { width: 1px; height: 14px; background: var(--border); }
+.fin-gap-legend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.fin-gap-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.fin-dot { width: 8px; height: 8px; border-radius: 50%; }
+.fin-dot.over { background: var(--amber); }
+.fin-dot.under { background: var(--red); }
+
+/* ── TABLE WRAPPER ── */
+.table-wrapper {
+  max-width: 1440px;
+  margin: 0 auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── TABLE ── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  min-width: 1100px;
+}
+
+/* Column widths */
+col.c-rank  { width: 42px; }
+col.c-club  { width: 200px; }
+col.c-xbi   { width: 82px; }
+col.c-fin   { width: 100px; }
+col.c-gap   { width: 90px; }
+col.c-metric { width: 72px; }
+
+thead th {
+  position: sticky;
+  top: 0;
+  background: var(--navy);
+  color: var(--cream);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 10px 6px 8px;
+  text-align: right;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  transition: background 0.12s;
+}
+thead th:hover { background: var(--navy-light); }
+thead th.sticky-col { position: sticky; z-index: 3; }
+thead th.th-rank { text-align: center; }
+thead th.th-club { text-align: left; }
+
+.th-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+.th-rank .th-inner, .th-club .th-inner { align-items: flex-start; }
+
+.th-abbr { font-size: 9.5px; }
+.th-tier {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 4px;
+  font-size: 7.5px;
+  letter-spacing: 0.08em;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(245,240,232,0.55);
+  line-height: 1.2;
+}
+.sort-indicator {
+  display: inline-block;
+  font-size: 8px;
+  margin-left: 3px;
+  opacity: 0.5;
+  vertical-align: middle;
+}
+.sort-active .sort-indicator { opacity: 1; color: var(--amber); }
+
+/* Sticky columns */
+th.col-rank, td.col-rank { position: sticky; left: 0; z-index: 2; }
+th.col-club, td.col-club { position: sticky; left: 42px; z-index: 2; }
+
+td.col-rank { background: inherit; }
+td.col-club { background: inherit; }
+
+/* Tooltip */
+.th-tooltip-wrap { position: relative; }
+.th-tooltip {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0d2347;
+  color: var(--cream);
+  font-family: 'Barlow', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+  padding: 6px 10px;
+  border: 1px solid rgba(200,144,42,0.4);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 100;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+.th-tooltip strong { display: block; color: var(--amber-light); margin-bottom: 2px; }
+thead th:hover .th-tooltip { opacity: 1; }
+
+/* ── TABLE BODY ── */
+tbody tr {
+  background: var(--cream);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.1s;
+}
+tbody tr:nth-child(even) { background: var(--row-alt); }
+tbody tr:hover { background: var(--row-hover) !important; }
+
+/* Birmingham highlighted row */
+tbody tr.bham-row { border-left: 3px solid var(--amber); }
+tbody tr.bham-row td.col-rank { padding-left: 5px; }
+
+/* Highlighted club row */
+tbody tr.highlight-row { border-left: 3px solid var(--amber); }
+
+td {
+  padding: 7px 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  text-align: right;
+  border-right: 1px solid var(--border);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+td.col-rank {
+  text-align: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  padding: 7px 4px;
+  width: 42px;
+}
+
+td.col-club {
+  text-align: left;
+  padding: 6px 8px 6px 10px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  min-width: 180px;
+}
+
+td.col-xbi {
+  font-family: 'DM Serif Display', serif;
+  font-size: 15px;
+  color: var(--navy);
+  text-align: right;
+}
+
+td.col-fin { text-align: right; font-size: 12px; }
+
+/* Club monogram */
+.club-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.club-mono {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Barlow', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+.club-name { line-height: 1.2; }
+.club-name-short { display: none; }
+
+/* Financial gap cell */
+.fin-gap-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.fin-gap-bar-wrap {
+  width: 40px;
+  height: 6px;
+  background: rgba(0,0,0,0.08);
+  border-radius: 1px;
+  position: relative;
+  overflow: hidden;
+}
+.fin-gap-bar {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: 1px;
+}
+.fin-gap-bar.positive { right: 50%; background: var(--amber); }
+.fin-gap-bar.negative { left: 50%; background: var(--red); }
+.fin-gap-val {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  min-width: 28px;
+  text-align: right;
+}
+.fin-gap-val.positive { color: var(--amber); }
+.fin-gap-val.negative { color: var(--red); }
+
+/* Metric cells */
+.metric-cell {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  font-weight: 400;
+  padding: 7px 8px;
+}
+
+/* Tier column group indicators */
+.tier1-group { border-left: 2px solid rgba(26,58,107,0.2); }
+.tier2-group { border-left: 2px solid rgba(90,110,58,0.2); }
+.tier3-group { border-left: 2px solid rgba(90,85,80,0.2); }
+
+/* Colgroup visuals */
+colgroup col { }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .site-header { padding: 20px 16px 18px; }
+  .tier-legend { padding: 8px 16px; }
+  .table-wrapper { margin: 0; }
+  
+  td.col-club { min-width: 130px; }
+  .club-name { display: none; }
+  .club-name-short { display: inline; }
+  
+  /* Hide metric cols on mobile, show only key ones */
+  .hide-mobile { display: none; }
+  
+  .methodology-inner { padding: 16px; }
+}
+
+/* ── FOOTER ── */
+.site-footer {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 16px 32px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.footer-note {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+.footer-brand {
+  font-family: 'DM Serif Display', serif;
+  font-size: 13px;
+  color: var(--navy);
+  opacity: 0.6;
 }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">x<span>B</span> Stats</div>
-  <div class="meta">
-    <strong id="gw-label">--</strong>
-    <span id="updated-label">--</span>
+<!-- ── HEADER ── -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-kicker">Expected Birmingham · Analytics</div>
+    <h1 class="header-title"><em>xB</em> Index</h1>
+    <div class="header-meta-row">
+      <span class="header-desc">Process quality rankings — 2025/26 Championship, GW 41</span>
+      <span class="header-timestamp" id="headerTimestamp">Updated 21 Apr 2026 · 06:00 UTC</span>
+    </div>
+    <div class="header-controls">
+      <button class="methodology-btn" id="methBtn" aria-expanded="false">Methodology ↓</button>
+      <div class="club-select-wrap">
+        <span class="club-select-label">Snapshot</span>
+        <select class="club-select" id="snapshotSelect"></select>
+      </div>
+      <div class="club-select-wrap">
+        <span class="club-select-label">Highlight club</span>
+        <select class="club-select" id="highlightSelect">
+          <option value="">— none —</option>
+        </select>
+      </div>
+    </div>
   </div>
 </header>
 
-<div class="controls">
-  <span class="ctrl-label">Snapshot</span>
-  <select id="snap-sel"></select>
-  <span class="ctrl-label">Display</span>
-  <div class="tog">
-    <div class="tb on" data-m="p90">Per 90</div>
-    <div class="tb" data-m="total">Season</div>
+<!-- ── METHODOLOGY PANEL ── -->
+<div class="methodology-panel" id="methPanel" aria-hidden="true">
+  <div class="methodology-inner">
+    <p>The <strong>xB Index</strong> is a composite process-quality score built from three weighted tiers of on-ball and off-ball metrics. Tier 1 (shot creation and suppression) carries 50% of the weight; Tier 2 (build-up and ball-progression) 30%; Tier 3 (set-piece and pressing context) 20%. Each metric is percentile-ranked against the 24-club Championship population and direction-corrected, so a higher xB Index always indicates stronger underlying process regardless of metric polarity.</p>
+    <p>The index deliberately <strong>excludes outcomes</strong>: goals, points, wins and losses are not inputs. Conversion rates and goalkeeper save percentages are similarly excluded. The Financial Efficiency column compares a club's xB process rank to its wage-bill rank — a positive gap means the club is outperforming its budget allocation on process quality. It is not a prediction of future results.</p>
   </div>
-  <span class="hint">Green = top 30% &nbsp;·&nbsp; Red = bottom 30%</span>
 </div>
 
-<main>
-<div id="loading" class="loading"><div class="spin"></div>Loading Championship data...</div>
-<div id="content" style="display:none">
-
-  <!-- Birmingham summary cards -->
-  <div class="cards" id="bham-cards"></div>
-
-  <!-- Tier legend -->
-  <div class="tier-legend">
-    <div class="tl-item"><div class="tl-dot" style="background:var(--t1)"></div>Tier 1 ×3 — shot quality &amp; volume</div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--t2)"></div>Tier 2 ×2 — fast breaks, direct attacks, build-ups, 1st-half away</div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--t3)"></div>Tier 3 ×1 — set pieces, pressing, through balls, crosses</div>
+<!-- ── TIER LEGEND ── -->
+<div class="tier-legend">
+  <span class="tier-legend-label">Tier weights</span>
+  <div class="tier-item"><span class="tier-badge t1">T1</span><span>Shot quality · 50%</span></div>
+  <div class="tier-item"><span class="tier-badge t2">T2</span><span>Build-up · 30%</span></div>
+  <div class="tier-item"><span class="tier-badge t3">T3</span><span>Context · 20%</span></div>
+  <div class="legend-divider"></div>
+  <div class="fin-gap-legend">
+    <div class="fin-gap-legend-item"><span class="fin-dot over"></span> Overperforming budget</div>
+    <div class="fin-gap-legend-item"><span class="fin-dot under"></span> Underperforming budget</div>
   </div>
-
-  <!-- Main index table -->
-  <div class="table-wrap">
-    <table>
-      <thead><tr id="table-head"></tr></thead>
-      <tbody id="table-body"></tbody>
-    </table>
-  </div>
-
-  <!-- Trend tracker -->
-  <div class="trend-section">
-    <div class="trend-header">
-      <div class="trend-title">xB Index trend</div>
-      <div class="trend-controls">
-        <span class="ctrl-label">Team</span>
-        <select id="trend-team-sel"></select>
-        <span class="ctrl-label">Metric</span>
-        <select id="trend-metric-sel"></select>
-        <div class="tog trend-tog">
-          <div class="tb on" data-w="all">All GWs</div>
-          <div class="tb" data-w="5">Rolling 5</div>
-        </div>
-      </div>
-    </div>
-    <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
-  </div>
-
-
-  <!-- Half-time tables -->
-  <div class="ht-grid">
-    <div class="ht-box">
-      <div class="ht-head">First half away <span class="ht-target">Birmingham target: top 10</span></div>
-      <table class="ht-table"><thead><tr id="fha-head"></tr></thead><tbody id="fha-body"></tbody></table>
-    </div>
-    <div class="ht-box">
-      <div class="ht-head">Second half away</div>
-      <table class="ht-table"><thead><tr id="sha-head"></tr></thead><tbody id="sha-body"></tbody></table>
-    </div>
-  </div>
-
-  <!-- Methodology note -->
-  <div class="note">
-    <strong>xB Index</strong> — composite percentile score using Belgian Study SHAP weightings.
-    Tier 1 (×3): SOT att/def, xG/shot differential, shot accuracy.
-    Tier 2 (×2): fast breaks/90, direct attacks/90, build-ups/90, first-half away rank.
-    Tier 3 (×1): set piece xG differential, PPDA, through balls/90, cross volume/90 (lower = better).
-    Score 0–100, 50 = league average. First/second half away from soccerstats.com (goals-based).
-    Built on publicly available Opta Championship data.
-  </div>
-
 </div>
-</main>
+
+<!-- ── BIRMINGHAM KPI CARD ── -->
+<div style="max-width:1440px;margin:0 auto;padding:12px 32px 0">
+  <div id="bhamCard" style="background:#fff;border:2px solid #c8902a;padding:14px 20px;display:inline-flex;gap:32px;align-items:baseline;flex-wrap:wrap">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#5a5550">Birmingham City</span>
+    <span id="bhamXbi" style="font-family:'DM Serif Display',serif;font-size:28px;color:#1a3a6b"></span>
+    <span id="bhamRank" style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5a5550"></span>
+    <span id="bhamGap" style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#c8902a">Fin rank: 6th · Gap: −9</span>
+  </div>
+</div>
+
+<!-- ── TABLE ── -->
+<div class="table-wrapper">
+  <table id="xbTable" aria-label="xB Index Championship rankings">
+    <colgroup>
+      <col class="c-rank">
+      <col class="c-club">
+      <col class="c-xbi">
+      <col class="c-fin">
+      <col class="c-gap">
+      <col class="c-metric"><col class="c-metric"><col class="c-metric"><col class="c-metric">
+      <col class="c-metric"><col class="c-metric"><col class="c-metric"><col class="c-metric">
+      <col class="c-metric"><col class="c-metric"><col class="c-metric"><col class="c-metric">
+    </colgroup>
+    <thead>
+      <tr>
+        <th class="col-rank sticky-col th-rank" data-col="rank" data-dir="asc">
+          <div class="th-inner"><span class="th-abbr">#<span class="sort-indicator sort-active">↑</span></span></div>
+        </th>
+        <th class="col-club sticky-col th-club" data-col="club" data-dir="asc">
+          <div class="th-inner"><span class="th-abbr">Club<span class="sort-indicator">↕</span></span></div>
+        </th>
+        <th data-col="xbIndex" data-dir="desc" class="sort-default">
+          <div class="th-inner th-tooltip-wrap">
+            <span class="th-abbr">xB IDX<span class="sort-indicator">↕</span></span>
+            <div class="th-tooltip"><strong>xB Index</strong>Composite process score · higher = better</div>
+          </div>
+        </th>
+        <th data-col="finRank" data-dir="asc" class="hide-mobile">
+          <div class="th-inner th-tooltip-wrap">
+            <span class="th-abbr">FIN RK<span class="sort-indicator">↕</span></span>
+            <div class="th-tooltip"><strong>Financial Rank</strong>Club wage-bill rank (1 = highest spend)</div>
+          </div>
+        </th>
+        <th data-col="finGap" data-dir="desc">
+          <div class="th-inner th-tooltip-wrap">
+            <span class="th-abbr">FIN GAP<span class="sort-indicator">↕</span></span>
+            <div class="th-tooltip"><strong>Financial Efficiency Gap</strong>xB rank minus wage rank · positive = overperforming</div>
+          </div>
+        </th>
+
+        <!-- T1 -->
+        <th data-col="sotAtk" data-dir="desc" class="tier1-group hide-mobile">
+          <div class="th-inner th-tooltip-wrap">
+            <span class="th-tier">T1</span>
+            <span class="th-abbr">SOT ATK<span class="sort-indicator">↕</span></span>
+            <div class="th-tooltip"><strong>Shots on Target (Att) per 90</strong>higher = better</div>
+          </div>
+        </th>
+        <th data-col="sotDef" data-dir="asc" class="hide-mobile">
+          <div class="th-inner th-tooltip-wrap">
+            <span class="th-tier">T1</span>
+            <span class="th-abbr">SOT DEF<span class="sort-indicator">↕</span></span>
+            <div class="th-tooltip"><strong>Shots on Target (Def) per 90</strong>lower = better (fewer conceded)</div>
+          </div>
+        </th>
+        <th data-col="xgSh" data-dir="desc" class="hide-mobile">
+          <div class="th-inner th-tooltip-wrap">
+            <span class="th-tier">T1</span>
+            <span class="th-abbr">xG/Sh<span class="sort-indicator">↕</span></span>
+            <div class="th-tooltip"><strong>xG per Shot (Attack)</strong>Shot quality · higher = better</div>
+          </div>
+        </th>
+        <th data-col="shotAcc" data-dir="desc" class="hide-mobile">
+          <div class="th-inner th-tooltip-wrap">
+            <span class="th-tier">T1</span>
+            <span class="th-abbr">SH ACC%<span class="sort-indicator">↕</span></span>
+            <div class="th-tooltip"><strong>Shot Accuracy %</strong>higher = better</div>
+          </div>
+        </th>
+
+        <!-- T2 -->
+        <th data-col="fb90" data-dir="desc" class="tier2-group hide-mobile">
+          <div class="th-inner th-tooltip-wrap">
+            <span class="th-tier">T2</span>
+            <span class="th-abbr">FB/90<span class="sort-indicator">↕</span></span>
+            <div class="th-tooltip"><strong>Forward Ball Carries per 90</strong>higher = better</div>
+          </div>
+        </th>
+        <th data-col="da90" data-dir="desc" class="hide-mobile">
+          <div class="th-inner th-tooltip-wrap">
+            <span class="th-tier">T2</span>
+            <span class="th-abbr">DA/90<span class="sort-indicator">↕</span></span>
+            <div class="th-tooltip"><strong>Dribble Attempts per 90</strong>higher = better</div>
+          </div>
+        </th>
+        <th data-col="bu90" data-dir="desc" class="hide-mobile">
+          <div class="th-inner th-tooltip-wrap">
+            <span class="th-tier">T2</span>
+            <span class="th-abbr">BU/90<span class="sort-indicator">↕</span></span>
+            <div class="th-tooltip"><strong>Build-up Sequences per 90</strong>higher = better</div>
+          </div>
+        </th>
+        <th data-col="h1Away" data-dir="asc" class="hide-mobile">
+          <div class="th-inner th-tooltip-wrap">
+            <span class="th-tier">T2</span>
+            <span class="th-abbr">H1 AWY<span class="sort-indicator">↕</span></span>
+            <div class="th-tooltip"><strong>H1 Away Goals Conceded per 90</strong>lower = better</div>
+          </div>
+        </th>
+
+        <!-- T3 -->
+        <th data-col="spXga" data-dir="asc" class="tier3-group hide-mobile">
+          <div class="th-inner th-tooltip-wrap">
+            <span class="th-tier">T3</span>
+            <span class="th-abbr">SP xGA<span class="sort-indicator">↕</span></span>
+            <div class="th-tooltip"><strong>Set-Piece xGA</strong>lower = better (less conceded from set pieces)</div>
+          </div>
+        </th>
+        <th data-col="ppda" data-dir="asc" class="hide-mobile">
+          <div class="th-inner th-tooltip-wrap">
+            <span class="th-tier">T3</span>
+            <span class="th-abbr">PPDA<span class="sort-indicator">↕</span></span>
+            <div class="th-tooltip"><strong>Passes Allowed per Defensive Action</strong>lower = better (higher pressing intensity)</div>
+          </div>
+        </th>
+        <th data-col="tball90" data-dir="desc" class="hide-mobile">
+          <div class="th-inner th-tooltip-wrap">
+            <span class="th-tier">T3</span>
+            <span class="th-abbr">TBALL<span class="sort-indicator">↕</span></span>
+            <div class="th-tooltip"><strong>Through Balls per 90</strong>higher = better</div>
+          </div>
+        </th>
+        <th data-col="cross90" data-dir="desc" class="hide-mobile">
+          <div class="th-inner th-tooltip-wrap">
+            <span class="th-tier">T3</span>
+            <span class="th-abbr">CROSS<span class="sort-indicator">↕</span></span>
+            <div class="th-tooltip"><strong>Crosses per 90</strong>higher = better</div>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+</div>
+
+<footer class="site-footer">
+  <span class="footer-note">Data: Opta Analyst · xB internal model · 2025–26 · Updates Mon &amp; Fri</span>
+  <span class="footer-brand">Expected Birmingham</span>
+</footer>
 
 <script>
-// ── Helpers ─────────────────────────────────────────────────────────────────
-function isB(n){return n&&n.toLowerCase().includes('birmingham')}
+// ── DATA (loaded from history.json) ──────────────────────────────────────────
+let DATA = [];
+let ALL_SNAPSHOTS = [];
+let CURRENT_SNAPSHOT_IDX = 0;
 
-function britishDate(iso){
-  if(!iso) return '--';
-  const [y,m,d] = iso.split('-');
-  return `${d}/${m}/${y}`;
-}
-
-// ── xB Index metrics ─────────────────────────────────────────────────────────
-const XBI = [
-  {key:'sot_atk',   label:'SOT Atk',   tier:1, hi:true,  dec:1, desc:'Shots on target per 90 — attacking. The single strongest predictor of winning in the Belgian Study. Higher is better.',                                              fn:(t,g)=>g>0?(t.atk_shots_ot||0)/g:0},
-  {key:'sot_def',   label:'SOT Def',   tier:1, hi:false, dec:1, desc:'Shots on target conceded per 90. Lower is better — fewer shots on target means the defence is limiting genuine danger.',                                           fn:(t,g)=>g>0?(t.def_sot_faced||0)/g:0},
-  {key:'xgsh_diff', label:'xG/sh Δ',  tier:1, hi:true,  dec:3, desc:'xG per shot created minus xG per shot conceded. Measures shot quality gap. Positive = creating better chances than conceding. Higher is better.',                  fn:(t)=>(t.atk_xg_per_shot||0)-(t.def_xga_per_shot||0)},
-  {key:'shot_acc',  label:'Shot Acc%', tier:1, hi:true,  dec:1, desc:'Percentage of shots that hit the target. Championship average ~33%. Teams below this are wasting attacking moments through poor positioning or finishing.',          fn:(t)=>(t.atk_shots||0)>0?((t.atk_shots_ot||0)/(t.atk_shots||1))*100:0},
-  {key:'fb',        label:'FB/90',     tier:2, hi:true,  dec:2, desc:'Fast break shots per 90. Attacks launched before the opposition can reorganise. Produces high-quality chances against disorganised defences. Higher is better.',    fn:(t,g)=>g>0?(t.atk_fast_break_shots||0)/g:0},
-  {key:'da',        label:'DA/90',      tier:2, hi:true,  dec:2, desc:'Direct attacks per 90. Quick vertical progressions from defence into the final third. One of three attack types alongside fast breaks and build-ups. Higher is better.',  fn:(t,g)=>g>0?(t.seq_direct_attacks||0)/g:0},
-  {key:'bu',        label:'BU/90',      tier:2, hi:true,  dec:2, desc:'Build-up sequences per 90. Patient possession-based attacks progressing into the final third. Combined with fast breaks and direct attacks, measures variety and unpredictability of attacking play. Higher is better.',  fn:(t,g)=>g>0?(t.seq_buildups||0)/g:0},
-
-  {key:'fha_rank',  label:'1H Away',   tier:2, hi:false, dec:0, desc:'First-half away rank (goals-based, from soccerstats.com). Position in the Championship if only counting mins 1-45 of away fixtures. Lower rank = better.',        fn:null},
-  {key:'sp_diff',   label:'SP xGΔ',   tier:3, hi:true,  dec:2, desc:'Set piece xG created minus conceded per 90. Set pieces account for ~1/3 of Championship goals. Positive = winning the dead ball battle. Higher is better.',        fn:(t,g)=>g>0?((t.sp_atk_xg||0)-(t.sp_def_xga||0))/g:0},
-  {key:'ppda',      label:'PPDA',      tier:3, hi:false, dec:1, desc:'Passes Per Defensive Action. How many passes the opposition completes before the team makes a challenge. Lower = harder, higher-intensity press.',                  fn:(t)=>t.press_ppda||null},
-  {key:'tb',        label:'TBall/90',  tier:3, hi:true,  dec:2, desc:'Through balls per 90. Passes played into space behind the defensive line. High through ball volume indicates progressive, penetrative play. Higher is better.',    fn:(t,g)=>g>0?(t.pass_through_balls||0)/g:0},
-  {key:'crosses',   label:'Cross/90',  tier:3, hi:false, dec:1, desc:'Crosses per 90. High crossing volume is negatively correlated with winning — it signals the team cannot find central routes to goal. Lower is better.',           fn:(t,g)=>g>0?(t.pass_crosses||0)/g:0},
-];
-const TW={1:3,2:2,3:1};
-
-// Trend metric options (subset of XBI + composite)
-const TREND_METRICS = [
-  {key:'xbi',      label:'xB Index (composite)'},
-  {key:'sot_atk',  label:'SOT Attacking'},
-  {key:'sot_def',  label:'SOT Defensive'},
-  {key:'xgsh_diff',label:'xG/shot differential'},
-  {key:'shot_acc', label:'Shot accuracy %'},
-  {key:'fb',       label:'Fast breaks / 90'},
-  {key:'da',       label:'Direct attacks / 90'},
-  {key:'bu',       label:'Build-ups / 90'},
-  {key:'sp_diff',  label:'Set piece xG differential'},
-  {key:'ppda',     label:'PPDA'},
-  {key:'tb',       label:'Through balls / 90'},
-  {key:'crosses',  label:'Crosses / 90'},
-];
-
-function pct(v, all, hi){
-  if(v==null||all.length<2) return 50;
-  const s=[...all].sort((a,b)=>a-b);
-  const r=s.filter(x=>x<v).length;
-  const p=(r/(s.length-1))*100;
-  return hi?p:100-p;
-}
-
-function computeTeam(t, htSnap){
-  const g=t.atk_played||1;
-  const m={};
-  XBI.forEach(md=>{
-    if(md.key==='fha_rank'){
-      // look up from halftime data
-      if(htSnap&&htSnap.first_half_away){
-        const name=Object.keys(HIST[0].teams).find(n=>n===t._name)||'';
-        const row=htSnap.first_half_away.find(r=>
-          r.name.toLowerCase().includes((t._name||'').toLowerCase().split(' ')[0])||
-          (t._name||'').toLowerCase().includes(r.name.toLowerCase().split(' ')[0])
-        );
-        m[md.key]=row?row.rank:12;
-      } else {
-        m[md.key]=12;
-      }
-    } else {
-      const v=md.fn(t,g);
-      m[md.key]=v;
-    }
-  });
-  return m;
-}
-
-function xbiScore(metrics, allMetrics){
-  let s=0,w=0;
-  XBI.forEach(md=>{
-    const v=metrics[md.key];
-    if(v==null) return;
-    const av=allMetrics.map(m=>m[md.key]).filter(x=>x!=null);
-    if(av.length<2) return;
-    s+=pct(v,av,md.hi)*TW[md.tier];
-    w+=TW[md.tier]*100;
-  });
-  return w>0?(s/w)*100:0;
-}
-
-function getXBIData(snapIdx, htSnap){
-  const sn=HIST[snapIdx===-1?HIST.length-1:snapIdx];
-  if(!sn) return[];
-  const computed=Object.entries(sn.teams).map(([name,t])=>{
-    const tc={...t,_name:name};
-    const m=computeTeam(tc,htSnap);
-    return{name,t,m};
-  });
-  const allM=computed.map(c=>c.m);
-  return computed.map((c,idx)=>{
-    const xbi=xbiScore(c.m,allM);
-    const fr=FIN_RANK[c.name]||null;
-    return {name:c.name,t:c.t,...c.m,xbi,fin_rank:fr};
-  });
-}
-
-// ── Financial ranks (combined squad value + wages, 1=highest spending) ──────
-const FIN_RANK = {
-  "Ipswich Town FC":1,"Southampton FC":3,"Leicester City FC":3,"Sheffield United FC":4,
-  "Birmingham City FC":6,"Norwich City FC":6,"Coventry City FC":8,"Middlesbrough FC":8,
-  "Stoke City FC":10,"Hull City AFC":11,"West Bromwich Albion FC":11,"Millwall FC":12,
-  "Watford FC":12,"Swansea City AFC":14,"Wrexham FC":15,"Bristol City FC":16,
-  "Derby County FC":16,"Preston North End FC":17,"Blackburn Rovers FC":18,
-  "Queens Park Rangers FC":20,"Oxford United FC":21,"Portsmouth FC":22,
-  "Charlton Athletic FC":23,"Sheffield Wednesday FC":24,
+const FIN_RANK_MAP = {
+  'Ipswich Town FC':1,'Southampton FC':3,'Leicester City FC':3,'Sheffield United FC':4,
+  'Birmingham City FC':6,'Norwich City FC':6,'Coventry City FC':8,'Middlesbrough FC':8,
+  'Stoke City FC':10,'Hull City AFC':11,'West Bromwich Albion FC':11,'Millwall FC':12,
+  'Watford FC':12,'Swansea City AFC':14,'Wrexham FC':15,'Bristol City FC':16,
+  'Derby County FC':16,'Preston North End FC':17,'Blackburn Rovers FC':18,
+  'Queens Park Rangers FC':20,'Oxford United FC':21,'Portsmouth FC':22,
+  'Charlton Athletic FC':23,'Sheffield Wednesday FC':24,
 };
 
-// ── State ─────────────────────────────────────────────────────────────────────
-let HIST=[], HALFTIME=[];
-let snapIdx=-1, mode='p90';
-let trendTeam='Birmingham City FC', trendMetric='xbi', trendWindow='all';
-let sortKey='xbi', sortDir='desc';
-let CHART=null;
-
-// ── Render index table ────────────────────────────────────────────────────────
-function renderTable(){
-  const htSnap=HALFTIME.length?HALFTIME[HALFTIME.length-1]:null;
-  const rows=getXBIData(snapIdx,htSnap);
-  if(!rows.length) return;
-
-  // Sort
-  // Pre-compute xbi ranks for gap calculation
-  const xbiSorted=[...rows].sort((x,y)=>y.xbi-x.xbi);
-  rows.forEach(r=>{
-    const xbiR=xbiSorted.findIndex(x=>x.name===r.name)+1;
-    r._fin_gap = r.fin_rank!=null ? r.fin_rank - xbiR : null;
+function buildDataFromSnapshot(snap) {
+  if (!snap || !snap.teams) return [];
+  const teams = snap.teams;
+  const games = snap.games_played || 1;
+  const rows = Object.entries(teams).map(([name, t]) => {
+    const fr = FIN_RANK_MAP[name] || 12;
+    return {
+      club: name,
+      finRank: fr,
+      sotAtk:  parseFloat(((t.sot_att||0)/games).toFixed(2)),
+      sotDef:  parseFloat(((t.sot_def||0)/games).toFixed(2)),
+      xgSh:    parseFloat((((t.xg||0)-(t.xg_against||0))/(t.shots||1)).toFixed(3)),
+      shotAcc: parseFloat((((t.sot_att||0)/(t.shots||1))*100).toFixed(1)),
+      fb90:    parseFloat(((t.fast_breaks||0)/games).toFixed(2)),
+      da90:    parseFloat(((t.seq_direct_attacks||0)/games).toFixed(2)),
+      bu90:    parseFloat(((t.seq_buildups||0)/games).toFixed(2)),
+      h1Away:  t.fha_rank || 12,
+      spXga:   parseFloat((((t.sp_xg||0)-(t.sp_xg_against||0))/games).toFixed(2)),
+      ppda:    parseFloat((t.ppda||12).toFixed(1)),
+      tball90: parseFloat(((t.through_balls||0)/games).toFixed(2)),
+      cross90: parseFloat(((t.crosses||0)/games).toFixed(1)),
+    };
   });
-  rows.sort((a,b)=>{
-    let av,bv;
-    if(sortKey==='fin_rank'){
-      av = a._fin_gap!=null ? a._fin_gap : -Infinity;
-      bv = b._fin_gap!=null ? b._fin_gap : -Infinity;
-    } else {
-      av=a[sortKey]??-Infinity;
-      bv=b[sortKey]??-Infinity;
-    }
-    return sortDir==='desc'?bv-av:av-bv;
-  });
-  const maxXBI=Math.max(...rows.map(r=>r.xbi));
-
-  // Previous snapshot for deltas -- always sorted by xbi desc for rank comparison
-  const prevIdx=snapIdx===-1?HIST.length-2:snapIdx-1;
-  const prevRowsRaw=prevIdx>=0?getXBIData(prevIdx,htSnap):[];
-  const prevRows=[...prevRowsRaw].sort((a,b)=>b.xbi-a.xbi);
-  const prevMap={};
-  prevRowsRaw.forEach(r=>{prevMap[r.name]=r});
-
-  // Birmingham cards
-  const bR=rows.find(r=>isB(r.name));
-  if(bR){
-    const bRank=rows.indexOf(bR)+1;
-    const prev=prevMap[bR.name];
-    const xbiDelta=prev?(bR.xbi-prev.xbi):null;
-    const rankDelta=prev?(prevRows.findIndex(r=>isB(r.name))+1-bRank):null;
-
-    document.getElementById('bham-cards').innerHTML=`
-      <div class="card">
-        <div class="card-label">xB Index</div>
-        <div class="card-val">${bR.xbi.toFixed(1)}</div>
-        <div class="card-sub">Rank <b>${bRank}/${rows.length}</b></div>
-        ${xbiDelta!=null?`<div class="card-trend ${xbiDelta>=0?'up':'dn'}">${xbiDelta>=0?'▲':'▼'} ${Math.abs(xbiDelta).toFixed(1)} vs prev GW</div>`:''}
-      </div>
-      <div class="card">
-        <div class="card-label">xG/shot differential</div>
-        <div class="card-val" style="color:${bR.xgsh_diff>=0?'var(--pos)':'var(--neg)'}">${bR.xgsh_diff>=0?'+':''}${bR.xgsh_diff.toFixed(3)}</div>
-        <div class="card-sub">Created vs conceded</div>
-      </div>
-      <div class="card">
-        <div class="card-label">1st half away rank</div>
-        <div class="card-val" style="color:var(--neg)">${bR.fha_rank || '—'}${bR.fha_rank===24?'th':bR.fha_rank===1?'st':bR.fha_rank===2?'nd':bR.fha_rank===3?'rd':'th'}</div>
-        <div class="card-sub" style="color:var(--neg)">Target: top 10</div>
-      </div>
-      <div class="card">
-        <div class="card-label">Crosses / 90</div>
-        <div class="card-val">${bR.crosses.toFixed(1)}</div>
-        <div class="card-sub" style="color:var(--neg)">Highest in Championship</div>
-      </div>`;
-  }
-
-  // Table headers
-  const head=document.getElementById('table-head');
-  head.innerHTML=`<th class="tl" style="width:56px;min-width:56px;max-width:56px">#</th><th class="tl" data-k="name">Club</th>
-    <th data-k="xbi" class="${sortKey==='xbi'?'s'+sortDir:''}" style="color:var(--acc);min-width:120px" title="xB Performance Index — composite score 0-100. Higher is better. 50 = Championship average.">xB Index</th>
-    <th data-k="fin_rank" class="${sortKey==='fin_rank'?'s'+sortDir:''}" title="Combined financial rank based on squad value and wages (1=highest spending). Gap shows whether the club is over or underperforming their investment." style="font-size:10px">Fin Rank</th>
-    ${XBI.map(m=>`<th data-k="${m.key}" class="${sortKey===m.key?'s'+sortDir:''}" title="${m.desc}">
-      <span style="font-size:9px;color:${m.tier===1?'var(--t1)':m.tier===2?'var(--t2)':'var(--t3)'}">T${m.tier}</span> ${m.label}
-    </th>`).join('')}`;
-
-  // Table rows
-  document.getElementById('table-body').innerHTML=rows.map((r,i)=>{
-    const b=isB(r.name);
-    const bw=Math.round((r.xbi/maxXBI)*72);
-    const prev=prevMap[r.name];
-    const delta=prev?(r.xbi-prev.xbi):null;
-    const deltaHtml=delta!=null&&Math.abs(delta)>0.05
-      ?'<span class="delta '+(delta>0?'up':'dn')+'">'+(delta>0?'&#9650;':'&#9660;')+'</span>'
-      :'';
-
-    const cells=XBI.map(md=>{
-      const v=r[md.key];
-      if(v==null) return'<td>—</td>';
-      const av=rows.map(x=>x[md.key]).filter(x=>x!=null);
-      const p=pct(v,av,md.hi);
-      const col=p>=70?'var(--pos)':p<=30?'var(--neg)':'var(--text)';
-      return`<td style="color:${col}">${v.toFixed(md.dec)}</td>`;
-    }).join('');
-
-    return`<tr class="${b?'bham':''}">
-      <td style="font-size:11px;width:56px;min-width:56px;max-width:56px;white-space:nowrap;overflow:hidden">
-        <span style="color:var(--muted);display:inline-block;width:20px;text-align:right">${(()=>{
-          const trueRank = rows.filter(x=>Math.round(x.xbi*10)>Math.round(r.xbi*10)).length+1;
-          return trueRank;
-        })()}</span><span style="display:inline-block;width:28px;text-align:left;padding-left:3px;font-size:10px">${(()=>{
-          if(sortKey!=='xbi'||sortDir!=='desc') return '';
-          if(!prev) return '<span style="color:var(--muted);opacity:.5">&#8211;</span>';
-          const prevRank = prevRows.findIndex(pr=>pr.name===r.name)+1;
-          if(prevRank===0) return '<span style="color:var(--muted);opacity:.5">&#8211;</span>';
-          const diff = prevRank - (i+1);
-          if(diff>0) return '<span style="color:var(--pos)">&#9650;'+diff+'</span>';
-          if(diff<0) return '<span style="color:var(--neg)">&#9660;'+Math.abs(diff)+'</span>';
-          return '<span style="color:var(--muted);opacity:.5">&#8211;</span>';
-        })()}</span>
-      </td>
-      <td class="tl">${r.name}</td>
-      <td style="white-space:nowrap">
-        <div class="bar-wrap" style="display:inline-flex">
-          <div class="bar${b?' blu':''}" style="width:${bw}px"></div>
-          <span class="xbi-val" style="min-width:36px;text-align:right">${r.xbi.toFixed(1)}</span>
-        </div><span style="display:inline-block;width:14px;text-align:left;margin-left:2px;font-size:10px">${deltaHtml}</span>
-      </td>
-      ${(()=>{
-        const fr = r.fin_rank;
-        if(!fr) return '<td style="color:var(--muted);font-size:11px;font-family:var(--font-m)">—</td>';
-        const gap = r._fin_gap!=null ? r._fin_gap : 0;
-        const gapCol = gap>0?'var(--pos)':gap<0?'var(--neg)':'var(--muted)';
-        const gapStr = gap>0?'+'+gap:String(gap);
-        return '<td style="font-family:var(--font-m);font-size:11px;white-space:nowrap"><span style="color:'+gapCol+';font-weight:600;min-width:32px;display:inline-block;text-align:right">('+gapStr+')</span> <span style="color:var(--muted);font-size:10px">'+fr+'</span></td>';
-      })()}
-      ${cells}
-    </tr>`;
-  }).join('');
-
-  head.querySelectorAll('th[data-k]').forEach(th=>th.addEventListener('click',()=>{
-    const k=th.dataset.k;
-    sortKey===k?(sortDir=sortDir==='desc'?'asc':'desc'):(sortKey=k,sortDir='desc');
-    renderTable();
-  }));
-}
-
-// ── Render trend chart ────────────────────────────────────────────────────────
-function renderTrend(){
-  if(!HIST.length) return;
-  const htSnap=HALFTIME.length?HALFTIME[HALFTIME.length-1]:null;
-
-  // Build series across all snapshots
-  const allSnaps=HIST.map((sn,i)=>{
-    const rows=getXBIData(i,htSnap);
-    const r=rows.find(r=>r.name===trendTeam);
-    if(!r) return null;
-    let val;
-    if(trendMetric==='xbi'){
-      val=r.xbi;
-    } else {
-      val=r[trendMetric];
-    }
-    return{label:sn.label, date:sn.date, val:val!=null?parseFloat(val.toFixed(3)):null};
-  }).filter(Boolean);
-
-  if(!allSnaps.length) return;
-
-  // Apply rolling average if selected
-  let series=allSnaps;
-  if(trendWindow==='5'&&allSnaps.length>=2){
-    series=allSnaps.map((s,i)=>{
-      const window=allSnaps.slice(Math.max(0,i-4),i+1);
-      const vals=window.map(w=>w.val).filter(v=>v!=null);
-      return{...s,val:vals.length?parseFloat((vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(3)):null};
+  // compute xbIndex
+  const metrics = ['sotAtk','sotDef','xgSh','shotAcc','fb90','da90','bu90','h1Away','spXga','ppda','tball90','cross90'];
+  const dirs =    [true,    false,   true,  true,     true,  true,  true,  false,   true,   false, true,     false  ];
+  const weights = [3,3,3,3, 2,2,2,2, 1,1,1,1];
+  metrics.forEach((m,i) => {
+    const vals = rows.map(r=>r[m]).sort((a,b)=>a-b);
+    rows.forEach(r => {
+      const rank = vals.indexOf(r[m]);
+      const pct = vals.length > 1 ? rank/(vals.length-1)*100 : 50;
+      r[m+'_pct'] = dirs[i] ? pct : 100-pct;
     });
+  });
+  rows.forEach(r => {
+    let score = 0, tw = 0;
+    metrics.forEach((m,i) => { score += r[m+'_pct']*weights[i]; tw += weights[i]; });
+    r.xbIndex = parseFloat((score/tw).toFixed(1));
+  });
+  // sort by xbIndex desc, add rank and finGap
+  rows.sort((a,b)=>b.xbIndex-a.xbIndex);
+  rows.forEach((r,i) => {
+    r.rank = rows.filter(x=>Math.round(x.xbIndex*10)>Math.round(r.xbIndex*10)).length+1;
+    r.finGap = r.finRank - r.rank;
+  });
+  return rows;
+}
+
+// Club brand colours for monograms
+const CLUB_COLORS = {
+  'Southampton FC':          '#D71920',
+  'Coventry City FC':        '#58A7CC',
+  'Ipswich Town FC':         '#0044A9',
+  'Sheffield United FC':     '#EE2737',
+  'Middlesbrough FC':        '#E03A3E',
+  'Norwich City FC':         '#00A650',
+  'Millwall FC':             '#1D3461',
+  'Bristol City FC':         '#C8102E',
+  'Watford FC':              '#D8A800',
+  'Stoke City FC':           '#E03A3E',
+  'Derby County FC':         '#1B1B1B',
+  'Hull City AFC':           '#F5A12E',
+  'Wrexham FC':              '#DC143C',
+  'Birmingham City FC':      '#0056A2',
+  'Leicester City FC':       '#003090',
+  'Queens Park Rangers FC':  '#1D5BA4',
+  'West Bromwich Albion FC': '#0B2B5A',
+  'Charlton Athletic FC':    '#D4021D',
+  'Preston North End FC':    '#1E3A5F',
+  'Blackburn Rovers FC':     '#009EE0',
+  'Oxford United FC':        '#F5A800',
+  'Swansea City AFC':        '#333333',
+  'Portsmouth FC':           '#013B70',
+  'Sheffield Wednesday FC':  '#003399',
+};
+
+// Short names for mobile
+const CLUB_SHORT = {
+  'Southampton FC':          'SOU',
+  'Coventry City FC':        'COV',
+  'Ipswich Town FC':         'IPS',
+  'Sheffield United FC':     'SHU',
+  'Middlesbrough FC':        'MBO',
+  'Norwich City FC':         'NOR',
+  'Millwall FC':             'MIL',
+  'Bristol City FC':         'BRS',
+  'Watford FC':              'WAT',
+  'Stoke City FC':           'STK',
+  'Derby County FC':         'DER',
+  'Hull City AFC':           'HUL',
+  'Wrexham FC':              'WRX',
+  'Birmingham City FC':      'BIR',
+  'Leicester City FC':       'LEI',
+  'Queens Park Rangers FC':  'QPR',
+  'West Bromwich Albion FC': 'WBA',
+  'Charlton Athletic FC':    'CHA',
+  'Preston North End FC':    'PNE',
+  'Blackburn Rovers FC':     'BLB',
+  'Oxford United FC':        'OXF',
+  'Swansea City AFC':        'SWA',
+  'Portsmouth FC':           'POM',
+  'Sheffield Wednesday FC':  'SWE',
+};
+
+// Column metadata: key, higher/lower better
+const METRIC_COLS = [
+  { key:'sotAtk',   higherBetter:true  },
+  { key:'sotDef',   higherBetter:false },
+  { key:'xgSh',     higherBetter:true  },
+  { key:'shotAcc',  higherBetter:true  },
+  { key:'fb90',     higherBetter:true  },
+  { key:'da90',     higherBetter:true  },
+  { key:'bu90',     higherBetter:true  },
+  { key:'h1Away',   higherBetter:false },
+  { key:'spXga',    higherBetter:true  },
+  { key:'ppda',     higherBetter:false },
+  { key:'tball90',  higherBetter:true  },
+  { key:'cross90',  higherBetter:false },
+];
+
+// Pre-compute min/max for each metric
+const METRIC_RANGES = {};
+METRIC_COLS.forEach(({ key }) => {
+  const vals = DATA.map(d => d[key]);
+  METRIC_RANGES[key] = { min: Math.min(...vals), max: Math.max(...vals) };
+});
+
+const MAX_FINGAP = Math.max(...DATA.map(d => Math.abs(d.finGap)));
+
+// ── COLOUR INTERPOLATION ──────────────────────────────────────────────────────
+// olive green → neutral → muted red
+const C_GREEN   = [107, 124, 69];   // #6b7c45
+const C_NEUTRAL = [212, 207, 199];  // #d4cfc7
+const C_RED     = [139, 64, 64];    // #8b4040
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+function metricColor(value, min, max, higherBetter) {
+  if (max === min) return `rgb(${C_NEUTRAL.join(',')})`;
+  let t = (value - min) / (max - min); // 0=worst…1=best
+  if (!higherBetter) t = 1 - t;        // flip for lower=better
+  // t: 0=red, 0.5=neutral, 1=green
+  let r, g, b;
+  if (t < 0.5) {
+    const s = t * 2;
+    r = lerp(C_RED[0], C_NEUTRAL[0], s);
+    g = lerp(C_RED[1], C_NEUTRAL[1], s);
+    b = lerp(C_RED[2], C_NEUTRAL[2], s);
+  } else {
+    const s = (t - 0.5) * 2;
+    r = lerp(C_NEUTRAL[0], C_GREEN[0], s);
+    g = lerp(C_NEUTRAL[1], C_GREEN[1], s);
+    b = lerp(C_NEUTRAL[2], C_GREEN[2], s);
   }
-
-  const col=isB(trendTeam)?'#1a6ef5':'#00e5ff';
-  const mdef=XBI.find(m=>m.key===trendMetric);
-  const dec=trendMetric==='xbi'?1:(mdef?mdef.dec:2);
-
-  if(CHART) CHART.destroy();
-  CHART=new Chart(document.getElementById('trend-chart').getContext('2d'),{
-    type:'line',
-    data:{
-      labels:series.map(s=>s.label||britishDate(s.date)),
-      datasets:[{
-        data:series.map(s=>s.val),
-        borderColor:col,
-        backgroundColor:col+'15',
-        borderWidth:2,
-        pointRadius:series.length<=10?4:2,
-        pointBackgroundColor:col,
-        tension:0.3,
-        fill:true,
-      }]
-    },
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      plugins:{
-        legend:{display:false},
-        tooltip:{
-          backgroundColor:'#1a1e25',
-          borderColor:'#252a34',
-          borderWidth:1,
-          titleColor:'#8b92a0',
-          bodyColor:'#e8eaf0',
-          titleFont:{family:'DM Mono',size:11},
-          bodyFont:{family:'DM Mono',size:12},
-          callbacks:{
-            label:c=>` ${c.parsed.y!=null?c.parsed.y.toFixed(dec):'—'}`,
-          }
-        }
-      },
-      scales:{
-        x:{grid:{color:'rgba(37,42,52,.6)'},ticks:{color:'#5a6070',font:{family:'DM Mono',size:10}}},
-        y:{grid:{color:'rgba(37,42,52,.6)'},ticks:{color:'#5a6070',font:{family:'DM Mono',size:10}}},
-      }
-    }
-  });
+  // Light alpha overlay approach: return bg color
+  return `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
 }
 
-// ── Render half-time tables ───────────────────────────────────────────────────
-function renderHT(){
-  const htSnap=HALFTIME.length?HALFTIME[HALFTIME.length-1]:null;
-  const headHtml='<th class="tl" style="width:56px;min-width:56px;max-width:56px">#</th><th class="tl">Club</th><th>GP</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th>';
-
-  ['fha','sha'].forEach((pfx,i)=>{
-    const key=i===0?'first_half_away':'second_half_away';
-    const rows=htSnap?htSnap[key]||[]:[];
-    document.getElementById(pfx+'-head').innerHTML=headHtml;
-    if(!rows.length){
-      document.getElementById(pfx+'-body').innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:12px;font-family:var(--font-m);font-size:11px">No data — run scraper first</td></tr>';
-      return;
-    }
-    document.getElementById(pfx+'-body').innerHTML=rows.map(r=>{
-      const b=isB(r.name);
-      const isTarget=r.rank===10&&i===0;
-      const gd=String(r.gd);
-      const gdCol=gd.startsWith('+')?'var(--pos)':gd==='0'?'var(--muted)':'var(--neg)';
-      return`<tr class="${b?'bham':''}${isTarget?' target-row':''}">
-        <td style="color:var(--muted)">${r.rank}</td>
-        <td class="tl">${r.name}</td>
-        <td>${r.gp}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td>
-        <td style="color:var(--pos)">${r.gf}</td>
-        <td style="color:var(--neg)">${r.ga}</td>
-        <td style="color:${gdCol}">${r.gd}</td>
-        <td style="font-weight:700">${r.pts}</td>
-      </tr>`;
-    }).join('');
-  });
+function textColorFor(bgRgb) {
+  // parse r,g,b from "rgb(r,g,b)"
+  const m = bgRgb.match(/(\d+),(\d+),(\d+)/);
+  if (!m) return '#1a1a1a';
+  const lum = (0.299 * m[1] + 0.587 * m[2] + 0.114 * m[3]) / 255;
+  return lum > 0.55 ? '#2a2520' : '#f5f0e8';
 }
 
-// ── Build trend selects ───────────────────────────────────────────────────────
-function buildTrendSelects(){
-  const sn=HIST[HIST.length-1];
-  const teams=Object.keys(sn.teams).sort((a,b)=>{
-    if(isB(a))return-1;if(isB(b))return 1;return a.localeCompare(b);
-  });
-  const teamSel=document.getElementById('trend-team-sel');
-  teamSel.innerHTML=teams.map(n=>`<option value="${n}"${n===trendTeam?' selected':''}>${n}</option>`).join('');
-  teamSel.addEventListener('change',()=>{trendTeam=teamSel.value;renderTrend()});
-
-  const metSel=document.getElementById('trend-metric-sel');
-  metSel.innerHTML=TREND_METRICS.map(m=>`<option value="${m.key}"${m.key===trendMetric?' selected':''}>${m.label}</option>`).join('');
-  metSel.addEventListener('change',()=>{trendMetric=metSel.value;renderTrend()});
-
-  document.querySelectorAll('.trend-tog .tb').forEach(b=>b.addEventListener('click',()=>{
-    document.querySelectorAll('.trend-tog .tb').forEach(x=>x.classList.remove('on'));
-    b.classList.add('on');trendWindow=b.dataset.w;renderTrend();
-  }));
+// ── FORMAT HELPERS ────────────────────────────────────────────────────────────
+function fmt(v, decimals=1) {
+  if (v === null || v === undefined) return '—';
+  return Number(v).toFixed(decimals);
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────────
-async function init(){
-  try{
-    const r=await fetch('data/history.json');
-    if(!r.ok) throw new Error(`HTTP ${r.status}`);
-    HIST=await r.json();
-    if(!HIST.length) throw new Error('No data yet. Run the scraper workflow from the GitHub Actions tab.');
+function monogram(club) {
+  // Take first letter of first two words
+  const words = club.replace(/ FC$| AFC$| City$/, '').split(' ');
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+  return (words[0][0] + words[1][0]).toUpperCase();
+}
 
-    try{
-      const r2=await fetch('data/halftime.json');
-      if(r2.ok) HALFTIME=await r2.json();
-    }catch(e){console.log('halftime.json not found')}
+// ── SORT STATE ────────────────────────────────────────────────────────────────
+let sortCol = 'rank';
+let sortDir = 'asc';
+let highlightClub = '';
 
-    // Update header
-    const latest=HIST[HIST.length-1];
-    const latestDate = britishDate((latest.date||'').split(' ')[0]);
-    document.getElementById('gw-label').textContent=latestDate;
-    document.getElementById('updated-label').textContent='Updated '+latestDate;
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function renderTable(data) {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
 
-    // Snapshot select
-    const snapSel=document.getElementById('snap-sel');
-    snapSel.innerHTML=[...HIST].reverse().map((h,i)=>{
-      const idx=HIST.length-1-i;
-      const snapDate = britishDate(h.date||h.label);
-      return`<option value="${idx}"${i===0?' selected':''}>${snapDate}</option>`;
-    }).join('');
-    snapSel.addEventListener('change',()=>{
-      snapIdx=parseInt(snapSel.value);
-      renderTable();
+  data.forEach((d, i) => {
+    const isBham = d.club === 'Birmingham City FC';
+    const isHighlight = d.club === highlightClub;
+
+    const tr = document.createElement('tr');
+    if (isBham) tr.classList.add('bham-row');
+    if (isHighlight && !isBham) tr.classList.add('highlight-row');
+
+    const color = CLUB_COLORS[d.club] || '#555';
+    const mono = monogram(d.club);
+    const short = CLUB_SHORT[d.club] || d.club.slice(0, 3).toUpperCase();
+
+    // Rank
+    // Joint rank: count teams with strictly higher rounded xbIndex
+    const trueRank = data.filter(x => Math.round(x.xbIndex*10) > Math.round(d.xbIndex*10)).length + 1;
+    tr.innerHTML += `<td class="col-rank">${trueRank}</td>`;
+
+    // Club
+    tr.innerHTML += `<td class="col-club">
+      <div class="club-row">
+        <div class="club-mono" style="background:${color}">${mono}</div>
+        <span class="club-name">${d.club.replace(/ FC$| AFC$/, '')}</span>
+        <span class="club-name-short">${short}</span>
+      </div>
+    </td>`;
+
+    // xB Index
+    tr.innerHTML += `<td class="col-xbi">${fmt(d.xbIndex, 1)}</td>`;
+
+    // Fin Rank
+    tr.innerHTML += `<td class="col-fin hide-mobile">${d.finRank}</td>`;
+
+    // Fin Gap
+    const gapAbs = Math.abs(d.finGap);
+    const barPct = Math.round((gapAbs / MAX_FINGAP) * 50);
+    const gapClass = d.finGap >= 0 ? 'positive' : 'negative';
+    const gapSign = d.finGap > 0 ? '+' : '';
+    tr.innerHTML += `<td>
+      <div class="fin-gap-cell">
+        <span class="fin-gap-val ${gapClass}">${gapSign}${d.finGap}</span>
+        <div class="fin-gap-bar-wrap">
+          <div class="fin-gap-bar ${gapClass}" style="width:${barPct}%"></div>
+        </div>
+      </div>
+    </td>`;
+
+    // Metric cells
+    METRIC_COLS.forEach(({ key, higherBetter }, idx) => {
+      const { min, max } = METRIC_RANGES[key];
+      const bg = metricColor(d[key], min, max, higherBetter);
+      const fg = textColorFor(bg);
+      const tierClass = idx < 4 ? 'tier1-group' : idx < 8 ? 'tier2-group' : 'tier3-group';
+      const decimals = key === 'xgSh' ? 3 : key === 'shotAcc' ? 1 : 2;
+      tr.innerHTML += `<td class="metric-cell hide-mobile ${idx===0?'tier1-group':idx===4?'tier2-group':idx===8?'tier3-group':''}"
+        style="background:${bg};color:${fg}">${fmt(d[key], decimals)}</td>`;
     });
 
-    // Mode toggle
-    document.querySelectorAll('.tog:not(.trend-tog) .tb').forEach(b=>b.addEventListener('click',()=>{
-      document.querySelectorAll('.tog:not(.trend-tog) .tb').forEach(x=>x.classList.remove('on'));
-      b.classList.add('on');mode=b.dataset.m;renderTable();
-    }));
-
-    buildTrendSelects();
-
-    document.getElementById('loading').style.display='none';
-    document.getElementById('content').style.display='block';
-
-    renderTable();
-    renderTrend();
-    renderHT();
-
-  }catch(err){
-    const isNoData = err.message.includes('No data yet');
-    document.getElementById('loading').innerHTML = isNoData
-      ? `<div style="text-align:center;font-family:var(--font-m);font-size:13px;color:var(--muted);padding:40px 20px;line-height:2.2">
-           <div style="font-size:32px;margin-bottom:16px">📊</div>
-           <div style="color:var(--label);font-size:15px;margin-bottom:10px">Waiting for first snapshot</div>
-           <div>Go to the <strong style="color:var(--acc)">Actions tab</strong> on GitHub and run <strong style="color:var(--acc)">xB Stats Scraper</strong> manually.</div>
-         </div>`
-      : `<div class="err">Failed to load: ${err.message}</div>`;
-  }
+    tbody.appendChild(tr);
+  });
 }
 
-init();
+function getSortedData() {
+  const d = [...DATA];
+  d.sort((a, b) => {
+    let av = a[sortCol], bv = b[sortCol];
+    if (typeof av === 'string') av = av.toLowerCase(), bv = bv.toLowerCase();
+    let cmp = av < bv ? -1 : av > bv ? 1 : 0;
+    return sortDir === 'asc' ? cmp : -cmp;
+  });
+  return d;
+}
+
+function updateSortHeaders() {
+  document.querySelectorAll('thead th').forEach(th => {
+    const col = th.dataset.col;
+    th.classList.remove('sort-active');
+    const ind = th.querySelector('.sort-indicator');
+    if (!ind) return;
+    if (col === sortCol) {
+      th.classList.add('sort-active');
+      ind.textContent = sortDir === 'asc' ? '↑' : '↓';
+    } else {
+      ind.textContent = '↕';
+    }
+  });
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+
+// Populate club dropdown -- called after data loads
+function populateClubSelect() {
+  const sel = document.getElementById('highlightSelect');
+  sel.innerHTML = '<option value="">— none —</option>';
+  DATA.slice().sort((a,b) => a.club.localeCompare(b.club)).forEach(d => {
+    if (d.club === 'Birmingham City FC') return;
+    const opt = document.createElement('option');
+    opt.value = d.club;
+    opt.textContent = d.club.replace(/ FC$| AFC$/, '');
+    sel.appendChild(opt);
+  });
+  sel.addEventListener('change', () => {
+    highlightClub = sel.value;
+    renderTable(getSortedData());
+  });
+}
+
+// Column sort
+document.querySelectorAll('thead th[data-col]').forEach(th => {
+  th.addEventListener('click', () => {
+    const col = th.dataset.col;
+    if (sortCol === col) {
+      sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      sortCol = col;
+      sortDir = th.dataset.dir || 'desc';
+    }
+    updateSortHeaders();
+    renderTable(getSortedData());
+  });
+});
+
+// Methodology toggle
+const methBtn = document.getElementById('methBtn');
+const methPanel = document.getElementById('methPanel');
+methBtn.addEventListener('click', () => {
+  const open = methPanel.classList.toggle('open');
+  methBtn.textContent = open ? 'Methodology ↑' : 'Methodology ↓';
+  methBtn.setAttribute('aria-expanded', open);
+  methPanel.setAttribute('aria-hidden', !open);
+});
+
+// ── FETCH & INIT ──────────────────────────────────────────────────────────────
+async function loadData() {
+  try {
+    const res = await fetch('data/history.json?t='+Date.now());
+    const history = await res.json();
+    if (!history || !history.length) throw new Error('empty');
+    ALL_SNAPSHOTS = history.slice().reverse(); // newest first
+
+    // Populate snapshot selector if it exists
+    const snapSel = document.getElementById('snapshotSelect');
+    if (snapSel) {
+      snapSel.innerHTML = '';
+      ALL_SNAPSHOTS.forEach((snap, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = snap.date || ('Snapshot '+(ALL_SNAPSHOTS.length-i));
+        if (i===0) opt.selected = true;
+        snapSel.appendChild(opt);
+      });
+      snapSel.addEventListener('change', () => {
+        CURRENT_SNAPSHOT_IDX = parseInt(snapSel.value);
+        DATA = buildDataFromSnapshot(ALL_SNAPSHOTS[CURRENT_SNAPSHOT_IDX]);
+        // update header timestamp
+        const ts = document.getElementById('headerTimestamp');
+        if (ts) ts.textContent = 'Updated '+ALL_SNAPSHOTS[CURRENT_SNAPSHOT_IDX].date;
+        updateBhamCard();
+        renderTable(getSortedData());
+      });
+    }
+
+    DATA = buildDataFromSnapshot(ALL_SNAPSHOTS[0]);
+    // update timestamp
+    const ts = document.getElementById('headerTimestamp');
+    if (ts && ALL_SNAPSHOTS[0].date) ts.textContent = 'Updated '+ALL_SNAPSHOTS[0].date;
+  } catch(e) {
+    console.warn('history.json not found, using static data', e);
+  }
+  populateClubSelect();
+  updateBhamCard();
+  updateSortHeaders();
+  renderTable(getSortedData());
+}
+
+function updateBhamCard() {
+  const bham = DATA.find(d=>d.club==='Birmingham City FC');
+  if (!bham) return;
+  const xbiEl = document.getElementById('bhamXbi');
+  const rkEl  = document.getElementById('bhamRank');
+  if (xbiEl) xbiEl.textContent = bham.xbIndex.toFixed(1);
+  if (rkEl)  rkEl.textContent  = 'Rank '+bham.rank+'/24';
+}
+
+loadData();
 </script>
 </body>
 </html>
