@@ -725,24 +725,37 @@ const FIN_RANK_MAP = {
 function buildDataFromSnapshot(snap) {
   if (!snap || !snap.teams) return [];
   const teams = snap.teams;
-  const games = snap.games_played || 1;
+  // Use modal games played (most common value across teams)
+  const gpVals = Object.values(teams).map(t=>t.atk_played||0).filter(v=>v>0);
+  const gpCounts = {};
+  gpVals.forEach(v=>{ gpCounts[v]=(gpCounts[v]||0)+1; });
+  const games = parseInt(Object.entries(gpCounts).sort((a,b)=>b[1]-a[1])[0]?.[0] || 1);
+
   const rows = Object.entries(teams).map(([name, t]) => {
     const fr = FIN_RANK_MAP[name] || 12;
+    const gp   = t.atk_played || games;
+    const xgA  = t.atk_xg || 0;
+    const xgD  = t.def_xga || 0;
+    const shots = t.atk_shots || 1;
+    const sot   = t.atk_shots_ot || 0;
+    const sotD  = t.def_sot_faced || 0;
+    const spXgA = t.sp_atk_xg || 0;
+    const spXgD = t.sp_def_xga || 0;
     return {
-      club: name,
+      club:    name,
       finRank: fr,
-      sotAtk:  parseFloat(((t.sot_att||0)/games).toFixed(2)),
-      sotDef:  parseFloat(((t.sot_def||0)/games).toFixed(2)),
-      xgSh:    parseFloat((((t.xg||0)-(t.xg_against||0))/(t.shots||1)).toFixed(3)),
-      shotAcc: parseFloat((((t.sot_att||0)/(t.shots||1))*100).toFixed(1)),
-      fb90:    parseFloat(((t.fast_breaks||0)/games).toFixed(2)),
-      da90:    parseFloat(((t.seq_direct_attacks||0)/games).toFixed(2)),
-      bu90:    parseFloat(((t.seq_buildups||0)/games).toFixed(2)),
+      sotAtk:  parseFloat((sot/gp).toFixed(2)),
+      sotDef:  parseFloat((sotD/gp).toFixed(2)),
+      xgSh:    parseFloat(((xgA - xgD)/shots).toFixed(3)),
+      shotAcc: parseFloat(((sot/shots)*100).toFixed(1)),
+      fb90:    parseFloat(((t.atk_fast_break_shots||0)/gp).toFixed(2)),
+      da90:    parseFloat(((t.seq_direct_attacks||0)/gp).toFixed(2)),
+      bu90:    parseFloat(((t.seq_buildups||0)/gp).toFixed(2)),
       h1Away:  t.fha_rank || 12,
-      spXga:   parseFloat((((t.sp_xg||0)-(t.sp_xg_against||0))/games).toFixed(2)),
-      ppda:    parseFloat((t.ppda||12).toFixed(1)),
-      tball90: parseFloat(((t.through_balls||0)/games).toFixed(2)),
-      cross90: parseFloat(((t.crosses||0)/games).toFixed(1)),
+      spXga:   parseFloat(((spXgA - spXgD)/gp).toFixed(2)),
+      ppda:    parseFloat((t.press_ppda||12).toFixed(1)),
+      tball90: parseFloat(((t.pass_through_balls||0)/gp).toFixed(2)),
+      cross90: parseFloat(((t.pass_crosses||0)/gp).toFixed(1)),
     };
   });
   // compute xbIndex
