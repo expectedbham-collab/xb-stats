@@ -37,7 +37,7 @@ def get_section(raw, *path):
         d = raw["team"]
         for p in path:
             d = d[p]
-        return d or []
+        return d if isinstance(d, list) else []
     except:
         return []
 
