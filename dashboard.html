@@ -1189,9 +1189,15 @@ async function loadData() {
     try {
       const htRes = await fetch('data/halftime.json?t='+Date.now());
       const htJson = await htRes.json();
+      console.log('halftime raw:', JSON.stringify(htJson).slice(0,200));
       if (htJson && htJson.length) {
-        HALFTIME_DATA = htJson[htJson.length-1];
+        // Find entry with most first_half_away entries
+        HALFTIME_DATA = htJson.sort((a,b) => (b.first_half_away||[]).length - (a.first_half_away||[]).length)[0];
         console.log('Halftime loaded, FHA entries:', HALFTIME_DATA.first_half_away?.length);
+      } else if (htJson && htJson.first_half_away) {
+        // Handle case where it's a single object not an array
+        HALFTIME_DATA = htJson;
+        console.log('Halftime loaded (object), FHA entries:', HALFTIME_DATA.first_half_away?.length);
       }
     } catch(e) { console.warn('halftime.json not found', e); }
 
