@@ -1008,8 +1008,12 @@ function renderTable(data) {
       </div>
     </td>`;
 
-    // xB Index
-    tr.innerHTML += `<td class="col-xbi">${fmt(d.xbIndex, 1)}</td>`;
+    // xB Index — colour coded green (high) to red (low)
+    const xbiMin = Math.min(...data.map(x=>x.xbIndex));
+    const xbiMax = Math.max(...data.map(x=>x.xbIndex));
+    const xbiBg  = metricColor(d.xbIndex, xbiMin, xbiMax, true);
+    const xbiFg  = textColorFor(xbiBg);
+    tr.innerHTML += `<td class="col-xbi" style="background:${xbiBg};color:${xbiFg}">${fmt(d.xbIndex, 1)}</td>`;
 
     // Fin Rank
     tr.innerHTML += `<td class="col-fin hide-mobile">${d.finRank}</td>`;
