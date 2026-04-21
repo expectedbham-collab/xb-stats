@@ -784,16 +784,20 @@ function buildDataFromSnapshot(snap) {
     const xgA  = t.atk_xg || 0;
     const xgD  = t.def_xga || 0;
     const shots = t.atk_shots || 1;
+    const defShots = t.def_shots_faced || 1;
     const sot   = t.atk_shots_ot || 0;
     const sotD  = t.def_sot_faced || 0;
     const spXgA = t.sp_atk_xg || 0;
     const spXgD = t.sp_def_xga || 0;
+    // xG/shot: use pre-calculated per-shot values if available, else compute
+    const xgShAtk = t.atk_xg_per_shot != null ? t.atk_xg_per_shot : (xgA/shots);
+    const xgShDef = t.def_xga_per_shot != null ? t.def_xga_per_shot : (xgD/defShots);
     return {
       club:    name,
       finRank: fr,
       sotAtk:  parseFloat((sot/gp).toFixed(2)),
       sotDef:  parseFloat((sotD/gp).toFixed(2)),
-      xgSh:    parseFloat(((xgA - xgD)/shots).toFixed(3)),
+      xgSh:    parseFloat((xgShAtk - xgShDef).toFixed(3)),
       shotAcc: parseFloat(((sot/shots)*100).toFixed(1)),
       fb90:    parseFloat(((t.atk_fast_break_shots||0)/gp).toFixed(2)),
       da90:    parseFloat(((t.seq_direct_attacks||0)/gp).toFixed(2)),
