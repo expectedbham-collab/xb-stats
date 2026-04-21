@@ -769,8 +769,9 @@ const FIN_RANK_MAP = {
   'Charlton Athletic FC':23,'Sheffield Wednesday FC':24,
 };
 
-function buildDataFromSnapshot(snap) {
+function buildDataFromSnapshot(snap, htData) {
   if (!snap || !snap.teams) return [];
+  if (!htData) htData = HALFTIME_DATA;
   const teams = snap.teams;
   // Use modal games played (most common value across teams)
   const gpVals = Object.values(teams).map(t=>t.atk_played||0).filter(v=>v>0);
@@ -803,8 +804,8 @@ function buildDataFromSnapshot(snap) {
       da90:    parseFloat(((t.seq_direct_attacks||0)/gp).toFixed(2)),
       bu90:    parseFloat(((t.seq_buildups||0)/gp).toFixed(2)),
       h1Away:  (()=>{
-        if (!HALFTIME_DATA) return 12;
-        const fha = HALFTIME_DATA.first_half_away || [];
+        if (!htData) return 12;
+        const fha = htData.first_half_away || [];
         const HT_NAME = {
           'Coventry City FC':'Coventry City','Derby County FC':'Derby County',
           'Norwich City FC':'Norwich City','Hull City AFC':'Hull City',
@@ -1188,8 +1189,11 @@ async function loadData() {
     try {
       const htRes = await fetch('data/halftime.json?t='+Date.now());
       const htJson = await htRes.json();
-      if (htJson && htJson.length) HALFTIME_DATA = htJson[htJson.length-1];
-    } catch(e) { console.warn('halftime.json not found'); }
+      if (htJson && htJson.length) {
+        HALFTIME_DATA = htJson[htJson.length-1];
+        console.log('Halftime loaded, FHA entries:', HALFTIME_DATA.first_half_away?.length);
+      }
+    } catch(e) { console.warn('halftime.json not found', e); }
 
     const res = await fetch('data/history.json?t='+Date.now());
     const history = await res.json();
@@ -1209,7 +1213,7 @@ async function loadData() {
       });
       snapSel.addEventListener('change', () => {
         CURRENT_SNAPSHOT_IDX = parseInt(snapSel.value);
-        DATA = buildDataFromSnapshot(ALL_SNAPSHOTS[CURRENT_SNAPSHOT_IDX]);
+        DATA = buildDataFromSnapshot(ALL_SNAPSHOTS[CURRENT_SNAPSHOT_IDX], HALFTIME_DATA);
         // update header timestamp
         const ts = document.getElementById('headerTimestamp');
         if (ts) ts.textContent = 'Updated '+ALL_SNAPSHOTS[CURRENT_SNAPSHOT_IDX].date;
@@ -1218,7 +1222,7 @@ async function loadData() {
       });
     }
 
-    DATA = buildDataFromSnapshot(ALL_SNAPSHOTS[0]);
+    DATA = buildDataFromSnapshot(ALL_SNAPSHOTS[0], HALFTIME_DATA);
     // update timestamp
     const ts = document.getElementById('headerTimestamp');
     if (ts && ALL_SNAPSHOTS[0].date) ts.textContent = 'Updated '+ALL_SNAPSHOTS[0].date;
