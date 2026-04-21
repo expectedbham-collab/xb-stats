@@ -822,6 +822,7 @@ function buildDataFromSnapshot(snap, htData) {
         };
         const shortName = HT_NAME[name];
         const entry = fha.find(x => x.name === shortName);
+        if (!entry && fha.length > 0) console.log('H1Away no match:', name, '->', shortName);
         return entry ? entry.rank : 12;
       })(),
       spXga:   parseFloat(((spXgA - spXgD)/gp).toFixed(2)),
