@@ -913,14 +913,17 @@ const METRIC_COLS = [
   { key:'cross90',  higherBetter:false },
 ];
 
-// Pre-compute min/max for each metric
+// METRIC_RANGES computed dynamically inside renderTable from live DATA
 const METRIC_RANGES = {};
-METRIC_COLS.forEach(({ key }) => {
-  const vals = DATA.map(d => d[key]);
-  METRIC_RANGES[key] = { min: Math.min(...vals), max: Math.max(...vals) };
-});
+let MAX_FINGAP = 12;
 
-const MAX_FINGAP = Math.max(...DATA.map(d => Math.abs(d.finGap)));
+function recomputeRanges(data) {
+  METRIC_COLS.forEach(({ key }) => {
+    const vals = data.map(d => d[key]);
+    METRIC_RANGES[key] = { min: Math.min(...vals), max: Math.max(...vals) };
+  });
+  MAX_FINGAP = Math.max(...data.map(d => Math.abs(d.finGap))) || 12;
+}
 
 // ── COLOUR INTERPOLATION ──────────────────────────────────────────────────────
 // olive green → neutral → muted red
@@ -979,6 +982,7 @@ let highlightClub = '';
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
 function renderTable(data) {
+  recomputeRanges(data);
   const tbody = document.getElementById('tableBody');
   tbody.innerHTML = '';
 
