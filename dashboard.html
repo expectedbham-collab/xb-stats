@@ -805,8 +805,22 @@ function buildDataFromSnapshot(snap) {
       h1Away:  (()=>{
         if (!HALFTIME_DATA) return 12;
         const fha = HALFTIME_DATA.first_half_away || [];
-        // Match by partial name (halftime uses short names like 'Coventry City')
-        const entry = fha.find(x => name.includes(x.name) || x.name.includes(name.split(' ')[0]));
+        const HT_NAME = {
+          'Coventry City FC':'Coventry City','Derby County FC':'Derby County',
+          'Norwich City FC':'Norwich City','Hull City AFC':'Hull City',
+          'Sheffield United FC':'Sheffield United','Blackburn Rovers FC':'Blackburn Rovers',
+          'Southampton FC':'Southampton','Middlesbrough FC':'Middlesbrough',
+          'Bristol City FC':'Bristol City','Wrexham FC':'Wrexham',
+          'Preston North End FC':'Preston','Stoke City FC':'Stoke City',
+          'Oxford United FC':'Oxford United','Millwall FC':'Millwall',
+          'Charlton Athletic FC':'Charlton Athletic','West Bromwich Albion FC':'West Brom',
+          'Leicester City FC':'Leicester City','Swansea City AFC':'Swansea City',
+          'Ipswich Town FC':'Ipswich Town','Watford FC':'Watford',
+          'Queens Park Rangers FC':'QPR','Portsmouth FC':'Portsmouth',
+          'Sheffield Wednesday FC':'Sheffield Wednesday','Birmingham City FC':'Birmingham City',
+        };
+        const shortName = HT_NAME[name];
+        const entry = fha.find(x => x.name === shortName);
         return entry ? entry.rank : 12;
       })(),
       spXga:   parseFloat(((spXgA - spXgD)/gp).toFixed(2)),
@@ -1001,7 +1015,26 @@ function renderTable(data) {
     // Rank
     // Joint rank: count teams with strictly higher rounded xbIndex
     const trueRank = data.filter(x => Math.round(x.xbIndex*10) > Math.round(d.xbIndex*10)).length + 1;
-    tr.innerHTML += `<td class="col-rank">${trueRank}</td>`;
+
+    // Position change arrow -- only show on default xBI descending sort
+    let arrowHtml = '<span style="display:inline-block;width:20px"></span>';
+    if (sortCol === 'xbIndex' && sortDir === 'desc' && ALL_SNAPSHOTS.length > 1) {
+      const prevSnap = ALL_SNAPSHOTS[1];
+      const prevData = buildDataFromSnapshot(prevSnap);
+      const prevTeam = prevData.find(x => x.club === d.club);
+      if (prevTeam) {
+        const prevRank = prevData.filter(x => Math.round(x.xbIndex*10) > Math.round(prevTeam.xbIndex*10)).length + 1;
+        const diff = prevRank - trueRank;
+        if (diff > 0) {
+          arrowHtml = `<span style="color:var(--green);font-size:9px;display:inline-block;width:20px">▲${diff}</span>`;
+        } else if (diff < 0) {
+          arrowHtml = `<span style="color:var(--red);font-size:9px;display:inline-block;width:20px">▼${Math.abs(diff)}</span>`;
+        } else {
+          arrowHtml = '<span style="color:var(--neutral);font-size:9px;display:inline-block;width:20px">–</span>';
+        }
+      }
+    }
+    tr.innerHTML += `<td class="col-rank"><span style="display:inline-block;min-width:16px;text-align:right">${trueRank}</span>${arrowHtml}</td>`;
 
     // Club
     tr.innerHTML += `<td class="col-club">
