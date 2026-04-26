@@ -790,6 +790,62 @@ colgroup col { }
   </div>
 </div>
 
+
+<!-- ── METRIC TREND CHART ── -->
+<div style="max-width:1440px;margin:32px auto 0;padding:0 32px 40px">
+  <div style="border-top:2px solid var(--navy);padding-top:24px">
+
+    <!-- Section header -->
+    <div style="display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:6px">Metric Trend</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--navy)">How is a metric changing over time?</div>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+        <div>
+          <label style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-secondary);display:block;margin-bottom:4px">Club</label>
+          <select id="trendClub" style="font-family:'IBM Plex Mono',monospace;font-size:12px;padding:6px 10px;border:1px solid var(--border);background:white;color:var(--text-primary);cursor:pointer;min-width:180px"></select>
+        </div>
+        <div>
+          <label style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-secondary);display:block;margin-bottom:4px">Metric</label>
+          <select id="trendMetric" style="font-family:'IBM Plex Mono',monospace;font-size:12px;padding:6px 10px;border:1px solid var(--border);background:white;color:var(--text-primary);cursor:pointer;min-width:200px">
+            <option value="xbIndex">xB Index (overall)</option>
+            <optgroup label="Tier 1 — Shot Quality &amp; Volume">
+              <option value="sotAtk">SOT ATK — Shots on target per game</option>
+              <option value="sotDef">SOT DEF — Shots conceded per game</option>
+              <option value="xgSh">XG/SH — xG per shot differential</option>
+              <option value="shotAcc">SHOT ACC% — Shot accuracy</option>
+            </optgroup>
+            <optgroup label="Tier 2 — Attack Variety">
+              <option value="fb90">FB/90 — Fast breaks per game</option>
+              <option value="da90">DA/90 — Direct attacks per game</option>
+              <option value="bu90">BU/90 — Build-up sequences per game</option>
+              <option value="h1Away">H1 AWY — First-half away rank</option>
+            </optgroup>
+            <optgroup label="Tier 3 — Context">
+              <option value="spXga">SP XGA — Set piece differential</option>
+              <option value="ppda">PPDA — Pressing intensity</option>
+              <option value="tball90">TBALL/90 — Through balls per game</option>
+              <option value="cross90">CROSS/90 — Crosses per game</option>
+            </optgroup>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart canvas -->
+    <div style="position:relative;background:white;border:1px solid var(--border);padding:20px 20px 12px">
+      <canvas id="trendCanvas" height="200" style="width:100%;display:block"></canvas>
+      <div id="trendEmpty" style="display:none;text-align:center;padding:40px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-secondary)">
+        Not enough snapshots yet. The chart will populate as weekly data builds up.
+      </div>
+    </div>
+
+    <!-- Chart legend / latest value -->
+    <div id="trendLegend" style="margin-top:12px;display:flex;gap:24px;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-secondary)"></div>
+  </div>
+</div>
+
 <footer class="site-footer">
   <span class="footer-note">Data: Opta Analyst · xB internal model · 2025–26 · Updates Mon &amp; Fri</span>
   <span class="footer-brand">Expected Birmingham</span>
@@ -1279,6 +1335,7 @@ async function loadData() {
     console.warn('history.json not found, using static data', e);
   }
   populateClubSelect();
+  initTrendChart();
   updateBhamCard();
   updateSortHeaders();
   renderTable(getSortedData());
@@ -1293,6 +1350,185 @@ function updateBhamCard() {
   if (xbiEl) xbiEl.textContent = bham.xbIndex.toFixed(1);
   if (rkEl)  rkEl.textContent  = 'Rank '+bham.rank+'/24';
 }
+
+
+// ── TREND CHART ────────────────────────────────────────────────────────────────
+
+const METRIC_LABELS = {
+  xbIndex: 'xB Index', sotAtk: 'SOT ATK', sotDef: 'SOT DEF', xgSh: 'XG/SH',
+  shotAcc: 'Shot Acc%', fb90: 'FB/90', da90: 'DA/90', bu90: 'BU/90',
+  h1Away: 'H1 Away Rank', spXga: 'SP XGA', ppda: 'PPDA',
+  tball90: 'TBall/90', cross90: 'Cross/90'
+};
+
+// Lower is better for these metrics
+const TREND_LOWER_BETTER = new Set(['sotDef','h1Away','ppda','cross90']);
+
+function renderTrendChart() {
+  const clubSel   = document.getElementById('trendClub');
+  const metricSel = document.getElementById('trendMetric');
+  const canvas    = document.getElementById('trendCanvas');
+  const emptyMsg  = document.getElementById('trendEmpty');
+  const legend    = document.getElementById('trendLegend');
+  if (!clubSel || !canvas) return;
+
+  const club   = clubSel.value;
+  const metric = metricSel.value;
+  if (!club || !metric || ALL_SNAPSHOTS.length < 2) {
+    canvas.style.display = 'none';
+    emptyMsg.style.display = 'block';
+    return;
+  }
+
+  // Build time series: one point per snapshot (oldest first)
+  const points = [];
+  const snapshots = [...ALL_SNAPSHOTS].reverse(); // oldest first
+  snapshots.forEach(snap => {
+    const d = buildDataFromSnapshot(snap, HALFTIME_DATA);
+    const team = d.find(r => r.club === club);
+    if (team && team[metric] != null) {
+      points.push({ date: snap.date || '', value: team[metric] });
+    }
+  });
+
+  if (points.length < 2) {
+    canvas.style.display = 'none';
+    emptyMsg.style.display = 'block';
+    return;
+  }
+
+  canvas.style.display = 'block';
+  emptyMsg.style.display = 'none';
+
+  // Draw chart
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.offsetWidth;
+  const H = 200;
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, W, H);
+
+  const PAD = { top: 20, right: 20, bottom: 36, left: 52 };
+  const cW = W - PAD.left - PAD.right;
+  const cH = H - PAD.top  - PAD.bottom;
+
+  const vals  = points.map(p => p.value);
+  const minV  = Math.min(...vals);
+  const maxV  = Math.max(...vals);
+  const range = maxV - minV || 1;
+  const pad   = range * 0.2;
+
+  const yMin = minV - pad;
+  const yMax = maxV + pad;
+
+  const xOf = i  => PAD.left + (i / (points.length - 1)) * cW;
+  const yOf = v  => PAD.top  + (1 - (v - yMin) / (yMax - yMin)) * cH;
+
+  // Grid lines
+  ctx.strokeStyle = '#e8e2d8';
+  ctx.lineWidth   = 1;
+  for (let g = 0; g <= 4; g++) {
+    const y = PAD.top + (g / 4) * cH;
+    ctx.beginPath(); ctx.moveTo(PAD.left, y); ctx.lineTo(PAD.left + cW, y); ctx.stroke();
+    const val = yMax - (g / 4) * (yMax - yMin);
+    ctx.fillStyle = '#8a8070';
+    ctx.font = '10px IBM Plex Mono, monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(metric === 'h1Away' ? Math.round(val) : val.toFixed(metric === 'xgSh' ? 3 : 2), PAD.left - 6, y + 3);
+  }
+
+  // Shade area under line
+  const lowerBetter = TREND_LOWER_BETTER.has(metric);
+  const lineCol = '#1a3a6b';
+  const fillCol = 'rgba(26,58,107,0.07)';
+
+  ctx.beginPath();
+  ctx.moveTo(xOf(0), yOf(points[0].value));
+  points.forEach((p, i) => ctx.lineTo(xOf(i), yOf(p.value)));
+  ctx.lineTo(xOf(points.length - 1), PAD.top + cH);
+  ctx.lineTo(xOf(0), PAD.top + cH);
+  ctx.closePath();
+  ctx.fillStyle = fillCol;
+  ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  ctx.strokeStyle = lineCol;
+  ctx.lineWidth   = 2;
+  ctx.lineJoin    = 'round';
+  ctx.moveTo(xOf(0), yOf(points[0].value));
+  points.forEach((p, i) => ctx.lineTo(xOf(i), yOf(p.value)));
+  ctx.stroke();
+
+  // Dots + date labels
+  points.forEach((p, i) => {
+    const x = xOf(i);
+    const y = yOf(p.value);
+
+    // Colour dot by improvement
+    let dotCol = '#1a3a6b';
+    if (i > 0) {
+      const prev = points[i-1].value;
+      const improved = lowerBetter ? p.value < prev : p.value > prev;
+      dotCol = improved ? '#6b7c45' : '#8b4040';
+    }
+
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = 'white';
+    ctx.fill();
+    ctx.strokeStyle = dotCol;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Date label
+    if (p.date) {
+      const label = p.date.slice(5); // MM-DD
+      ctx.fillStyle = '#8a8070';
+      ctx.font = '9px IBM Plex Mono, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(label, x, H - PAD.bottom + 14);
+    }
+  });
+
+  // Trend summary in legend
+  const first = points[0].value;
+  const last  = points[points.length - 1].value;
+  const diff  = last - first;
+  const improved = lowerBetter ? diff < 0 : diff > 0;
+  const dirStr  = improved ? '▲ Improving' : diff === 0 ? '— Stable' : '▼ Declining';
+  const dirCol  = improved ? '#6b7c45' : diff === 0 ? '#8a8070' : '#8b4040';
+  const metricLabel = METRIC_LABELS[metric] || metric;
+
+  legend.innerHTML = `
+    <span style="color:var(--navy);font-weight:500">${club.replace(/ (FC|AFC)$/, '')}</span>
+    <span style="color:var(--text-secondary)">${metricLabel}</span>
+    <span style="color:${dirCol};font-weight:500">${dirStr}</span>
+    <span style="color:var(--text-secondary)">First: <strong style="color:var(--text-primary)">${first.toFixed(metric==='xgSh'?3:2)}</strong></span>
+    <span style="color:var(--text-secondary)">Latest: <strong style="color:var(--text-primary)">${last.toFixed(metric==='xgSh'?3:2)}</strong></span>
+    <span style="color:var(--text-secondary)">${points.length} snapshots</span>
+  `;
+}
+
+function initTrendChart() {
+  const clubSel = document.getElementById('trendClub');
+  if (!clubSel) return;
+
+  // Populate club dropdown
+  const clubs = [...new Set(ALL_SNAPSHOTS.flatMap(s => Object.keys(s.teams || {})))].sort();
+  clubSel.innerHTML = clubs.map(c =>
+    `<option value="${c}" ${c==='Birmingham City FC'?'selected':''}>${c.replace(/ (FC|AFC)$/,'')}</option>`
+  ).join('');
+
+  clubSel.addEventListener('change', renderTrendChart);
+  document.getElementById('trendMetric').addEventListener('change', renderTrendChart);
+  window.addEventListener('resize', renderTrendChart);
+  renderTrendChart();
+}
+
 
 loadData();
 </script>
