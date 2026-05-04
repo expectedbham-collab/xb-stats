@@ -47,4 +47,5 @@ jobs:
           git add data/history.json data/halftime.json
           git diff --cached --quiet && exit 0
           git commit -m "chore: stats snapshot $(date -u +%Y-%m-%d)"
+          git pull --rebase origin main || true
           git push origin HEAD:${{ github.ref_name }}
