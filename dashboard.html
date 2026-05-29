@@ -1312,7 +1312,9 @@ async function loadData() {
       ALL_SNAPSHOTS.forEach((snap, i) => {
         const opt = document.createElement('option');
         opt.value = i;
-        opt.textContent = snap.date || ('Snapshot '+(ALL_SNAPSHOTS.length-i));
+        const snapLabel = snap.label || snap.date || ('Snapshot '+(ALL_SNAPSHOTS.length-i));
+        const snapDate  = snap.label && snap.date ? ' · ' + snap.date.slice(5).replace('-','/') : '';
+        opt.textContent = snapLabel + snapDate;
         if (i===0) opt.selected = true;
         snapSel.appendChild(opt);
       });
@@ -1321,7 +1323,10 @@ async function loadData() {
         DATA = buildDataFromSnapshot(ALL_SNAPSHOTS[CURRENT_SNAPSHOT_IDX], HALFTIME_DATA);
         // update header timestamp
         const ts = document.getElementById('headerTimestamp');
-        if (ts) ts.textContent = 'Updated '+ALL_SNAPSHOTS[CURRENT_SNAPSHOT_IDX].date;
+        if (ts) {
+          const snap = ALL_SNAPSHOTS[CURRENT_SNAPSHOT_IDX];
+          ts.textContent = (snap.label ? snap.label + (snap.date ? ' · '+snap.date : '') : 'Updated '+(snap.date||''));
+        }
         updateBhamCard();
         renderTable(getSortedData());
       });
@@ -1330,7 +1335,10 @@ async function loadData() {
     DATA = buildDataFromSnapshot(ALL_SNAPSHOTS[0], HALFTIME_DATA);
     // update timestamp
     const ts = document.getElementById('headerTimestamp');
-    if (ts && ALL_SNAPSHOTS[0].date) ts.textContent = 'Updated '+ALL_SNAPSHOTS[0].date;
+    if (ts) {
+          const s0 = ALL_SNAPSHOTS[0];
+          ts.textContent = (s0.label ? s0.label + (s0.date ? ' · '+s0.date : '') : 'Updated '+(s0.date||''));
+        }
   } catch(e) {
     console.warn('history.json not found, using static data', e);
   }
@@ -1387,7 +1395,7 @@ function renderTrendChart() {
     const d = buildDataFromSnapshot(snap, HALFTIME_DATA);
     const team = d.find(r => r.club === club);
     if (team && team[metric] != null) {
-      points.push({ date: snap.date || '', value: team[metric] });
+      points.push({ date: snap.date||'', label: snap.label||'', value: team[metric] });
     }
   });
 
@@ -1485,12 +1493,12 @@ function renderTrendChart() {
     ctx.stroke();
 
     // Date label
-    if (p.date) {
-      const label = p.date.slice(5); // MM-DD
+    const tickLbl = p.label || (p.date ? p.date.slice(5) : '');
+    if (tickLbl) {
       ctx.fillStyle = '#8a8070';
       ctx.font = '9px IBM Plex Mono, monospace';
       ctx.textAlign = 'center';
-      ctx.fillText(label, x, H - PAD.bottom + 14);
+      ctx.fillText(tickLbl, x, H - PAD.bottom + 14);
     }
   });
 
