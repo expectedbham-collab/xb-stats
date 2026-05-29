@@ -35,8 +35,7 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
     "Accept": "application/json",
     "Referer": "https://theanalyst.com/competition/english-championship/stats",
-    "x-sdapi-token": "LRkJ2MjwlC8RxUfVkne4",
-    "Cookie": "_ga=GA1.1.1893701905.1771255214; STYXKEY_sdapi_session=1780053552.1acb6e0a1ebfa8b10869a968cd1325167f22d10b23d29a0835d182d2dc8ea5d3; STYXKEY_sdapi_session_present=1; _ga_BGFPTYQE1X=GS2.1.s1780051752$o108$g1$t1780051792$j20$l0$h0",
+    "Cookie": "_ga=GA1.1.1893701905.1771255214; STYXKEY_sdapi_session=1780053552.1acb6e0a1ebfa8b10869a968cd1325167f22d10b23d29a0835d182d2dc8ea5d3; STYXKEY_sdapi_session_present=1; _ga_BGFPTYQE1X=GS2.1.s1780051752$o108$g1$t1780052173$j60$l0$h0",
 }
 
 # ─────────────────────────────────────────────────────────────
