@@ -311,6 +311,7 @@ def run(dry_run=False, force=False):
         **payload,
     }
 
+    label = infer_label(history, teams)
     existing = next((i for i, s in enumerate(history) if s.get("label") == label), None)
     if existing is not None:
         history[existing] = snapshot
