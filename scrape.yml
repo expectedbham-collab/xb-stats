@@ -31,6 +31,9 @@ jobs:
         run: playwright install chromium --with-deps
 
       - name: Run Opta stats scraper
+        env:
+          SDAPI_TOKEN: ${{ secrets.SDAPI_TOKEN }}
+          SDAPI_COOKIE: ${{ secrets.SDAPI_COOKIE }}
         run: |
           if [ "${{ github.event.inputs.force }}" = "true" ]; then
             python scraper.py --force
