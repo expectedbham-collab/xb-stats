@@ -13,10 +13,12 @@ STANDINGS_URL = "https://theanalyst.com/wp-json/sdapi/v1/soccerdata/standings?tm
 XPTS_URL      = "https://dataviz.theanalyst.com/project-data/soccer/bmmk637l2a33h90zlu36kx8no/expected-points.json"
 HISTORY_PATH  = os.path.join(os.path.dirname(__file__), "data", "history.json")
 
-BASE_HEADERS = {
+HEADERS = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
     "Accept": "application/json",
     "Referer": "https://theanalyst.com/competition/english-championship/stats",
+    "x-sdapi-token": "LRkJ2MjwlC8RxUfVkne4",
+    "Cookie": "_ga=GA1.1.1893701905.1771255214; STYXKEY_sdapi_session=1780135559.13924930e8728b4c47f9432c4b1e7e208d12171ae24250c69ccfb8d6c7490cdc; STYXKEY_sdapi_session_present=1; _ga_BGFPTYQE1X=GS2.1.s1780133759$o109$g1$t1780133777$j42$l0$h0",
 }
 
 def sf(v, fb=0.0):
@@ -262,11 +264,7 @@ def meets_threshold(teams, min_teams=20):
 
 def run(dry_run=False, force=False):
     session = requests.Session()
-    session.headers.update({
-        **BASE_HEADERS,
-        "x-sdapi-token": os.environ["SDAPI_TOKEN"],
-        "Cookie": os.environ["SDAPI_COOKIE"],
-    })
+    session.headers.update(HEADERS)
 
     print("1/3 Fetching stats...")
     r1 = session.get(STATS_URL, timeout=30); r1.raise_for_status()
