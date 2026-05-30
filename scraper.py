@@ -2,6 +2,7 @@
 """
 xB Championship Stats Scraper
 Uses team-level data for most metrics -- verified 2026-04-11.
+Auto-fetches session cookie via Playwright on each run.
 """
 
 import hashlib, json, os, sys
@@ -13,13 +14,65 @@ STANDINGS_URL = "https://theanalyst.com/wp-json/sdapi/v1/soccerdata/standings?tm
 XPTS_URL      = "https://dataviz.theanalyst.com/project-data/soccer/bmmk637l2a33h90zlu36kx8no/expected-points.json"
 HISTORY_PATH  = os.path.join(os.path.dirname(__file__), "data", "history.json")
 
-HEADERS = {
+BASE_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
     "Accept": "application/json",
     "Referer": "https://theanalyst.com/competition/english-championship/stats",
-    "x-sdapi-token": "LRkJ2MjwlC8RxUfVkne4",
-    "Cookie": "_ga=GA1.1.1893701905.1771255214; STYXKEY_sdapi_session=1780135559.13924930e8728b4c47f9432c4b1e7e208d12171ae24250c69ccfb8d6c7490cdc; STYXKEY_sdapi_session_present=1; _ga_BGFPTYQE1X=GS2.1.s1780133759$o109$g1$t1780133777$j42$l0$h0",
 }
+
+
+def fetch_session_credentials():
+    """Use Playwright to visit theanalyst.com and capture a fresh session cookie
+    and x-sdapi-token from the actual network requests the page makes."""
+    from playwright.sync_api import sync_playwright
+
+    cookie_str = None
+    token = None
+
+    print("  Launching browser to fetch fresh session...")
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        context = browser.new_context(
+            user_agent=BASE_HEADERS["User-Agent"]
+        )
+        page = context.new_page()
+
+        def handle_request(request):
+            nonlocal token
+            if "sdapi" in request.url and token is None:
+                hdrs = request.headers
+                if "x-sdapi-token" in hdrs:
+                    token = hdrs["x-sdapi-token"]
+
+        page.on("request", handle_request)
+
+        page.goto(
+            "https://theanalyst.com/competition/english-championship/stats",
+            wait_until="networkidle",
+            timeout=60000,
+        )
+        # Give JS a moment to fire the API calls
+        page.wait_for_timeout(3000)
+
+        cookies = context.cookies()
+        browser.close()
+
+    if cookies:
+        cookie_str = "; ".join(f"{c['name']}={c['value']}" for c in cookies)
+
+    if not cookie_str:
+        raise RuntimeError("Failed to capture session cookie from theanalyst.com")
+
+    print(f"  Cookie captured ({len(cookie_str)} chars)")
+    if token:
+        print(f"  Token captured: {token[:10]}...")
+    else:
+        # Fall back to known token if page didn't expose it
+        token = "LRkJ2MjwlC8RxUfVkne4"
+        print(f"  Token not found in requests, using fallback")
+
+    return cookie_str, token
+
 
 def sf(v, fb=0.0):
     try: return float(v) if v is not None else fb
@@ -33,7 +86,6 @@ def tname(r):
     return r.get("contestantName") or r.get("contestantShortName", "Unknown")
 
 def get_section(raw, *path):
-    """Safely get raw['team'][path[0]][path[1]] etc."""
     try:
         d = raw["team"]
         for p in path:
@@ -50,7 +102,6 @@ def build_team_stats(raw):
             teams[name] = {}
         teams[name].update(d)
 
-    # ── attack.overall ──────────────────────────────────────────
     for r in get_section(raw, "attack", "overall"):
         n = tname(r)
         merge(n, {
@@ -64,7 +115,6 @@ def build_team_stats(raw):
             "atk_shots_in_box_perc": round(sf(r.get("shots_in_box_perc")), 1),
         })
 
-    # ── attack.non_pen ──────────────────────────────────────────
     for r in get_section(raw, "attack", "non_pen"):
         n = tname(r)
         merge(n, {
@@ -75,7 +125,6 @@ def build_team_stats(raw):
             "np_xg_per_shot":   round(sf(r.get("xg_per_shot")), 3),
         })
 
-    # ── attack.set_piece ────────────────────────────────────────
     for r in get_section(raw, "attack", "set_piece"):
         n = tname(r)
         merge(n, {
@@ -84,7 +133,6 @@ def build_team_stats(raw):
             "sp_atk_xg":        round(sf(r.get("team_sp_xG")), 2),
         })
 
-    # ── attack.misc (FAST BREAKS here) ──────────────────────────
     for r in get_section(raw, "attack", "misc"):
         n = tname(r)
         merge(n, {
@@ -97,7 +145,6 @@ def build_team_stats(raw):
             "atk_fast_break_goals": si(r.get("fast_break_goals")),
         })
 
-    # ── defending.overall ───────────────────────────────────────
     for r in get_section(raw, "defending", "overall"):
         n = tname(r)
         merge(n, {
@@ -109,7 +156,6 @@ def build_team_stats(raw):
             "def_shot_conv_against":round(sf(r.get("shot_conv_against")), 1),
         })
 
-    # ── defending.set_piece ─────────────────────────────────────
     for r in get_section(raw, "defending", "set_piece"):
         n = tname(r)
         merge(n, {
@@ -117,7 +163,6 @@ def build_team_stats(raw):
             "sp_def_xga":       round(sf(r.get("team_sp_xG_against")), 2),
         })
 
-    # ── defending.misc (FAST BREAKS AGAINST) ────────────────────
     for r in get_section(raw, "defending", "misc"):
         n = tname(r)
         merge(n, {
@@ -126,7 +171,6 @@ def build_team_stats(raw):
             "def_opp_touches_box":          si(r.get("opp_tch_in_box")),
         })
 
-    # ── possession.overall (CROSSES, PASSES, RECOVERIES) ────────
     for r in get_section(raw, "possession", "overall"):
         n = tname(r)
         merge(n, {
@@ -149,7 +193,6 @@ def build_team_stats(raw):
             "clearances":           si(r.get("clearances")),
         })
 
-    # ── sequences.overall (PPDA, PRESSING, DIRECT ATTACKS) ──────
     for r in get_section(raw, "sequences", "overall"):
         n = tname(r)
         merge(n, {
@@ -168,7 +211,6 @@ def build_team_stats(raw):
             "seq_passes_per_seq":       round(sf(r.get("passes_for")), 2),
         })
 
-    # ── misc.overall (FOULS, CARDS, ERRORS) ─────────────────────
     for r in get_section(raw, "misc", "overall"):
         n = tname(r)
         merge(n, {
@@ -252,8 +294,6 @@ def infer_label(history, teams):
 
 
 def meets_threshold(teams, min_teams=20):
-    """Only save snapshot when at least min_teams share the same games-played count.
-    Prevents saving mid-round when only some teams have played."""
     from collections import Counter
     played_counts = [t.get("atk_played", 0) for t in teams.values() if t.get("atk_played")]
     if not played_counts:
@@ -263,8 +303,15 @@ def meets_threshold(teams, min_teams=20):
 
 
 def run(dry_run=False, force=False):
+    print("Fetching fresh session credentials...")
+    cookie_str, token = fetch_session_credentials()
+
     session = requests.Session()
-    session.headers.update(HEADERS)
+    session.headers.update({
+        **BASE_HEADERS,
+        "x-sdapi-token": token,
+        "Cookie": cookie_str,
+    })
 
     print("1/3 Fetching stats...")
     r1 = session.get(STATS_URL, timeout=30); r1.raise_for_status()
@@ -320,7 +367,6 @@ def run(dry_run=False, force=False):
         history.append(snapshot)
         print(f"New snapshot: {label} ({today})")
 
-    # Birmingham summary
     for name, stats in teams.items():
         if "birmingham" in name.lower():
             bx = next((x for x in xpts if "birmingham" in (x.get("name","")).lower()), {})
