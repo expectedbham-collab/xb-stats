@@ -51,13 +51,23 @@ def fetch_data_via_browser():
         page = context.new_page()
         page.on("response", handle_response)
 
-        # Stats page triggers tournamentstats + standings naturally
-        page.goto(
-            "https://theanalyst.com/competition/english-championship/stats",
-            wait_until="networkidle",
-            timeout=60000,
-        )
-        page.wait_for_timeout(3000)
+        # Stats page triggers tournamentstats + standings naturally.
+        # Use domcontentloaded so we don't hang waiting for the page to fully
+        # settle -- the API calls fire before that anyway.
+        try:
+            page.goto(
+                "https://theanalyst.com/competition/english-championship/stats",
+                wait_until="domcontentloaded",
+                timeout=60000,
+            )
+        except Exception as e:
+            print(f"  Page load warning (continuing): {e}")
+
+        # Wait up to 20s for the API responses to arrive
+        for _ in range(20):
+            if all(v is not None for v in captured.values()):
+                break
+            page.wait_for_timeout(1000)
 
         # Fallbacks: fetch any missing endpoints via the browser context
         # (inherits cookies + auth the page already set up)
