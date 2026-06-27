@@ -81840,10 +81840,10 @@
     ]
   },
   {
-    "date": "2026-05-29",
-    "label": "GW46",
+    "date": "2026-06-27",
+    "label": "2026-06-27",
     "last_updated": "2026-05-26 07:58:49.067229",
-    "_hash": "714e490095913ef69651ee8c09d1230f",
+    "_hash": "5ac33309ef97e83a921ec6d8d6f07fea",
     "teams": {
       "Blackburn Rovers FC": {
         "atk_played": 46,
@@ -84007,7 +84007,7 @@
           "lastRank": 22,
           "rankStatus": "Relegation",
           "name": "Oxford United FC",
-          "shortName": "Oxford",
+          "shortName": "Oxford U",
           "code": "OXF",
           "points": 47,
           "deduction": 0,
@@ -84423,7 +84423,7 @@
           "lastRank": null,
           "rankStatus": "",
           "name": "Oxford United FC",
-          "shortName": "Oxford",
+          "shortName": "Oxford U",
           "code": "OXF",
           "points": 29,
           "deduction": 0,
@@ -84893,7 +84893,7 @@
           "lastRank": null,
           "rankStatus": "",
           "name": "Oxford United FC",
-          "shortName": "Oxford",
+          "shortName": "Oxford U",
           "code": "OXF",
           "points": 18,
           "deduction": 0,
