@@ -2,12 +2,11 @@
 """
 xB Championship Stats Scraper
 Uses team-level data for most metrics -- verified 2026-04-11.
-Auto-fetches session cookie via Playwright on each run.
+Fetches all data via Playwright browser context -- no token replay.
 """
 
 import hashlib, json, os, sys
 from datetime import date
-import requests
 
 STATS_URL     = "https://theanalyst.com/wp-json/sdapi/v1/soccerdata/tournamentstats?tmcl=bmmk637l2a33h90zlu36kx8no"
 STANDINGS_URL = "https://theanalyst.com/wp-json/sdapi/v1/soccerdata/standings?tmcl=bmmk637l2a33h90zlu36kx8no"
@@ -21,57 +20,78 @@ BASE_HEADERS = {
 }
 
 
-def fetch_session_credentials():
-    """Use Playwright to visit theanalyst.com and capture a fresh session cookie
-    and x-sdapi-token from the actual network requests the page makes."""
+def fetch_data_via_browser():
+    """Visit the stats page in a real browser and capture the JSON responses
+    for stats, standings, and expected-points as they fire naturally.
+    The browser handles all auth -- no token extraction needed.
+    Returns (stats_json, standings_json, xpts_json)."""
     from playwright.sync_api import sync_playwright
 
-    cookie_str = None
-    token = None
+    captured = {"stats": None, "standings": None, "xpts": None}
 
-    print("  Launching browser to fetch fresh session...")
+    def handle_response(response):
+        url = response.url
+        try:
+            if "tournamentstats" in url and captured["stats"] is None:
+                captured["stats"] = response.json()
+                print(f"  Captured stats ({len(response.body())} bytes)")
+            elif "standings" in url and "sdapi" in url and captured["standings"] is None:
+                captured["standings"] = response.json()
+                print(f"  Captured standings")
+            elif "expected-points" in url and captured["xpts"] is None:
+                captured["xpts"] = response.json()
+                print(f"  Captured xpts")
+        except Exception as e:
+            print(f"  Response parse warning for {url[:80]}: {e}")
+
+    print("  Launching browser...")
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        context = browser.new_context(
-            user_agent=BASE_HEADERS["User-Agent"]
-        )
+        context = browser.new_context(user_agent=BASE_HEADERS["User-Agent"])
         page = context.new_page()
+        page.on("response", handle_response)
 
-        def handle_request(request):
-            nonlocal token
-            if "sdapi" in request.url and token is None:
-                hdrs = request.headers
-                if "x-sdapi-token" in hdrs:
-                    token = hdrs["x-sdapi-token"]
-
-        page.on("request", handle_request)
-
+        # Stats page triggers tournamentstats + standings naturally
         page.goto(
             "https://theanalyst.com/competition/english-championship/stats",
             wait_until="networkidle",
             timeout=60000,
         )
-        # Give JS a moment to fire the API calls
         page.wait_for_timeout(3000)
 
-        cookies = context.cookies()
+        # Fallbacks: fetch any missing endpoints via the browser context
+        # (inherits cookies + auth the page already set up)
+        if captured["stats"] is None:
+            print("  Fetching stats via browser context (fallback)...")
+            resp = context.request.get(STATS_URL, timeout=30000)
+            if resp.ok:
+                captured["stats"] = resp.json()
+            else:
+                print(f"  Stats fallback failed: {resp.status}")
+
+        if captured["standings"] is None:
+            print("  Fetching standings via browser context (fallback)...")
+            resp = context.request.get(STANDINGS_URL, timeout=30000)
+            if resp.ok:
+                captured["standings"] = resp.json()
+            else:
+                print(f"  Standings fallback failed: {resp.status}")
+
+        if captured["xpts"] is None:
+            print("  Fetching xpts via browser context (fallback)...")
+            resp = context.request.get(XPTS_URL, timeout=30000)
+            if resp.ok:
+                captured["xpts"] = resp.json()
+            else:
+                print(f"  xpts fallback failed: {resp.status}")
+
         browser.close()
 
-    if cookies:
-        cookie_str = "; ".join(f"{c['name']}={c['value']}" for c in cookies)
+    missing = [k for k, v in captured.items() if v is None]
+    if missing:
+        raise RuntimeError(f"Failed to capture: {', '.join(missing)}")
 
-    if not cookie_str:
-        raise RuntimeError("Failed to capture session cookie from theanalyst.com")
-
-    print(f"  Cookie captured ({len(cookie_str)} chars)")
-    if token:
-        print(f"  Token captured: {token[:10]}...")
-    else:
-        # Fall back to known token if page didn't expose it
-        token = "LRkJ2MjwlC8RxUfVkne4"
-        print(f"  Token not found in requests, using fallback")
-
-    return cookie_str, token
+    return captured["stats"], captured["standings"], captured["xpts"]
 
 
 def sf(v, fb=0.0):
@@ -303,26 +323,12 @@ def meets_threshold(teams, min_teams=20):
 
 
 def run(dry_run=False, force=False):
-    print("Fetching fresh session credentials...")
-    cookie_str, token = fetch_session_credentials()
+    print("Fetching data via Playwright browser...")
+    stats_raw, standings_raw, xpts_raw = fetch_data_via_browser()
 
-    session = requests.Session()
-    session.headers.update({
-        **BASE_HEADERS,
-        "x-sdapi-token": token,
-        "Cookie": cookie_str,
-    })
-
-    print("1/3 Fetching stats...")
-    r1 = session.get(STATS_URL, timeout=30); r1.raise_for_status()
-    print("2/3 Fetching standings...")
-    r2 = session.get(STANDINGS_URL, timeout=30); r2.raise_for_status()
-    print("3/3 Fetching expected points...")
-    r3 = session.get(XPTS_URL, timeout=30); r3.raise_for_status()
-
-    teams     = build_team_stats(r1.json())
-    standings = parse_standings(r2.json())
-    xpts      = parse_xpts(r3.json())
+    teams     = build_team_stats(stats_raw)
+    standings = parse_standings(standings_raw)
+    xpts      = parse_xpts(xpts_raw)
 
     print(f"  Standings rows: {len(standings['total'])} | xPts rows: {len(xpts)}")
 
@@ -353,7 +359,7 @@ def run(dry_run=False, force=False):
     snapshot = {
         "date": today,
         "label": today,
-        "last_updated": r1.json().get("team", {}).get("lastUpdated", ""),
+        "last_updated": stats_raw.get("team", {}).get("lastUpdated", ""),
         "_hash": current_hash,
         **payload,
     }
