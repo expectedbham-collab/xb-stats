@@ -49,7 +49,8 @@ def scrape_halftime():
         page = browser.new_page()
 
         print(f"  Fetching: {TIMING_URL}")
-        page.goto(TIMING_URL, wait_until="networkidle", timeout=30000)
+        page.goto(TIMING_URL, wait_until="domcontentloaded", timeout=30000)
+        page.wait_for_selector("table", timeout=15000)
 
         # The page has tabs -- click through each one and extract the table
         # Tab structure: "First Half away" / "Second Half away" on timing.asp
@@ -69,7 +70,8 @@ def scrape_halftime():
         # ── halftime.asp: first/second half HOME tables ──
         try:
             halftime_url = "https://www.soccerstats.com/halftime.asp?league=england2"
-            page.goto(halftime_url, wait_until="networkidle", timeout=30000)
+            page.goto(halftime_url, wait_until="domcontentloaded", timeout=30000)
+        page.wait_for_selector("table", timeout=15000)
             page.wait_for_selector("table", timeout=10000)
             results["first_half_home"]  = extract_table(page, tab_text="First Half home")
             results["second_half_home"] = extract_table(page, tab_text="Second Half home")
