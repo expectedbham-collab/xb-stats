@@ -8,6 +8,13 @@ Scrapes soccerstats.com for Championship half-time tables:
   - First half home  (same)
   - Second half home (same)
 
+Approach:
+  - timing.asp serves BOTH first-half-away and second-half-away tables on one page.
+  - halftime.asp serves BOTH first-half-home and second-half-home tables on one page.
+  - Both tables on each page are rendered as plain HTML (no interactive tabs).
+  - We grab the rendered page text and parse out the four standings tables by
+    locating each section heading then walking forward to consume team rows.
+
 Saves to data/halftime.json alongside history.json.
 Runs after scraper.py in the GitHub Actions workflow.
 
@@ -29,145 +36,200 @@ from datetime import date
 
 HALFTIME_PATH = os.path.join(os.path.dirname(__file__), "data", "halftime.json")
 TIMING_URL    = "https://www.soccerstats.com/timing.asp?league=england2"
+HALFTIME_URL  = "https://www.soccerstats.com/halftime.asp?league=england2"
 
-# ─────────────────────────────────────────────────────────────
-# Playwright table extraction
-# ─────────────────────────────────────────────────────────────
+# Championship clubs we're looking for, using the short names soccerstats.com uses.
+CHAMPIONSHIP_TEAMS_SS = {
+    "Birmingham City", "Blackburn", "Bristol City", "Charlton", "Coventry City",
+    "Derby County", "Hull City", "Ipswich Town", "Leicester City", "Middlesbrough",
+    "Millwall", "Norwich City", "Oxford Utd", "Portsmouth", "Preston",
+    "QP Rangers", "Sheffield Utd", "Sheffield Wed", "Southampton", "Stoke City",
+    "Swansea City", "Watford", "West Brom", "Wrexham",
+}
+
+# Mapping from soccerstats.com short forms to the canonical names used elsewhere
+# in the project (these match the names in the dashboard's HT_NAME map).
+NAME_MAP = {
+    "QP Rangers":    "QPR",
+    "Sheffield Utd": "Sheffield United",
+    "Sheffield Wed": "Sheffield Wednesday",
+    "Oxford Utd":    "Oxford United",
+    "Blackburn":     "Blackburn Rovers",
+    "Charlton":      "Charlton Athletic",
+}
+
+SECTION_HEADINGS = {
+    "first_half_away":  "First Half away",
+    "second_half_away": "Second Half away",
+    "first_half_home":  "First Half at home",
+    "second_half_home": "Second Half at home",
+}
+
+
+def canonicalise_name(soccerstats_name):
+    return NAME_MAP.get(soccerstats_name, soccerstats_name)
+
+
+def fetch_page_text(url):
+    """Load the URL via Playwright and return the full rendered body text."""
+    from playwright.sync_api import sync_playwright
+
+    print(f"  Fetching: {url}")
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
+        page.goto(url, wait_until="domcontentloaded", timeout=30000)
+        page.wait_for_selector("table", timeout=15000)
+        page.wait_for_timeout(1500)  # let any late JS settle
+        body_text = page.locator("body").inner_text()
+        browser.close()
+    return body_text
+
+
+def parse_section(body_text, heading, next_headings):
+    """
+    Find `heading` in body_text, then walk forward consuming team rows
+    until we either run out of teams or hit one of the next_headings.
+
+    A row in the rendered text looks like ten consecutive non-blank lines:
+        rank, club, GP, W, D, L, GF, GA, GD, Pts
+    """
+    lines = [ln.strip() for ln in body_text.splitlines()]
+    lines = [ln for ln in lines if ln != ""]
+
+    try:
+        start = next(i for i, ln in enumerate(lines) if ln == heading)
+    except StopIteration:
+        print(f"    Heading not found: '{heading}'")
+        return []
+
+    rows = []
+    i = start + 1
+    stop_set = set(next_headings)
+
+    while i < len(lines):
+        if lines[i] in stop_set:
+            break
+
+        if i + 9 >= len(lines):
+            i += 1
+            continue
+
+        rank_token = lines[i]
+        club_token = lines[i + 1]
+
+        if not rank_token.isdigit():
+            i += 1
+            continue
+        rank_val = int(rank_token)
+        if rank_val < 1 or rank_val > 30:
+            i += 1
+            continue
+
+        if club_token not in CHAMPIONSHIP_TEAMS_SS:
+            i += 1
+            continue
+
+        stat_tokens = lines[i + 2 : i + 10]
+        if len(stat_tokens) < 8:
+            i += 1
+            continue
+
+        try:
+            gp  = int(stat_tokens[0])
+            w   = int(stat_tokens[1])
+            d   = int(stat_tokens[2])
+            l   = int(stat_tokens[3])
+            gf  = int(stat_tokens[4])
+            ga  = int(stat_tokens[5])
+            gd  = stat_tokens[6]  # may have +/-/0
+            pts = int(stat_tokens[7])
+        except ValueError:
+            i += 1
+            continue
+
+        if gp < 1 or gp > 50:
+            i += 1
+            continue
+
+        rows.append({
+            "rank": rank_val,
+            "name": canonicalise_name(club_token),
+            "gp":   gp,
+            "w":    w,
+            "d":    d,
+            "l":    l,
+            "gf":   gf,
+            "ga":   ga,
+            "gd":   gd,
+            "pts":  pts,
+        })
+
+        i += 10
+
+    return rows
+
 
 def scrape_halftime():
     """
     Returns dict with keys: first_half_away, second_half_away,
                             first_half_home, second_half_home
-    Each is a list of team dicts.
     """
-    from playwright.sync_api import sync_playwright
+    results = {
+        "first_half_away":  [],
+        "second_half_away": [],
+        "first_half_home":  [],
+        "second_half_home": [],
+    }
 
-    results = {}
+    # AWAY page (timing.asp)
+    try:
+        away_text = fetch_page_text(TIMING_URL)
+        results["first_half_away"] = parse_section(
+            away_text,
+            SECTION_HEADINGS["first_half_away"],
+            next_headings=[SECTION_HEADINGS["second_half_away"]],
+        )
+        results["second_half_away"] = parse_section(
+            away_text,
+            SECTION_HEADINGS["second_half_away"],
+            next_headings=[],
+        )
+        print(f"    first_half_away: {len(results['first_half_away'])} rows")
+        print(f"    second_half_away: {len(results['second_half_away'])} rows")
+    except Exception as e:
+        print(f"  Warning: timing.asp scrape failed: {e}")
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
-
-        print(f"  Fetching: {TIMING_URL}")
-        page.goto(TIMING_URL, wait_until="domcontentloaded", timeout=30000)
-        page.wait_for_selector("table", timeout=15000)
-
-        # ── timing.asp: first/second half AWAY tables ──
-        try:
-            results["first_half_away"] = extract_table(page, tab_text="First Half away")
-            results["second_half_away"] = extract_table(page, tab_text="Second Half away")
-        except Exception as e:
-            print(f"  Warning: timing.asp extraction failed: {e}")
-            results["first_half_away"] = []
-            results["second_half_away"] = []
-
-        # ── halftime.asp: first/second half HOME tables ──
-        try:
-            halftime_url = "https://www.soccerstats.com/halftime.asp?league=england2"
-            page.goto(halftime_url, wait_until="domcontentloaded", timeout=30000)
-            page.wait_for_selector("table", timeout=15000)
-            results["first_half_home"]  = extract_table(page, tab_text="First Half home")
-            results["second_half_home"] = extract_table(page, tab_text="Second Half home")
-        except Exception as e:
-            print(f"  Warning: halftime.asp extraction failed: {e}")
-            results["first_half_home"]  = []
-            results["second_half_home"] = []
-
-        browser.close()
+    # HOME page (halftime.asp)
+    try:
+        home_text = fetch_page_text(HALFTIME_URL)
+        results["first_half_home"] = parse_section(
+            home_text,
+            SECTION_HEADINGS["first_half_home"],
+            next_headings=[SECTION_HEADINGS["second_half_home"]],
+        )
+        results["second_half_home"] = parse_section(
+            home_text,
+            SECTION_HEADINGS["second_half_home"],
+            next_headings=[],
+        )
+        print(f"    first_half_home: {len(results['first_half_home'])} rows")
+        print(f"    second_half_home: {len(results['second_half_home'])} rows")
+    except Exception as e:
+        print(f"  Warning: halftime.asp scrape failed: {e}")
 
     return results
 
-
-def extract_table(page, tab_text=None):
-    """
-    Click a tab (if specified), then extract the visible standings table.
-    Returns list of dicts: {rank, name, gp, w, d, l, gf, ga, gd, pts}
-    """
-    if tab_text:
-        try:
-            # Find and click the tab
-            tab = page.locator(f"text='{tab_text}'").first
-            tab.click()
-            page.wait_for_timeout(800)  # small wait for re-render
-        except Exception:
-            # Try partial match
-            try:
-                tabs = page.locator("a, td, th, button, span").all_text_contents()
-                matched = [t for t in tabs if tab_text.lower() in t.lower()]
-                if matched:
-                    page.locator(f"text='{matched[0]}'").first.click()
-                    page.wait_for_timeout(800)
-            except Exception as e:
-                print(f"    Tab click failed for '{tab_text}': {e}")
-
-    rows = []
-    try:
-        # Find all tables and pick the one that looks like a standings table
-        tables = page.locator("table").all()
-        standings_table = None
-        for table in tables:
-            text = table.inner_text()
-            # Standings tables have GP/W/D/L columns
-            if any(col in text for col in ["GP", " W ", " D ", " L ", "Pts"]):
-                if any(team in text for team in ["Birmingham", "Coventry", "Middlesbrough"]):
-                    standings_table = table
-                    break
-
-        if not standings_table:
-            print(f"    No standings table found for '{tab_text}'")
-            return []
-
-        # Extract rows
-        trs = standings_table.locator("tr").all()
-        for tr in trs:
-            cells = [c.strip() for c in tr.all_text_contents()]
-            # Filter: valid row has rank number, team name, numeric stats
-            # Typical: ['1', 'Coventry City', '21', '12', '7', '2', '23', '7', '+16', '43']
-            if len(cells) >= 9:
-                try:
-                    rank = int(cells[0])
-                    name = cells[1]
-                    # Try to parse GP
-                    gp = int(cells[2])
-                    rows.append({
-                        "rank": rank,
-                        "name": name,
-                        "gp":   gp,
-                        "w":    int(cells[3]),
-                        "d":    int(cells[4]),
-                        "l":    int(cells[5]),
-                        "gf":   int(cells[6]),
-                        "ga":   int(cells[7]),
-                        "gd":   cells[8],   # keep as string e.g. "+16"
-                        "pts":  int(cells[9]),
-                    })
-                except (ValueError, IndexError):
-                    continue  # skip header rows and non-data rows
-
-    except Exception as e:
-        print(f"    Table extraction error for '{tab_text}': {e}")
-
-    print(f"    Extracted {len(rows)} rows for '{tab_text}'")
-    return rows
-
-
-# ─────────────────────────────────────────────────────────────
-# Change detection
-# ─────────────────────────────────────────────────────────────
 
 def snap_hash(data):
     return hashlib.md5(json.dumps(data, sort_keys=True).encode()).hexdigest()
 
 
-# ─────────────────────────────────────────────────────────────
-# Main
-# ─────────────────────────────────────────────────────────────
-
 def run(dry_run=False, force=False):
     print("Scraping soccerstats.com halftime tables...")
     data = scrape_halftime()
 
-    # Summary
+    # Summary including Birmingham detail
     for key, rows in data.items():
         print(f"  {key}: {len(rows)} teams")
         bham = next((r for r in rows if "birmingham" in r["name"].lower()), None)
@@ -176,7 +238,11 @@ def run(dry_run=False, force=False):
                   f"W{bham['w']} D{bham['d']} L{bham['l']} "
                   f"GF{bham['gf']} GA{bham['ga']}")
 
-    # Load existing
+    # Safety: refuse to overwrite halftime.json if every section came back empty
+    if not any(data.values()):
+        print("  All sections empty — refusing to overwrite halftime.json with empty data.")
+        return False
+
     os.makedirs(os.path.dirname(HALFTIME_PATH), exist_ok=True)
     history = []
     if os.path.exists(HALFTIME_PATH):
@@ -197,7 +263,6 @@ def run(dry_run=False, force=False):
         **data,
     }
 
-    # Update today or append
     existing = next((i for i, s in enumerate(history) if s.get("date") == today), None)
     if existing is not None:
         history[existing] = snapshot
