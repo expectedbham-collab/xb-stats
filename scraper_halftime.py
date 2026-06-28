@@ -52,14 +52,8 @@ def scrape_halftime():
         page.goto(TIMING_URL, wait_until="domcontentloaded", timeout=30000)
         page.wait_for_selector("table", timeout=15000)
 
-        # The page has tabs -- click through each one and extract the table
-        # Tab structure: "First Half away" / "Second Half away" on timing.asp
-        # Half-time home/away tables are on halftime.asp
-
         # ── timing.asp: first/second half AWAY tables ──
         try:
-            # First half away tab should be default
-            page.wait_for_selector("table", timeout=10000)
             results["first_half_away"] = extract_table(page, tab_text="First Half away")
             results["second_half_away"] = extract_table(page, tab_text="Second Half away")
         except Exception as e:
@@ -71,8 +65,7 @@ def scrape_halftime():
         try:
             halftime_url = "https://www.soccerstats.com/halftime.asp?league=england2"
             page.goto(halftime_url, wait_until="domcontentloaded", timeout=30000)
-        page.wait_for_selector("table", timeout=15000)
-            page.wait_for_selector("table", timeout=10000)
+            page.wait_for_selector("table", timeout=15000)
             results["first_half_home"]  = extract_table(page, tab_text="First Half home")
             results["second_half_home"] = extract_table(page, tab_text="Second Half home")
         except Exception as e:
