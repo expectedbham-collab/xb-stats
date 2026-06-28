@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>xB Index — Championship Process Quality</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream: #f5f0e8; --navy: #1a3a6b; --amber: #c8902a; --amber-light: #d9a84a;
+  --green: #6b7c45; --neutral: #d4cfc7; --red: #8b4040; --border: #ddd8cf;
+  --text-primary: #1a1a1a; --text-secondary: #5a5550;
+  --row-alt: #f0ebe2; --row-hover: #ede7dc;
+}
+
+body { background: var(--cream); color: var(--text-primary); font-family: 'Barlow', sans-serif; font-size: 14px; }
+
+.site-header { background: var(--navy); color: var(--cream); padding: 28px 32px 24px; }
+.header-inner { max-width: 1440px; margin: 0 auto; }
+.header-kicker { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--amber); margin-bottom: 8px; }
+.header-title { font-family: 'DM Serif Display', serif; font-size: clamp(28px, 4vw, 44px); line-height: 1.1; color: var(--cream); }
+.header-title em { font-style: italic; color: var(--amber-light); }
+.header-desc { font-family: 'Barlow', sans-serif; font-size: 15px; color: rgba(245, 240, 232, 0.88); margin-top: 10px; max-width: 720px; line-height: 1.45; }
+.header-credibility { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: rgba(245, 240, 232, 0.55); letter-spacing: 0.04em; margin-top: 8px; max-width: 720px; line-height: 1.5; }
+.header-credibility strong { color: var(--amber-light); font-weight: 500; }
+.header-meta-row { display: flex; align-items: baseline; gap: 18px; margin-top: 14px; flex-wrap: wrap; }
+.header-timestamp { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(245, 240, 232, 0.45); letter-spacing: 0.06em; }
+.snapshot-hint { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--amber); letter-spacing: 0.08em; text-transform: uppercase; }
+.header-controls { display: flex; align-items: center; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+.methodology-btn { font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); background: transparent; border: 1px solid rgba(200, 144, 42, 0.4); padding: 5px 12px; cursor: pointer; }
+.club-select-wrap { display: flex; align-items: center; gap: 8px; }
+.club-select-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(245, 240, 232, 0.5); }
+.club-select { font-family: 'Barlow', sans-serif; font-size: 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: var(--cream); padding: 5px 26px 5px 10px; cursor: pointer; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c8902a'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; }
+.club-select option { background: var(--navy); color: var(--cream); }
+
+.headline-insight { max-width: 1440px; margin: 0 auto; padding: 24px 32px 8px; }
+.headline-insight-inner { background: #fff; border-left: 4px solid var(--amber); padding: 20px 24px; display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+.headline-insight-text { font-family: 'DM Serif Display', serif; font-size: 18px; line-height: 1.4; color: var(--text-primary); flex: 1; min-width: 320px; }
+.headline-insight-text strong { color: var(--navy); }
+.headline-insight-text em { font-style: italic; color: var(--amber); font-weight: 500; }
+.headline-insight-text .neg { color: var(--red); font-style: normal; font-weight: 600; }
+.headline-insight-scores { display: flex; gap: 22px; align-items: flex-start; }
+.score-block { display: flex; flex-direction: column; gap: 3px; min-width: 92px; }
+.score-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-secondary); }
+.score-value { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--navy); line-height: 1; }
+.score-value.amber { color: var(--amber); } .score-value.red { color: var(--red); }
+.score-detail { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-secondary); }
+.target-bar-wrap { margin-top: 4px; width: 92px; }
+.target-bar-track { height: 6px; background: #eee5d4; position: relative; border-radius: 1px; }
+.target-bar-fill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 1px; }
+.target-bar-fill.below { background: var(--red); } .target-bar-fill.at { background: var(--green); }
+.target-marker { position: absolute; top: -2px; width: 2px; height: 10px; background: var(--amber); }
+.target-marker::after { content: '0.12'; position: absolute; top: -11px; left: -8px; font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: var(--amber); letter-spacing: 0; }
+
+.methodology-panel { background: #162f58; border-top: 1px solid rgba(200, 144, 42, 0.3); overflow: hidden; max-height: 0; transition: max-height 0.3s ease; }
+.methodology-panel.open { max-height: 500px; }
+.methodology-inner { max-width: 1440px; margin: 0 auto; padding: 20px 32px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.methodology-inner p { font-family: 'Barlow', sans-serif; font-size: 12.5px; line-height: 1.7; color: rgba(245, 240, 232, 0.75); }
+.methodology-inner strong { color: var(--amber-light); font-weight: 600; }
+@media (max-width: 680px) { .methodology-inner { grid-template-columns: 1fr; } }
+
+.table-wrapper { max-width: 1440px; margin: 16px auto 0; overflow-x: auto; }
+table.main-table { width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 1640px; }
+col.c-rank { width: 50px; } col.c-club { width: 200px; } col.c-xbi { width: 90px; }
+col.c-raw { width: 100px; } col.c-gap { width: 130px; } col.c-metric { width: 90px; }
+
+thead tr.tier-row th {
+  padding: 8px 6px; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px;
+  letter-spacing: 0.12em; text-transform: uppercase; text-align: center;
+  color: var(--cream); border-right: 1px solid rgba(255,255,255,0.15);
+  border-bottom: 1px solid rgba(255,255,255,0.2); cursor: default;
+}
+thead tr.tier-row th.empty { background: var(--cream); border: none; }
+thead tr.tier-row th.headline { background: #0d2347; color: var(--amber-light); font-weight: 500; }
+thead tr.tier-row th.raw-display { background: #1f2f4f; color: rgba(245,240,232,0.85); }
+thead tr.tier-row th.t1 { background: #1a3a6b; }
+thead tr.tier-row th.t2 { background: #2a4a7b; }
+thead tr.tier-row th.t3 { background: #3a5a8b; }
+thead tr.tier-row th .weight { display: block; font-size: 8px; color: rgba(245,240,232,0.6); margin-top: 2px; letter-spacing: 0.08em; font-weight: 400; }
+
+thead tr.col-row th {
+  background: var(--navy); color: var(--cream); font-family: 'IBM Plex Mono', monospace;
+  padding: 8px 6px; text-align: right; cursor: pointer;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  vertical-align: top; user-select: none; transition: background 0.12s;
+}
+thead tr.col-row th:hover { background: #243f72; }
+thead tr.col-row th.th-rank { text-align: center; }
+thead tr.col-row th.th-club { text-align: left; }
+thead tr.col-row th.headline-col { background: #0d2347; }
+thead tr.col-row th.headline-col:hover { background: #15315f; }
+thead tr.col-row th.raw-col { background: #1f2f4f; }
+thead tr.col-row th.raw-col:hover { background: #2a3f60; }
+thead tr.col-row th.diff-col { background: #1a3a6b; }
+thead tr.col-row th.diff-col:hover { background: #243f72; }
+thead tr.col-row th.sort-active { background: #243f72; box-shadow: inset 0 -2px 0 var(--amber); }
+thead tr.col-row th.sort-active.headline-col { background: #15315f; box-shadow: inset 0 -2px 0 var(--amber); }
+thead tr.col-row th.sort-active.raw-col { background: #2a3f60; box-shadow: inset 0 -2px 0 var(--amber); }
+
+.th-abbr { font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; display: block; }
+.th-sub { font-family: 'Barlow', sans-serif; font-size: 9.5px; font-weight: 400; letter-spacing: 0.02em; text-transform: none; color: rgba(245, 240, 232, 0.5); margin-top: 3px; display: block; line-height: 1.2; }
+.th-abbr.headline { color: var(--amber-light); font-weight: 600; }
+.th-abbr.raw { color: rgba(245, 240, 232, 0.85); }
+.th-abbr.diff { color: var(--amber-light); font-weight: 600; }
+.th-target { font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; color: var(--amber); display: block; margin-top: 2px; letter-spacing: 0.04em; }
+.sort-arrow { display: inline-block; font-size: 9px; margin-left: 3px; opacity: 0.35; vertical-align: middle; }
+.sort-active .sort-arrow { opacity: 1; color: var(--amber); }
+
+th.col-rank, td.col-rank { position: sticky; left: 0; z-index: 2; }
+th.col-club, td.col-club { position: sticky; left: 50px; z-index: 2; }
+thead tr.col-row th.col-rank, thead tr.col-row th.col-club { background: var(--navy); }
+thead tr.tier-row th.col-rank, thead tr.tier-row th.col-club { background: var(--cream); }
+
+tbody tr { background: var(--cream); border-bottom: 1px solid var(--border); }
+tbody tr:nth-child(even) { background: var(--row-alt); }
+tbody tr td.col-rank { background: inherit; }
+tbody tr td.col-club { background: inherit; }
+tbody tr:hover { background: var(--row-hover) !important; }
+tbody tr.bham-row { border-left: 3px solid var(--amber); }
+tbody tr.highlight-row { border-left: 3px solid var(--amber); }
+
+td { padding: 8px 6px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; text-align: right; border-right: 1px solid var(--border); white-space: nowrap; }
+td.col-rank { text-align: center; color: var(--text-secondary); }
+td.col-club { text-align: left; padding: 6px 8px 6px 10px; font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 500; }
+td.col-xbi { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--navy); }
+
+td.col-raw {
+  background: #fbf8f2 !important;
+  font-family: 'DM Serif Display', serif; font-size: 14px;
+  text-align: right; padding: 6px 8px;
+  border-left: 1px dashed rgba(200,144,42,0.3);
+  border-right: 1px dashed rgba(200,144,42,0.3);
+}
+td.col-diff {
+  font-family: 'DM Serif Display', serif; font-size: 14px;
+  text-align: right; padding: 6px 8px;
+}
+.raw-cell-inner { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+.raw-cell-value { line-height: 1; }
+.raw-cell-value.above-target { color: var(--green); font-weight: 600; }
+.raw-cell-value.near-target { color: var(--navy); }
+.raw-cell-value.below-target { color: var(--text-primary); }
+.raw-cell-value.well-below { color: var(--red); }
+.mini-bar { width: 64px; height: 4px; background: #ede5d2; position: relative; border-radius: 1px; }
+.mini-bar-fill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 1px; }
+.mini-bar-marker { position: absolute; top: -1px; width: 2px; height: 6px; background: var(--amber); }
+
+.club-row { display: flex; align-items: center; gap: 8px; }
+.club-mono { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Barlow', sans-serif; font-size: 9px; font-weight: 700; color: #fff; }
+
+.fin-gap-cell { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+.fin-gap-val { font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
+.fin-gap-val.positive { color: var(--green); } .fin-gap-val.negative { color: var(--red); } .fin-gap-val.zero { color: var(--text-secondary); }
+.fin-gap-label { font-family: 'Barlow', sans-serif; font-size: 9.5px; color: var(--text-secondary); margin-left: 4px; }
+
+.section-intro { max-width: 1440px; margin: 36px auto 0; padding: 0 32px; }
+.section-kicker { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 6px; }
+.section-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--navy); margin-bottom: 8px; }
+.section-blurb { font-family: 'Barlow', sans-serif; font-size: 13.5px; line-height: 1.55; color: var(--text-secondary); max-width: 720px; }
+.section-blurb strong { color: var(--text-primary); font-weight: 600; }
+
+.halftime-grid { max-width: 1440px; margin: 16px auto 0; padding: 0 32px 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 768px) { .halftime-grid { grid-template-columns: 1fr; } }
+.ht-table-wrap > h3 { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 10px; display: flex; justify-content: space-between; }
+.ht-table-wrap h3 .target { color: var(--amber); }
+.ht-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.ht-table th { background: var(--navy); color: var(--cream); font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 500; padding: 6px 4px; }
+.ht-table td { padding: 5px 4px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; border-bottom: 1px solid var(--border); }
+.ht-table td.name { font-family: 'Barlow', sans-serif; font-size: 12px; text-align: left; }
+.ht-table tr.bham-ht { background: #fff8ec; border-left: 3px solid var(--amber); }
+.ht-table tr.bham-ht td { font-weight: 600; }
+
+.trend-section { max-width: 1440px; margin: 0 auto; padding: 16px 32px 40px; }
+.trend-controls { display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 14px; }
+.trend-controls select { font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 6px 10px; border: 1px solid var(--border); background: white; cursor: pointer; }
+.trend-chart-box { background: white; border: 1px solid var(--border); padding: 20px; }
+.trend-legend { margin-top: 12px; display: flex; gap: 24px; flex-wrap: wrap; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-secondary); }
+.trend-legend strong { color: var(--text-primary); }
+
+.footer-brand { font-family: 'DM Serif Display', serif; font-size: 13px; color: var(--navy); opacity: 0.6; }
+.site-footer { max-width: 1440px; margin: 32px auto 0; padding: 16px 32px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.footer-note { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.08em; color: var(--text-secondary); text-transform: uppercase; }
+
+.loading-state { padding: 60px 32px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-secondary); }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-kicker">Expected Birmingham · Analytics</div>
+    <h1 class="header-title"><em>xB</em> Index</h1>
+    <p class="header-desc">Process quality rankings — measuring how Championship sides create and concede chances, <em style="color:var(--amber-light);font-style:italic">independent of finishing</em>.</p>
+    <p class="header-credibility">Composite of 13 Opta metrics across <strong>shot quality</strong>, <strong>attacking variety</strong> and <strong>pressing context</strong>. Outcomes (goals, points, wins) deliberately excluded.</p>
+    <div class="header-meta-row">
+      <span class="header-timestamp" id="headerTimestamp">Loading…</span>
+      <span class="snapshot-hint">← Compare to earlier weeks</span>
+    </div>
+    <div class="header-controls">
+      <button class="methodology-btn" id="methBtn">Methodology ↓</button>
+      <div class="club-select-wrap"><span class="club-select-label">Snapshot</span><select class="club-select" id="snapshotSelect"></select></div>
+      <div class="club-select-wrap"><span class="club-select-label">Highlight club</span><select class="club-select" id="highlightSelect"><option value="">— none —</option></select></div>
+    </div>
+  </div>
+</header>
+
+<div class="methodology-panel" id="methPanel">
+  <div class="methodology-inner">
+    <p>The <strong>xB Index</strong> is a composite process score. Each metric is percentile-ranked against the 24-club Championship population, then averaged within its tier. Tier 1 (shot creation and suppression, including xG/Sh differential) is weighted 50%; Tier 2 (attacking variety: transition, vertical, build-up, entry) 30%; Tier 3 (set-piece, pressing, cross accuracy) 20%.</p>
+    <p><strong>xG per Shot ATK</strong> and <strong>xG per Shot DEF</strong> are shown as raw reference values, not scored. <strong>Cross Volume</strong> is also displayed but not scored — raw volume isn't informative on its own; cross <em>accuracy</em> is what scores. Snapshots are deduplicated to one per ISO week (latest kept).</p>
+  </div>
+</div>
+
+<div class="headline-insight">
+  <div class="headline-insight-inner">
+    <div class="headline-insight-text" id="headlineText">Loading data…</div>
+    <div class="headline-insight-scores" id="headlineScores"></div>
+  </div>
+</div>
+
+<div class="table-wrapper">
+  <table class="main-table" id="xbTable">
+    <colgroup>
+      <col class="c-rank"><col class="c-club"><col class="c-xbi">
+      <col class="c-raw"><col class="c-raw">
+      <col class="c-gap">
+      <col class="c-metric"><col class="c-metric"><col class="c-metric"><col class="c-metric"><col class="c-metric">
+      <col class="c-metric"><col class="c-metric"><col class="c-metric"><col class="c-metric"><col class="c-metric">
+      <col class="c-metric"><col class="c-metric"><col class="c-metric"><col class="c-metric">
+    </colgroup>
+    <thead>
+      <tr class="tier-row">
+        <th class="empty" colspan="2"></th>
+        <th class="headline">xB IDX<span class="weight">composite</span></th>
+        <th class="raw-display">xG/Sh ATK<span class="weight">raw · target 0.12</span></th>
+        <th class="raw-display">xG/Sh DEF<span class="weight">raw · lower better</span></th>
+        <th class="empty"></th>
+        <th class="t1" colspan="5">Tier 1 — Shot Quality &amp; Volume<span class="weight">50% weight</span></th>
+        <th class="t2" colspan="5">Tier 2 — Attacking Variety<span class="weight">30% weight</span></th>
+        <th class="t3" colspan="4">Tier 3 — Pressing &amp; Set-piece<span class="weight">20% weight</span></th>
+      </tr>
+      <tr class="col-row">
+        <th class="col-rank th-rank" data-col="rank" data-dir="asc"><span class="th-abbr">#<span class="sort-arrow">↕</span></span></th>
+        <th class="col-club th-club" data-col="club" data-dir="asc"><span class="th-abbr">Club<span class="sort-arrow">↕</span></span></th>
+        <th class="headline-col sort-active" data-col="xbi" data-dir="desc"><span class="th-abbr headline">xB IDX<span class="sort-arrow">↓</span></span><span class="th-sub">overall</span></th>
+        <th class="raw-col" data-col="xgShAtk" data-dir="desc"><span class="th-abbr raw">xG/Sh ATK<span class="sort-arrow">↕</span></span><span class="th-sub">created /shot</span><span class="th-target">target 0.12</span></th>
+        <th class="raw-col" data-col="xgShDef" data-dir="asc"><span class="th-abbr raw">xG/Sh DEF<span class="sort-arrow">↕</span></span><span class="th-sub">conceded /shot</span><span class="th-target">lower = better</span></th>
+        <th data-col="finGap" data-dir="desc"><span class="th-abbr">FIN GAP<span class="sort-arrow">↕</span></span><span class="th-sub">vs wage rank</span></th>
+        <th class="diff-col" data-col="xgShDiff" data-dir="desc"><span class="th-abbr diff">xG/Sh DIFF<span class="sort-arrow">↕</span></span><span class="th-sub">ATK − DEF</span><span class="th-target">key signal</span></th>
+        <th data-col="sotAtk" data-dir="desc"><span class="th-abbr">Shots OT<span class="sort-arrow">↕</span></span><span class="th-sub">on target /game</span></th>
+        <th data-col="sotDef" data-dir="asc"><span class="th-abbr">Shots OT<span class="sort-arrow">↕</span></span><span class="th-sub">conceded /game</span></th>
+        <th data-col="inBox" data-dir="desc"><span class="th-abbr">In Box %<span class="sort-arrow">↕</span></span><span class="th-sub">of all shots</span></th>
+        <th data-col="shotAcc" data-dir="desc"><span class="th-abbr">Shot Acc<span class="sort-arrow">↕</span></span><span class="th-sub">% on target</span></th>
+        <th data-col="fb" data-dir="desc"><span class="th-abbr">Fast Brks<span class="sort-arrow">↕</span></span><span class="th-sub">transition /game</span></th>
+        <th data-col="da" data-dir="desc"><span class="th-abbr">Direct Att<span class="sort-arrow">↕</span></span><span class="th-sub">vertical /game</span></th>
+        <th data-col="bu" data-dir="desc"><span class="th-abbr">Build-up<span class="sort-arrow">↕</span></span><span class="th-sub">sequences /game</span></th>
+        <th data-col="tball" data-dir="desc"><span class="th-abbr">Through<span class="sort-arrow">↕</span></span><span class="th-sub">balls /game</span></th>
+        <th data-col="h1Away" data-dir="asc"><span class="th-abbr">H1 Away<span class="sort-arrow">↕</span></span><span class="th-sub">first-half rank</span></th>
+        <th data-col="spXg" data-dir="desc"><span class="th-abbr">SP xG Diff<span class="sort-arrow">↕</span></span><span class="th-sub">set pieces</span></th>
+        <th data-col="ppda" data-dir="asc"><span class="th-abbr">PPDA<span class="sort-arrow">↕</span></span><span class="th-sub">press intensity</span></th>
+        <th data-col="crossAcc" data-dir="desc"><span class="th-abbr">Cross Acc<span class="sort-arrow">↕</span></span><span class="th-sub">% completed</span></th>
+        <th data-col="cross" data-dir="desc"><span class="th-abbr">Cross Vol<span class="sort-arrow">↕</span></span><span class="th-sub">/game · not scored</span></th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"><tr><td colspan="20" class="loading-state">Loading data…</td></tr></tbody>
+  </table>
+</div>
+
+<div class="section-intro">
+  <div class="section-kicker">Half-time splits</div>
+  <h2 class="section-title">First-half away form</h2>
+  <p class="section-blurb">Birmingham have historically conceded ground after half-time in away fixtures. These tables split each side's away record into <strong>first 45 minutes</strong> and <strong>second 45 minutes</strong>, treating each half as its own mini-league. A top-10 first-half away ranking is the internal target.</p>
+</div>
+
+<div class="halftime-grid">
+  <div class="ht-table-wrap">
+    <h3><span>First Half Away</span><span class="target">Birmingham target: top 10</span></h3>
+    <table class="ht-table">
+      <thead><tr><th>#</th><th style="text-align:left">Club</th><th>GP</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead>
+      <tbody id="fhaBody"></tbody>
+    </table>
+  </div>
+  <div class="ht-table-wrap">
+    <h3><span>Second Half Away</span></h3>
+    <table class="ht-table">
+      <thead><tr><th>#</th><th style="text-align:left">Club</th><th>GP</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead>
+      <tbody id="shaBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section-intro">
+  <div class="section-kicker">Metric trend</div>
+  <h2 class="section-title">How is chance quality moving over time?</h2>
+  <p class="section-blurb">A <strong>0.02 difference in xG per shot</strong> compounds to roughly 12 expected goals across a season — the gap between mid-table and the playoff places. Use this chart to track whether Birmingham's process is closing that gap. One data point per ISO week.</p>
+</div>
+
+<div class="trend-section">
+  <div class="trend-controls">
+    <div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-secondary);margin-bottom:4px">Club</div>
+      <select id="trendClub"></select>
+    </div>
+    <div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-secondary);margin-bottom:4px">Metric</div>
+      <select id="trendMetric">
+        <option value="xgShAtk" selected>xG/Sh ATK (target 0.12)</option>
+        <option value="xgShDef">xG/Sh DEF</option>
+        <option value="xgShDiff">xG/Sh DIFF (key signal)</option>
+        <option value="xbi">xB Index (overall composite)</option>
+        <option value="sotAtk">Shots OT /game</option>
+        <option value="sotDef">Shots OT conceded /game</option>
+        <option value="inBox">In Box %</option>
+        <option value="shotAcc">Shot accuracy %</option>
+        <option value="fb">Fast Breaks /game</option>
+        <option value="da">Direct Attacks /game</option>
+        <option value="bu">Build-up sequences /game</option>
+        <option value="tball">Through Balls /game</option>
+        <option value="h1Away">H1 Away rank</option>
+        <option value="spXg">Set-piece xG diff</option>
+        <option value="ppda">PPDA</option>
+        <option value="crossAcc">Cross accuracy %</option>
+        <option value="cross">Cross Volume /game</option>
+      </select>
+    </div>
+  </div>
+  <div class="trend-chart-box">
+    <canvas id="trendCanvas" height="220" style="width:100%;display:block"></canvas>
+    <div id="trendEmpty" style="display:none;text-align:center;padding:40px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-secondary)">Not enough weekly snapshots yet — the chart populates as data builds up.</div>
+  </div>
+  <div class="trend-legend" id="trendLegend"></div>
+</div>
+
+<footer class="site-footer">
+  <span class="footer-note">Data: Opta Analyst · xB internal model · 2025–26 · Updates Mon &amp; Fri</span>
+  <span class="footer-brand">Expected Birmingham</span>
+</footer>
+
+<script>
+const FOCUS_CLUB = 'Birmingham City FC';
+const XG_TARGET = 0.12;
+
+const FIN_RANK_MAP = {
+  'Ipswich Town FC':1,'Leicester City FC':2,'Southampton FC':3,'Sheffield United FC':4,
+  'Birmingham City FC':5,'Norwich City FC':6,'Coventry City FC':7,'Middlesbrough FC':8,
+  'Stoke City FC':9,'West Bromwich Albion FC':10,'Hull City AFC':11,'Millwall FC':12,
+  'Watford FC':13,'Swansea City AFC':14,'Wrexham FC':15,'Bristol City FC':16,
+  'Derby County FC':17,'Preston North End FC':18,'Blackburn Rovers FC':19,
+  'Queens Park Rangers FC':20,'Oxford United FC':21,'Portsmouth FC':22,
+  'Charlton Athletic FC':23,'Sheffield Wednesday FC':24,
+};
+
+const HT_NAME = {
+  'Coventry City FC':'Coventry City','Derby County FC':'Derby County',
+  'Norwich City FC':'Norwich City','Hull City AFC':'Hull City',
+  'Sheffield United FC':'Sheffield United','Blackburn Rovers FC':'Blackburn Rovers',
+  'Southampton FC':'Southampton','Middlesbrough FC':'Middlesbrough',
+  'Bristol City FC':'Bristol City','Wrexham FC':'Wrexham',
+  'Preston North End FC':'Preston','Stoke City FC':'Stoke City',
+  'Oxford United FC':'Oxford United','Millwall FC':'Millwall',
+  'Charlton Athletic FC':'Charlton Athletic','West Bromwich Albion FC':'West Brom',
+  'Leicester City FC':'Leicester City','Swansea City AFC':'Swansea City',
+  'Ipswich Town FC':'Ipswich Town','Watford FC':'Watford',
+  'Queens Park Rangers FC':'QPR','Portsmouth FC':'Portsmouth',
+  'Sheffield Wednesday FC':'Sheffield Wednesday','Birmingham City FC':'Birmingham City',
+};
+
+const COLORS = {
+  'Southampton FC':'#D71920','Coventry City FC':'#58A7CC','Ipswich Town FC':'#0044A9',
+  'Sheffield United FC':'#EE2737','Middlesbrough FC':'#E03A3E','Norwich City FC':'#00A650',
+  'Millwall FC':'#1D3461','Bristol City FC':'#C8102E','Watford FC':'#D8A800',
+  'Stoke City FC':'#E03A3E','Derby County FC':'#1B1B1B','Hull City AFC':'#F5A12E',
+  'Wrexham FC':'#DC143C','Birmingham City FC':'#0056A2','Leicester City FC':'#003090',
+  'Queens Park Rangers FC':'#1D5BA4','West Bromwich Albion FC':'#0B2B5A',
+  'Charlton Athletic FC':'#D4021D','Preston North End FC':'#1E3A5F',
+  'Blackburn Rovers FC':'#009EE0','Oxford United FC':'#F5A800',
+  'Swansea City AFC':'#333','Portsmouth FC':'#013B70','Sheffield Wednesday FC':'#003399',
+};
+
+let ALL_SNAPSHOTS = [];
+let HALFTIME_DATA = null;
+let CURRENT_IDX = 0;
+let DATA = [];
+let sortCol = 'xbi';
+let sortDir = 'desc';
+let highlightClub = '';
+
+function displayName(fcName) { return fcName.replace(/ (FC|AFC)$/, ''); }
+function monogram(fcName) {
+  const w = displayName(fcName).replace(/ City$| United$| Athletic$| Rovers$/, '').split(' ');
+  return w.length === 1 ? w[0].slice(0,2).toUpperCase() : (w[0][0]+w[1][0]).toUpperCase();
+}
+function sf(v, fb=0){const x=parseFloat(v);return isNaN(x)?fb:x;}
+
+function isoWeekKey(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00Z');
+  if (isNaN(d)) return dateStr;
+  const target = new Date(d.valueOf());
+  const dayNr = (target.getUTCDay() + 6) % 7;
+  target.setUTCDate(target.getUTCDate() - dayNr + 3);
+  const firstThursday = target.valueOf();
+  target.setUTCMonth(0, 1);
+  if (target.getUTCDay() !== 4) {
+    target.setUTCMonth(0, 1 + ((4 - target.getUTCDay()) + 7) % 7);
+  }
+  const weekNum = 1 + Math.ceil((firstThursday - target) / 604800000);
+  const year = new Date(firstThursday).getUTCFullYear();
+  return `${year}-W${String(weekNum).padStart(2,'0')}`;
+}
+
+function dedupeWeekly(history) {
+  const byWeek = {};
+  history.forEach(snap => {
+    if (!snap.date) return;
+    const wk = isoWeekKey(snap.date);
+    if (!byWeek[wk] || snap.date > byWeek[wk].date) byWeek[wk] = snap;
+  });
+  return Object.values(byWeek).sort((a,b) => a.date < b.date ? -1 : 1);
+}
+
+// ── SCORED METRICS ──────────────────────────────────────────────────
+// Tier 1: shot quality and volume (50%)
+// Tier 2: attacking variety — transition, vertical, build-up, entry (30%)
+// Tier 3: set-piece, pressing, cross quality (20%)
+// `cross` (volume) is shown but NOT scored — neutral display
+const SCORED_COLS = [
+  // Tier 1
+  {key:'xgShDiff', better:true,  tier:1},
+  {key:'sotAtk',   better:true,  tier:1},
+  {key:'sotDef',   better:false, tier:1},
+  {key:'inBox',    better:true,  tier:1},
+  {key:'shotAcc',  better:true,  tier:1},
+  // Tier 2
+  {key:'fb',       better:true,  tier:2},
+  {key:'da',       better:true,  tier:2},
+  {key:'bu',       better:true,  tier:2},
+  {key:'tball',    better:true,  tier:2},
+  {key:'h1Away',   better:false, tier:2},
+  // Tier 3
+  {key:'spXg',     better:true,  tier:3},
+  {key:'ppda',     better:false, tier:3},
+  {key:'crossAcc', better:true,  tier:3},
+  // Neutral display only
+  {key:'cross',    better:null,  tier:3},
+];
+const TIER_WEIGHTS = {1: 0.50, 2: 0.30, 3: 0.20};
+
+function pctRank(vals, v, hi) {
+  const s = [...vals].sort((a,b)=>a-b);
+  const r = s.indexOf(v);
+  const p = s.length>1 ? (r/(s.length-1))*100 : 50;
+  return hi ? p : 100-p;
+}
+
+function buildDataFromSnapshot(snap) {
+  if (!snap || !snap.teams) return [];
+  const teams = snap.teams;
+
+  const gpVals = Object.values(teams).map(t => t.atk_played || 0).filter(v => v>0);
+  const gpCounts = {};
+  gpVals.forEach(v => { gpCounts[v] = (gpCounts[v]||0)+1; });
+  const games = parseInt(Object.entries(gpCounts).sort((a,b)=>b[1]-a[1])[0]?.[0] || 1);
+
+  const rows = Object.entries(teams).map(([name, t]) => {
+    const gp = t.atk_played || games;
+    const shortName = HT_NAME[name];
+    const fha = HALFTIME_DATA?.first_half_away || [];
+    const h1Entry = shortName ? fha.find(x => x.name === shortName) : null;
+    const xgShAtk = sf(t.atk_xg_per_shot);
+    const xgShDef = sf(t.def_xga_per_shot);
+
+    return {
+      club:     name,
+      finRank:  FIN_RANK_MAP[name] || 12,
+      xgShAtk:  xgShAtk,
+      xgShDef:  xgShDef,
+      xgShDiff: parseFloat((xgShAtk - xgShDef).toFixed(3)),
+      sotAtk:   parseFloat(((t.atk_shots_ot||0)/gp).toFixed(2)),
+      sotDef:   parseFloat(((t.def_sot_faced||0)/gp).toFixed(2)),
+      inBox:    parseFloat((t.atk_shots_in_box_perc||0).toFixed(1)),
+      shotAcc:  parseFloat((((t.atk_shots_ot||0)/(t.atk_shots||1))*100).toFixed(1)),
+      fb:       parseFloat(((t.atk_fast_break_shots||0)/gp).toFixed(2)),
+      da:       parseFloat(((t.seq_direct_attacks||0)/gp).toFixed(2)),
+      bu:       parseFloat(((t.seq_buildups||0)/gp).toFixed(2)),
+      tball:    parseFloat(((t.pass_through_balls||0)/gp).toFixed(2)),
+      h1Away:   h1Entry ? h1Entry.rank : 12,
+      spXg:     parseFloat((((t.sp_atk_xg||0) - (t.sp_def_xga||0))/gp).toFixed(2)),
+      ppda:     parseFloat((t.press_ppda||12).toFixed(1)),
+      crossAcc: parseFloat((t.pass_cross_acc||0).toFixed(1)),
+      cross:    parseFloat(((t.pass_crosses||0)/gp).toFixed(1)),
+    };
+  });
+
+  SCORED_COLS.forEach(c => {
+    if (c.better === null) return;
+    const vals = rows.map(x => x[c.key]);
+    rows.forEach(r => { r[c.key+'_pct'] = pctRank(vals, r[c.key], c.better); });
+  });
+
+  rows.forEach(r => {
+    let score = 0;
+    [1,2,3].forEach(tier => {
+      const cols = SCORED_COLS.filter(c => c.tier === tier && c.better !== null);
+      if (!cols.length) return;
+      const avgPct = cols.reduce((a, c) => a + r[c.key+'_pct'], 0) / cols.length;
+      score += avgPct * TIER_WEIGHTS[tier];
+    });
+    r.xbi = parseFloat(score.toFixed(1));
+  });
+
+  const sorted = [...rows].sort((a,b) => b.xbi - a.xbi);
+  sorted.forEach(r => {
+    r.rank = sorted.filter(x => Math.round(x.xbi*10) > Math.round(r.xbi*10)).length + 1;
+    r.finGap = r.finRank - r.rank;
+  });
+  return sorted;
+}
+
+const C_GREEN=[107,124,69], C_NEUTRAL=[212,207,199], C_RED=[139,64,64];
+function lerp(a,b,t){return a+(b-a)*t}
+function metricColor(v,min,max,hi){
+  if (max===min) return `rgb(${C_NEUTRAL.join(',')})`;
+  let t = (v-min)/(max-min);
+  if (!hi) t = 1-t;
+  let r,g,b;
+  if (t<0.5){const s=t*2;r=lerp(C_RED[0],C_NEUTRAL[0],s);g=lerp(C_RED[1],C_NEUTRAL[1],s);b=lerp(C_RED[2],C_NEUTRAL[2],s);}
+  else {const s=(t-0.5)*2;r=lerp(C_NEUTRAL[0],C_GREEN[0],s);g=lerp(C_NEUTRAL[1],C_GREEN[1],s);b=lerp(C_NEUTRAL[2],C_GREEN[2],s);}
+  return `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
+}
+function textColor(bg){const m=bg.match(/(\d+),(\d+),(\d+)/);if(!m)return '#1a1a1a';const l=(0.299*m[1]+0.587*m[2]+0.114*m[3])/255;return l>0.55?'#2a2520':'#f5f0e8';}
+
+function rawXgCell(value, isAttack) {
+  const target = isAttack ? XG_TARGET : 0.09;
+  let cls;
+  if (isAttack) {
+    if (value >= XG_TARGET) cls='above-target';
+    else if (value >= 0.10) cls='near-target';
+    else if (value >= 0.08) cls='below-target';
+    else cls='well-below';
+  } else {
+    if (value <= 0.085) cls='above-target';
+    else if (value <= 0.095) cls='near-target';
+    else if (value <= 0.105) cls='below-target';
+    else cls='well-below';
+  }
+  const barMax = 0.15;
+  const valPct = Math.min(100,(value/barMax)*100);
+  const targetPct = (target/barMax)*100;
+  const fill = isAttack
+    ? (value>=target?'var(--green)':(value>=0.10?'var(--navy)':'var(--red)'))
+    : (value<=target?'var(--green)':(value<=0.10?'var(--navy)':'var(--red)'));
+  return `<div class="raw-cell-inner"><span class="raw-cell-value ${cls}">${value.toFixed(3)}</span><div class="mini-bar"><div class="mini-bar-fill" style="width:${valPct}%;background:${fill}"></div><div class="mini-bar-marker" style="left:${targetPct}%"></div></div></div>`;
+}
+
+function ordinalSuffix(n){const s=['th','st','nd','rd'],v=n%100;return s[(v-20)%10]||s[v]||s[0];}
+function buildHeadline() {
+  const focus = DATA.find(t => t.club === FOCUS_CLUB);
+  if (!focus) {
+    document.getElementById('headlineText').textContent = 'Birmingham City not found in this snapshot.';
+    document.getElementById('headlineScores').innerHTML = '';
+    return;
+  }
+  const total = DATA.length;
+  let gap;
+  if (focus.finGap < -2) gap = `<em>${Math.abs(focus.finGap)} places below where their wage bill suggests they should be</em>`;
+  else if (focus.finGap > 2) gap = `<em>${focus.finGap} places above where their wage bill suggests</em>`;
+  else gap = `roughly in line with their wage bill`;
+  let xg;
+  const dist = (XG_TARGET - focus.xgShAtk).toFixed(3);
+  if (focus.xgShAtk >= XG_TARGET) xg = `Already hitting the <strong>${XG_TARGET}</strong> xG/shot target.`;
+  else if (focus.xgShAtk >= 0.10) xg = `xG per shot of <strong>${focus.xgShAtk.toFixed(3)}</strong> — needs another <span class="neg">+${dist}</span> to hit 0.12.`;
+  else xg = `Creating just <strong>${focus.xgShAtk.toFixed(3)}</strong> xG per shot — well short of the <strong>0.12</strong> target.`;
+  document.getElementById('headlineText').innerHTML = `<strong>${displayName(focus.club)}</strong> rank <strong>${focus.rank}<sup>${ordinalSuffix(focus.rank)}</sup> of ${total}</strong> by process quality — ${gap}. ${xg}`;
+  const targetPct = Math.min(100,(focus.xgShAtk/XG_TARGET)*100);
+  document.getElementById('headlineScores').innerHTML = `
+    <div class="score-block"><span class="score-label">xB Index</span><span class="score-value">${focus.xbi.toFixed(1)}</span><span class="score-detail">Rank ${focus.rank} / ${total}</span></div>
+    <div class="score-block"><span class="score-label">xG/Sh ATK</span><span class="score-value ${focus.xgShAtk<0.10?'red':''}">${focus.xgShAtk.toFixed(3)}</span><div class="target-bar-wrap"><div class="target-bar-track"><div class="target-bar-fill ${focus.xgShAtk>=XG_TARGET?'at':'below'}" style="width:${targetPct}%"></div><div class="target-marker" style="left:100%"></div></div></div></div>
+    <div class="score-block"><span class="score-label">xG/Sh DEF</span><span class="score-value ${focus.xgShDef>0.10?'red':''}">${focus.xgShDef.toFixed(3)}</span><span class="score-detail">Conceded per shot</span></div>`;
+}
+
+function getSortedData() {
+  const d = [...DATA];
+  d.sort((a,b) => {
+    let av = a[sortCol], bv = b[sortCol];
+    if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+    const cmp = av < bv ? -1 : av > bv ? 1 : 0;
+    return sortDir === 'asc' ? cmp : -cmp;
+  });
+  return d;
+}
+function updateSortHeaders() {
+  document.querySelectorAll('thead tr.col-row th').forEach(th => {
+    th.classList.remove('sort-active');
+    const arrow = th.querySelector('.sort-arrow');
+    if (!arrow) return;
+    if (th.dataset.col === sortCol) {
+      th.classList.add('sort-active');
+      arrow.textContent = sortDir === 'asc' ? '↑' : '↓';
+    } else {
+      arrow.textContent = '↕';
+    }
+  });
+}
+
+function renderTable() {
+  if (!DATA.length) return;
+  const data = getSortedData();
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+
+  const RANGES = {};
+  SCORED_COLS.forEach(c => { if (c.better===null) return; const v=DATA.map(t=>t[c.key]); RANGES[c.key]={min:Math.min(...v),max:Math.max(...v)}; });
+  const xbiR = {min: Math.min(...DATA.map(t=>t.xbi)), max: Math.max(...DATA.map(t=>t.xbi))};
+
+  data.forEach(d => {
+    const isBham = d.club === FOCUS_CLUB;
+    const isHighlight = !isBham && d.club === highlightClub;
+    const tr = document.createElement('tr');
+    if (isBham) tr.classList.add('bham-row');
+    if (isHighlight) tr.classList.add('highlight-row');
+
+    const xbiBg = metricColor(d.xbi, xbiR.min, xbiR.max, true);
+    let gapClass='zero', gapTxt='0';
+    if (d.finGap>0){gapClass='positive';gapTxt='+'+d.finGap;}
+    if (d.finGap<0){gapClass='negative';gapTxt=String(d.finGap);}
+    const gapLabel = d.finGap===0?'at budget':(d.finGap>0?'above budget':'below budget');
+
+    let html = `<td class="col-rank">${d.rank}</td>`;
+    html += `<td class="col-club"><div class="club-row"><div class="club-mono" style="background:${COLORS[d.club]||'#555'}">${monogram(d.club)}</div>${displayName(d.club)}</div></td>`;
+    html += `<td class="col-xbi" style="background:${xbiBg};color:${textColor(xbiBg)}">${d.xbi.toFixed(1)}</td>`;
+    html += `<td class="col-raw">${rawXgCell(d.xgShAtk, true)}</td>`;
+    html += `<td class="col-raw">${rawXgCell(d.xgShDef, false)}</td>`;
+    html += `<td><div class="fin-gap-cell"><span class="fin-gap-val ${gapClass}">${gapTxt}</span><span class="fin-gap-label">${gapLabel}</span></div></td>`;
+    SCORED_COLS.forEach(c => {
+      let bg, fg, val;
+      if (c.better===null){bg='rgb(240,235,226)';fg='#5a5550';}
+      else {const{min,max}=RANGES[c.key];bg=metricColor(d[c.key],min,max,c.better);fg=textColor(bg);}
+      let dp;
+      if (c.key==='xgShDiff') dp = 3;
+      else if (c.key==='inBox' || c.key==='shotAcc' || c.key==='crossAcc') dp = 1;
+      else if (c.key==='h1Away') dp = 0;
+      else if (c.key==='spXg') dp = 2;
+      else if (c.key==='cross' || c.key==='ppda') dp = 1;
+      else dp = 2;
+      val = d[c.key].toFixed(dp);
+      if ((c.key==='spXg' || c.key==='xgShDiff') && d[c.key]>0) val = '+' + val;
+      const extraClass = c.key==='xgShDiff' ? ' col-diff' : '';
+      html += `<td class="${extraClass.trim()}" style="background:${bg};color:${fg}">${val}</td>`;
+    });
+    tr.innerHTML = html;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderHalftime() {
+  if (!HALFTIME_DATA) return;
+  ['fha','sha'].forEach(key => {
+    const data = key==='fha' ? HALFTIME_DATA.first_half_away : HALFTIME_DATA.second_half_away;
+    const tbody = document.getElementById(key+'Body');
+    if (!tbody || !data) return;
+    tbody.innerHTML = data.map((r,i) => {
+      const bham = r.name && r.name.toLowerCase().includes('birmingham');
+      const bg = bham ? '' : (i%2===0?'background:#f5f0e8;':'');
+      return `<tr${bham?' class="bham-ht"':''} style="${bg}">
+        <td>${r.rank}</td><td class="name">${r.name}</td>
+        <td>${r.gp}</td><td style="color:#1a7a4a">${r.w}</td><td>${r.d}</td><td style="color:#c0392b">${r.l}</td>
+        <td>${r.gf}</td><td>${r.ga}</td><td>${r.gd}</td><td style="font-weight:600">${r.p ?? r.pts}</td>
+      </tr>`;
+    }).join('');
+  });
+}
+
+const METRIC_LABELS = {
+  xbi:'xB Index', xgShAtk:'xG/Sh ATK', xgShDef:'xG/Sh DEF', xgShDiff:'xG/Sh DIFF',
+  sotAtk:'Shots OT /game', sotDef:'Shots OT conceded /game',
+  inBox:'In Box %', shotAcc:'Shot Acc %', fb:'Fast Breaks /game',
+  da:'Direct Attacks /game', bu:'Build-up /game', tball:'Through Balls /game',
+  h1Away:'H1 Away rank', spXg:'Set-piece xG diff', ppda:'PPDA',
+  crossAcc:'Cross Acc %', cross:'Cross Vol /game',
+};
+const TREND_LOWER_BETTER = new Set(['sotDef','h1Away','ppda','xgShDef']);
+
+function renderTrend() {
+  const club = document.getElementById('trendClub').value;
+  const metric = document.getElementById('trendMetric').value;
+  const canvas = document.getElementById('trendCanvas');
+  const empty = document.getElementById('trendEmpty');
+  const legend = document.getElementById('trendLegend');
+  if (!club || ALL_SNAPSHOTS.length < 2) { canvas.style.display='none'; empty.style.display='block'; legend.innerHTML=''; return; }
+
+  const points = [];
+  const snaps = [...ALL_SNAPSHOTS].reverse();
+  snaps.forEach(s => {
+    const d = buildDataFromSnapshot(s);
+    const t = d.find(r => r.club === club);
+    if (t && t[metric] != null) points.push({ label: s.label||'', date: s.date||'', v: t[metric] });
+  });
+  if (points.length < 2) { canvas.style.display='none'; empty.style.display='block'; legend.innerHTML=''; return; }
+  canvas.style.display='block'; empty.style.display='none';
+
+  const dpr = window.devicePixelRatio||1;
+  const W = canvas.offsetWidth, H = 220;
+  canvas.width = W*dpr; canvas.height = H*dpr; canvas.style.height = H+'px';
+  const ctx = canvas.getContext('2d'); ctx.scale(dpr,dpr); ctx.clearRect(0,0,W,H);
+
+  const PAD = {top:24, right:80, bottom:36, left:60};
+  const cW = W-PAD.left-PAD.right, cH = H-PAD.top-PAD.bottom;
+  const vals = points.map(p=>p.v);
+  let minV = Math.min(...vals), maxV = Math.max(...vals);
+  const range = maxV-minV || Math.abs(minV*0.2) || 0.01;
+  const pad = range*0.2;
+  const yMin = minV-pad, yMax = maxV+pad;
+  const xOf = i => PAD.left + (i/(points.length-1))*cW;
+  const yOf = v => PAD.top + (1-(v-yMin)/(yMax-yMin))*cH;
+
+  ctx.strokeStyle='#e8e2d8'; ctx.lineWidth=1;
+  for (let g=0; g<=4; g++) {
+    const y = PAD.top+(g/4)*cH;
+    ctx.beginPath(); ctx.moveTo(PAD.left,y); ctx.lineTo(PAD.left+cW,y); ctx.stroke();
+    const val = yMax-(g/4)*(yMax-yMin);
+    ctx.fillStyle='#8a8070'; ctx.font='10px IBM Plex Mono'; ctx.textAlign='right';
+    const dp = (metric==='xgShAtk'||metric==='xgShDef'||metric==='xgShDiff')?3 : (metric==='inBox'||metric==='shotAcc'||metric==='crossAcc'||metric==='h1Away'?0:2);
+    ctx.fillText(val.toFixed(dp), PAD.left-6, y+3);
+  }
+
+  if (metric==='xgShAtk' && 0.12>=yMin && 0.12<=yMax) {
+    ctx.strokeStyle=getComputedStyle(document.body).getPropertyValue('--amber'); ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(PAD.left, yOf(0.12)); ctx.lineTo(PAD.left+cW, yOf(0.12)); ctx.stroke();
+    ctx.setLineDash([]); ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--amber'); ctx.font='9px IBM Plex Mono'; ctx.textAlign='left';
+    ctx.fillText('TARGET 0.12', PAD.left+cW+6, yOf(0.12)+3);
+  }
+  if (metric==='xgShDiff' && 0>=yMin && 0<=yMax) {
+    ctx.strokeStyle='#5a5550'; ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(PAD.left, yOf(0)); ctx.lineTo(PAD.left+cW, yOf(0)); ctx.stroke();
+    ctx.setLineDash([]); ctx.fillStyle='#5a5550'; ctx.font='9px IBM Plex Mono'; ctx.textAlign='left';
+    ctx.fillText('PARITY', PAD.left+cW+6, yOf(0)+3);
+  }
+
+  ctx.beginPath(); ctx.moveTo(xOf(0), yOf(points[0].v));
+  points.forEach((p,i)=>ctx.lineTo(xOf(i),yOf(p.v)));
+  ctx.lineTo(xOf(points.length-1), PAD.top+cH); ctx.lineTo(xOf(0), PAD.top+cH); ctx.closePath();
+  ctx.fillStyle='rgba(26,58,107,0.08)'; ctx.fill();
+
+  ctx.beginPath(); ctx.strokeStyle='#1a3a6b'; ctx.lineWidth=2.5;
+  ctx.moveTo(xOf(0), yOf(points[0].v));
+  points.forEach((p,i)=>ctx.lineTo(xOf(i),yOf(p.v)));
+  ctx.stroke();
+
+  const lower = TREND_LOWER_BETTER.has(metric);
+  points.forEach((p,i) => {
+    const x = xOf(i), y = yOf(p.v);
+    let col = '#1a3a6b';
+    if (i>0) { const improved = lower ? p.v < points[i-1].v : p.v > points[i-1].v; col = improved?'#6b7c45':'#8b4040'; }
+    ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fillStyle='white'; ctx.fill();
+    ctx.strokeStyle=col; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle='#5a5550'; ctx.font='9px IBM Plex Mono'; ctx.textAlign='center';
+    ctx.fillText(p.label||p.date.slice(5), x, H-PAD.bottom+14);
+  });
+
+  const first = points[0].v, last = points[points.length-1].v, diff = last-first;
+  const improved = lower ? diff<0 : diff>0;
+  const dirStr = improved?'▲ Improving':diff===0?'— Stable':'▼ Declining';
+  const dirCol = improved?'#6b7c45':diff===0?'#8a8070':'#8b4040';
+  const dp = (metric==='xgShAtk'||metric==='xgShDef'||metric==='xgShDiff')?3:2;
+  legend.innerHTML = `
+    <span style="color:var(--navy);font-weight:500">${displayName(club)}</span>
+    <span>${METRIC_LABELS[metric]||metric}</span>
+    <span style="color:${dirCol};font-weight:600">${dirStr}</span>
+    <span>First: <strong>${first.toFixed(dp)}</strong></span>
+    <span>Latest: <strong>${last.toFixed(dp)}</strong></span>
+    <span>${points.length} weekly snapshots</span>`;
+}
+
+async function loadData() {
+  try {
+    try {
+      const htRes = await fetch('data/halftime.json?t='+Date.now());
+      const htJson = await htRes.json();
+      if (Array.isArray(htJson) && htJson.length) {
+        HALFTIME_DATA = htJson.sort((a,b)=>(b.first_half_away||[]).length - (a.first_half_away||[]).length)[0];
+      } else if (htJson && htJson.first_half_away) {
+        HALFTIME_DATA = htJson;
+      }
+    } catch(e) { console.warn('halftime.json missing:', e); }
+
+    const res = await fetch('data/history.json?t='+Date.now());
+    const history = await res.json();
+    if (!history || !history.length) throw new Error('history.json empty');
+
+    const weekly = dedupeWeekly(history);
+    console.log(`Loaded ${history.length} snapshots → ${weekly.length} after weekly dedup`);
+    ALL_SNAPSHOTS = weekly.slice().reverse();
+
+    const snapSel = document.getElementById('snapshotSelect');
+    snapSel.innerHTML = '';
+    ALL_SNAPSHOTS.forEach((s, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      const label = s.label || isoWeekKey(s.date) || s.date || ('Snapshot ' + (ALL_SNAPSHOTS.length-i));
+      const datePart = s.date ? ' · '+s.date : '';
+      opt.textContent = label + datePart;
+      if (i===0) opt.selected = true;
+      snapSel.appendChild(opt);
+    });
+    snapSel.addEventListener('change', () => {
+      CURRENT_IDX = parseInt(snapSel.value);
+      DATA = buildDataFromSnapshot(ALL_SNAPSHOTS[CURRENT_IDX]);
+      updateTimestamp(); buildHeadline(); renderTable();
+    });
+
+    const hSel = document.getElementById('highlightSelect');
+    hSel.innerHTML = '<option value="">— none —</option>';
+    Object.keys(ALL_SNAPSHOTS[0].teams).sort().forEach(name => {
+      if (name === FOCUS_CLUB) return;
+      const opt = document.createElement('option');
+      opt.value = name; opt.textContent = displayName(name);
+      hSel.appendChild(opt);
+    });
+    hSel.addEventListener('change', () => { highlightClub = hSel.value; renderTable(); });
+
+    const tSel = document.getElementById('trendClub');
+    Object.keys(ALL_SNAPSHOTS[0].teams).sort().forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = name; opt.textContent = displayName(name);
+      if (name === FOCUS_CLUB) opt.selected = true;
+      tSel.appendChild(opt);
+    });
+    tSel.addEventListener('change', renderTrend);
+    document.getElementById('trendMetric').addEventListener('change', renderTrend);
+    window.addEventListener('resize', renderTrend);
+
+    DATA = buildDataFromSnapshot(ALL_SNAPSHOTS[0]);
+    updateTimestamp();
+    buildHeadline();
+    updateSortHeaders();
+    renderTable();
+    renderHalftime();
+    renderTrend();
+  } catch(e) {
+    console.error('Data load failed:', e);
+    document.getElementById('tableBody').innerHTML = `<tr><td colspan="20" class="loading-state">Failed to load data — check browser console.</td></tr>`;
+    document.getElementById('headlineText').textContent = 'Failed to load data.';
+  }
+}
+
+function updateTimestamp() {
+  const s = ALL_SNAPSHOTS[CURRENT_IDX];
+  const ts = document.getElementById('headerTimestamp');
+  if (!ts) return;
+  const label = s.label ? s.label : '';
+  const date = s.date || '';
+  ts.textContent = `Updated ${date}${label ? ' · '+label : ''}`;
+}
+
+document.querySelectorAll('thead tr.col-row th').forEach(th => {
+  th.addEventListener('click', () => {
+    const col = th.dataset.col;
+    if (!col) return;
+    if (sortCol === col) sortDir = sortDir==='asc'?'desc':'asc';
+    else { sortCol = col; sortDir = th.dataset.dir || 'desc'; }
+    updateSortHeaders(); renderTable();
+  });
+});
+
+document.getElementById('methBtn').addEventListener('click', function() {
+  const open = document.getElementById('methPanel').classList.toggle('open');
+  this.textContent = open ? 'Methodology ↑' : 'Methodology ↓';
+});
+
+loadData();
+</script>
+</body>
+</html>
