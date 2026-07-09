@@ -1,31 +1,31 @@
 #!/usr/bin/env python3
 """
-xB SoccerStats Scraper
------------------------
+xB SoccerStats Halftime Scraper
+--------------------------------
 Scrapes soccerstats.com for Championship half-time tables:
   - First half away  (GP, W, D, L, GF, GA, GD, Pts)
   - Second half away
   - First half home
   - Second half home
 
-Approach:
-  - timing.asp serves first-half-away + second-half-away on one page.
-  - halftime.asp serves first-half-home + second-half-home on one page.
-  - Tables are plain HTML stacked vertically — no tabs to click.
-  - Wait for a known team name (Birmingham) to be visible before extracting,
-    so we know the content has rendered.
-  - Parse the rendered body text by locating each section heading then
-    walking forward consuming team rows.
+Hybrid approach:
+  1. Playwright fetches the rendered HTML — handles the cookie/privacy banner
+     by clicking through any visible accept/dismiss button.
+  2. BeautifulSoup parses the HTML for standings tables. The tables are
+     server-side rendered into the page; once we have the HTML, parsing is
+     deterministic and fast.
+
+Saves to data/halftime.json alongside history.json.
 
 Requirements:
-    pip install playwright
+    pip install playwright beautifulsoup4
     playwright install chromium
 
 Usage:
     python scraper_halftime.py            # normal
     python scraper_halftime.py --dry-run  # inspect without writing
     python scraper_halftime.py --force    # write even if unchanged
-    python scraper_halftime.py --debug    # save body text to disk for diagnosis
+    python scraper_halftime.py --debug    # dump fetched HTML to disk
 """
 
 import hashlib
@@ -34,10 +34,16 @@ import os
 import sys
 from datetime import date
 
+from bs4 import BeautifulSoup
+
 HALFTIME_PATH = os.path.join(os.path.dirname(__file__), "data", "halftime.json")
 DEBUG_DIR     = os.path.join(os.path.dirname(__file__), "data", "debug")
 TIMING_URL    = "https://www.soccerstats.com/timing.asp?league=england2"
-HALFTIME_URL  = "https://www.soccerstats.com/halftime.asp?league=england2"
+
+USER_AGENT = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+)
 
 CHAMPIONSHIP_TEAMS_SS = {
     "Birmingham City", "Blackburn", "Bristol City", "Charlton", "Coventry City",
@@ -56,11 +62,11 @@ NAME_MAP = {
     "Charlton":      "Charlton Athletic",
 }
 
-SECTION_HEADINGS = {
-    "first_half_away":  "First Half away",
-    "second_half_away": "Second Half away",
-    "first_half_home":  "First Half at home",
-    "second_half_home": "Second Half at home",
+SECTION_MARKERS = {
+    "first_half_away":  "First Half table (AWAY, 1-45 min.)",
+    "second_half_away": "Second Half table (AWAY, 46-90 min.)",
+    "first_half_home":  "First Half table (AT HOME, 1-45 min.)",
+    "second_half_home": "Second Half table (AT HOME, 46-90 min.)",
 }
 
 
@@ -68,166 +74,159 @@ def canonicalise_name(soccerstats_name):
     return NAME_MAP.get(soccerstats_name, soccerstats_name)
 
 
-def fetch_page_text(url, debug_label=None):
-    """
-    Load the URL via Playwright and return the full rendered body text.
-    Waits for a Championship team name to be visible — that's our signal
-    the standings tables have actually rendered, not just any page skeleton.
-    """
+def fetch_html_via_browser(url):
+    """Use Playwright to fetch the rendered HTML, handling consent banners."""
     from playwright.sync_api import sync_playwright
 
     print(f"  Fetching: {url}")
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        context = browser.new_context(
-            user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
-            viewport={"width": 1280, "height": 900},
+        browser = p.chromium.launch(
+            headless=True,
+            args=[
+                "--disable-blink-features=AutomationControlled",
+                "--no-sandbox",
+            ],
         )
+        context = browser.new_context(
+            user_agent=USER_AGENT,
+            viewport={"width": 1366, "height": 900},
+            locale="en-GB",
+            timezone_id="Europe/London",
+        )
+
+        # Hide the navigator.webdriver flag — some sites use it for bot detection
+        context.add_init_script(
+            "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
+        )
+
         page = context.new_page()
+
+        # Warm-up: visit homepage first so cookies / session state look natural
+        try:
+            page.goto("https://www.soccerstats.com/",
+                      wait_until="domcontentloaded", timeout=30000)
+            page.wait_for_timeout(1500)
+        except Exception as e:
+            print(f"    Warm-up failed (non-fatal): {e}")
+
         page.goto(url, wait_until="domcontentloaded", timeout=30000)
 
-        # Wait for a known team name to appear in the rendered page text.
-        # This is much more reliable than wait_for_selector("table") because
-        # soccerstats.com has many small layout tables that load before content.
+        # Try to dismiss any consent / cookie banner
+        dismiss_consent(page)
+
+        # Wait for the actual data to appear
         try:
             page.wait_for_function(
                 """() => {
-                    const body = document.body ? document.body.innerText : '';
-                    return body.includes('Birmingham City') &&
-                           body.includes('Coventry City') &&
-                           body.includes('Sheffield');
+                    const t = document.body ? document.body.innerText : '';
+                    return t.includes('Birmingham City') &&
+                           t.includes('Coventry City') &&
+                           t.includes('First Half table (AWAY');
                 }""",
                 timeout=25000,
             )
         except Exception as e:
-            print(f"    Warning: content marker wait timed out: {e}")
+            print(f"    Content wait timed out: {e}")
 
-        # Small additional settle time
-        page.wait_for_timeout(2000)
-
-        body_text = page.locator("body").inner_text()
-
-        # Debug dump if requested via --debug flag or env var
-        if debug_label and ("--debug" in sys.argv or os.environ.get("XB_DEBUG")):
-            os.makedirs(DEBUG_DIR, exist_ok=True)
-            debug_path = os.path.join(DEBUG_DIR, f"{debug_label}.txt")
-            with open(debug_path, "w") as f:
-                f.write(body_text)
-            print(f"    Debug: dumped body text to {debug_path}")
-
+        page.wait_for_timeout(1500)
+        html = page.content()
         browser.close()
-    return body_text
+
+    return html
 
 
-def parse_section(body_text, heading, next_headings):
-    """
-    Find `heading` in body_text, then walk forward consuming team rows
-    until we either run out of teams or hit one of the next_headings.
+def dismiss_consent(page):
+    """Try a series of common consent-banner button selectors."""
+    candidates = [
+        "button:has-text('Accept All')",
+        "button:has-text('Accept all')",
+        "button:has-text('I Accept')",
+        "button:has-text('Accept')",
+        "button:has-text('Agree')",
+        "button:has-text('Continue')",
+        "button:has-text('Got it')",
+        "button:has-text('OK')",
+        "#cmpwelcomebtnyes",
+        "[id*='accept']",
+        "[class*='accept']",
+        "[class*='consent'] button",
+    ]
+    for sel in candidates:
+        try:
+            el = page.locator(sel).first
+            if el.is_visible(timeout=1000):
+                el.click(timeout=3000)
+                print(f"    Dismissed consent via: {sel}")
+                page.wait_for_timeout(800)
+                return
+        except Exception:
+            continue
 
-    A row in the rendered text is ten consecutive non-blank lines:
-        rank, club, GP, W, D, L, GF, GA, GD, Pts
-    """
-    lines = [ln.strip() for ln in body_text.splitlines()]
-    lines = [ln for ln in lines if ln != ""]
 
-    # Match heading (case-insensitive, in case of weird casing)
-    start = None
-    for i, ln in enumerate(lines):
-        if ln.lower() == heading.lower():
-            start = i
-            break
+# ─────────────────────────────────────────────────────────────
+# HTML parsing (deterministic once we have the page)
+# ─────────────────────────────────────────────────────────────
 
-    if start is None:
-        print(f"    Heading not found: '{heading}'")
-        return []
+def is_standings_table(table):
+    text = table.get_text(" ", strip=True)
+    has_columns = all(col in text for col in ["GP", "GF", "GA", "Pts"])
+    has_team    = any(t in text for t in ("Birmingham City", "Coventry City", "Sheffield"))
+    return has_columns and has_team
 
+
+def parse_standings_table(table):
     rows = []
-    i = start + 1
-    stop_set = {h.lower() for h in next_headings}
-
-    while i < len(lines):
-        if lines[i].lower() in stop_set:
-            break
-
-        if i + 9 >= len(lines):
-            break
-
-        rank_token = lines[i]
-        club_token = lines[i + 1]
-
-        if not rank_token.isdigit():
-            i += 1
+    for tr in table.find_all("tr"):
+        cells = [td.get_text(strip=True) for td in tr.find_all("td")]
+        if len(cells) < 10:
             continue
-        rank_val = int(rank_token)
+        if not cells[0].isdigit():
+            continue
+        rank_val = int(cells[0])
         if rank_val < 1 or rank_val > 30:
-            i += 1
             continue
 
+        club_token = cells[1]
         if club_token not in CHAMPIONSHIP_TEAMS_SS:
-            i += 1
-            continue
-
-        stat_tokens = lines[i + 2 : i + 10]
-        if len(stat_tokens) < 8:
-            i += 1
             continue
 
         try:
-            gp  = int(stat_tokens[0])
-            w   = int(stat_tokens[1])
-            d   = int(stat_tokens[2])
-            l   = int(stat_tokens[3])
-            gf  = int(stat_tokens[4])
-            ga  = int(stat_tokens[5])
-            gd  = stat_tokens[6]
-            pts = int(stat_tokens[7])
+            gp  = int(cells[2])
+            w   = int(cells[3])
+            d   = int(cells[4])
+            l   = int(cells[5])
+            gf  = int(cells[6])
+            ga  = int(cells[7])
+            gd  = cells[8]
+            pts = int(cells[9])
         except ValueError:
-            i += 1
             continue
 
         if gp < 1 or gp > 50:
-            i += 1
             continue
 
         rows.append({
             "rank": rank_val,
             "name": canonicalise_name(club_token),
-            "gp":   gp,
-            "w":    w,
-            "d":    d,
-            "l":    l,
-            "gf":   gf,
-            "ga":   ga,
-            "gd":   gd,
-            "pts":  pts,
+            "gp":   gp, "w": w, "d": d, "l": l,
+            "gf":   gf, "ga": ga, "gd": gd, "pts": pts,
         })
-        i += 10
-
     return rows
 
 
-def diagnostic_dump(body_text, label):
-    """When parsing fails, print a sample of the body text so we can see why."""
-    print(f"\n    === DIAGNOSTIC: {label} ===")
-    if not body_text:
-        print("    body_text is empty!")
-        return
-
-    print(f"    body_text length: {len(body_text)} chars")
-    # Show first 500 chars and any line containing "Half"
-    print("    First 400 chars:")
-    print("    " + body_text[:400].replace("\n", " ⏎ "))
-
-    print("\n    Lines containing 'Half':")
-    for ln in body_text.splitlines():
-        if "Half" in ln or "half" in ln:
-            print(f"      {repr(ln.strip())}")
-
-    print("\n    Lines containing 'Birmingham':")
-    for ln in body_text.splitlines():
-        if "Birmingham" in ln:
-            print(f"      {repr(ln.strip())}")
-    print("    === END DIAGNOSTIC ===\n")
+def find_table_after_marker(soup, marker_text):
+    """Find the marker text in the document, then walk forward to the next
+    standings-shaped table."""
+    marker_node = soup.find(string=lambda s: s and marker_text in s)
+    if marker_node is None:
+        return None
+    current = marker_node
+    while True:
+        current = current.find_next("table")
+        if current is None:
+            return None
+        if is_standings_table(current):
+            return current
 
 
 def scrape_halftime():
@@ -238,45 +237,30 @@ def scrape_halftime():
         "second_half_home": [],
     }
 
-    # AWAY page (timing.asp)
     try:
-        away_text = fetch_page_text(TIMING_URL, debug_label="timing")
-        results["first_half_away"] = parse_section(
-            away_text,
-            SECTION_HEADINGS["first_half_away"],
-            next_headings=[SECTION_HEADINGS["second_half_away"]],
-        )
-        results["second_half_away"] = parse_section(
-            away_text,
-            SECTION_HEADINGS["second_half_away"],
-            next_headings=[],
-        )
-        print(f"    first_half_away: {len(results['first_half_away'])} rows")
-        print(f"    second_half_away: {len(results['second_half_away'])} rows")
-        if not results["first_half_away"] and not results["second_half_away"]:
-            diagnostic_dump(away_text, "timing.asp")
+        html = fetch_html_via_browser(TIMING_URL)
     except Exception as e:
-        print(f"  Warning: timing.asp scrape failed: {e}")
+        print(f"  Failed to fetch {TIMING_URL}: {e}")
+        return results
 
-    # HOME page (halftime.asp)
-    try:
-        home_text = fetch_page_text(HALFTIME_URL, debug_label="halftime")
-        results["first_half_home"] = parse_section(
-            home_text,
-            SECTION_HEADINGS["first_half_home"],
-            next_headings=[SECTION_HEADINGS["second_half_home"]],
-        )
-        results["second_half_home"] = parse_section(
-            home_text,
-            SECTION_HEADINGS["second_half_home"],
-            next_headings=[],
-        )
-        print(f"    first_half_home: {len(results['first_half_home'])} rows")
-        print(f"    second_half_home: {len(results['second_half_home'])} rows")
-        if not results["first_half_home"] and not results["second_half_home"]:
-            diagnostic_dump(home_text, "halftime.asp")
-    except Exception as e:
-        print(f"  Warning: halftime.asp scrape failed: {e}")
+    # Optional debug dump
+    if "--debug" in sys.argv or os.environ.get("XB_DEBUG"):
+        os.makedirs(DEBUG_DIR, exist_ok=True)
+        debug_path = os.path.join(DEBUG_DIR, "timing.html")
+        with open(debug_path, "w") as f:
+            f.write(html)
+        print(f"    Debug: dumped HTML to {debug_path}")
+
+    soup = BeautifulSoup(html, "html.parser")
+
+    for key, marker in SECTION_MARKERS.items():
+        table = find_table_after_marker(soup, marker)
+        if table is None:
+            print(f"    {key}: marker not found ('{marker}')")
+            continue
+        rows = parse_standings_table(table)
+        results[key] = rows
+        print(f"    {key}: {len(rows)} rows")
 
     return results
 
