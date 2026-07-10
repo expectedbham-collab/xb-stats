@@ -260,7 +260,8 @@ footer{padding:14px 0 32px;font-family:'IBM Plex Mono',monospace;font-size:9px;l
     <details>
       <summary>Methodology — what's scored, what isn't</summary>
       <div class="dbody">
-        <p>The <strong>xB Index</strong> ranks each club against the other 23 on 11 process metrics across three weighted tiers (T1 shot quality 50% · T2 build-up 30% · T3 context 20%). Each metric produces a score from <strong>0 to 100</strong> — 100 = best in league, 50 = middle of the pack, 0 = worst. For metrics where lower is better (like PPDA and shots conceded), the direction is flipped before scoring, so a higher score always means better process. When you tap a team, you'll see their <strong>rank out of 24</strong> for every metric, which is easier to grasp than the raw percentile. <strong>Outcomes are excluded by design</strong>: no goals, no points, no win/draw/loss records anywhere in the inputs. Cross volume is <strong>displayed but not scored</strong> — how much a team crosses tells you about style, not quality. Wage-bill ranks are estimates compiled from published accounts (source &amp; date shown here in production). Where a data point is missing for a club it shows as “—” and is excluded from that club's score, never silently imputed.</p>
+        <p><strong>What's new in this version.</strong> Two changes from the previous dashboard: (1) H1 Away rank is no longer scored — it's a results-derived metric (W/D/L/Pts), which contradicts the process-only positioning. It may return as context, but never as an index input. (2) Cross accuracy % is now scored in T2 — cross <em>volume</em> stays displayed-but-not-scored (it's a style choice), but cross <em>accuracy</em> measures execution and is a fair process signal. Both changes shift Birmingham roughly two positions, in different directions.</p>
+        <p>The <strong>xB Index</strong> ranks each club against the other 23 on 12 process metrics across three weighted tiers (T1 shot quality 50% · T2 build-up 30% · T3 context 20%). Each metric produces a score from <strong>0 to 100</strong> — 100 = best in league, 50 = middle of the pack, 0 = worst. For metrics where lower is better (like PPDA and shots conceded), the direction is flipped before scoring, so a higher score always means better process. When you tap a team, you'll see their <strong>rank out of 24</strong> for every metric, which is easier to grasp than the raw percentile. <strong>Outcomes are excluded by design</strong>: no goals, no points, no win/draw/loss records anywhere in the inputs. Cross volume is <strong>displayed but not scored</strong> — how much a team crosses tells you about style, not quality. Wage-bill ranks are estimates compiled from published accounts (source &amp; date shown here in production). Where a data point is missing for a club it shows as “—” and is excluded from that club's score, never silently imputed.</p>
       </div>
     </details>
     <details>
@@ -297,7 +298,8 @@ const TEAMS = {
   "ppda": 9.1,
   "tball90": 0.84,
   "cross90": 14.1,
-  "finRank": 7
+  "finRank": 7,
+  "crossAcc": 27.4
  },
  "Middlesbrough FC": {
   "gp": 46,
@@ -313,7 +315,8 @@ const TEAMS = {
   "ppda": 8.9,
   "tball90": 0.89,
   "cross90": 17.4,
-  "finRank": 8
+  "finRank": 8,
+  "crossAcc": 29.1
  },
  "Southampton FC": {
   "gp": 46,
@@ -329,7 +332,8 @@ const TEAMS = {
   "ppda": 10.7,
   "tball90": 0.8,
   "cross90": 16.1,
-  "finRank": 3
+  "finRank": 3,
+  "crossAcc": 27.0
  },
  "Derby County FC": {
   "gp": 46,
@@ -345,7 +349,8 @@ const TEAMS = {
   "ppda": 11.4,
   "tball90": 0.64,
   "cross90": 14.7,
-  "finRank": 17
+  "finRank": 17,
+  "crossAcc": 24.5
  },
  "Hull City AFC": {
   "gp": 46,
@@ -361,7 +366,8 @@ const TEAMS = {
   "ppda": 10.1,
   "tball90": 0.54,
   "cross90": 16.9,
-  "finRank": 11
+  "finRank": 11,
+  "crossAcc": 24.2
  },
  "Norwich City FC": {
   "gp": 46,
@@ -377,7 +383,8 @@ const TEAMS = {
   "ppda": 11.6,
   "tball90": 0.5,
   "cross90": 17.1,
-  "finRank": 6
+  "finRank": 6,
+  "crossAcc": 26.3
  },
  "Sheffield United FC": {
   "gp": 46,
@@ -393,7 +400,8 @@ const TEAMS = {
   "ppda": 10.5,
   "tball90": 0.69,
   "cross90": 13.2,
-  "finRank": 4
+  "finRank": 4,
+  "crossAcc": 29.1
  },
  "Wrexham FC": {
   "gp": 46,
@@ -409,7 +417,8 @@ const TEAMS = {
   "ppda": 10.6,
   "tball90": 0.6,
   "cross90": 13.7,
-  "finRank": 15
+  "finRank": 15,
+  "crossAcc": 25.8
  },
  "Millwall FC": {
   "gp": 46,
@@ -425,7 +434,8 @@ const TEAMS = {
   "ppda": 10.8,
   "tball90": 0.8,
   "cross90": 12.7,
-  "finRank": 12
+  "finRank": 12,
+  "crossAcc": 28.4
  },
  "Blackburn Rovers FC": {
   "gp": 46,
@@ -441,7 +451,8 @@ const TEAMS = {
   "ppda": 11.1,
   "tball90": 0.8,
   "cross90": 16.4,
-  "finRank": 19
+  "finRank": 19,
+  "crossAcc": 25.5
  },
  "Bristol City FC": {
   "gp": 46,
@@ -457,7 +468,8 @@ const TEAMS = {
   "ppda": 10.5,
   "tball90": 0.47,
   "cross90": 14.3,
-  "finRank": 16
+  "finRank": 16,
+  "crossAcc": 26.6
  },
  "Ipswich Town FC": {
   "gp": 46,
@@ -473,7 +485,8 @@ const TEAMS = {
   "ppda": 10.3,
   "tball90": 0.53,
   "cross90": 13.7,
-  "finRank": 1
+  "finRank": 1,
+  "crossAcc": 26.9
  },
  "Preston North End FC": {
   "gp": 46,
@@ -489,7 +502,8 @@ const TEAMS = {
   "ppda": 11.1,
   "tball90": 0.57,
   "cross90": 15.7,
-  "finRank": 18
+  "finRank": 18,
+  "crossAcc": 20.3
  },
  "West Bromwich Albion FC": {
   "gp": 46,
@@ -505,7 +519,8 @@ const TEAMS = {
   "ppda": 11.9,
   "tball90": 0.38,
   "cross90": 17.1,
-  "finRank": 10
+  "finRank": 10,
+  "crossAcc": 29.2
  },
  "Stoke City FC": {
   "gp": 46,
@@ -521,7 +536,8 @@ const TEAMS = {
   "ppda": 12.0,
   "tball90": 0.54,
   "cross90": 18.3,
-  "finRank": 9
+  "finRank": 9,
+  "crossAcc": 26.9
  },
  "Leicester City FC": {
   "gp": 46,
@@ -537,7 +553,8 @@ const TEAMS = {
   "ppda": 12.6,
   "tball90": 0.56,
   "cross90": 14.1,
-  "finRank": 2
+  "finRank": 2,
+  "crossAcc": 27.2
  },
  "Watford FC": {
   "gp": 46,
@@ -553,7 +570,8 @@ const TEAMS = {
   "ppda": 11.2,
   "tball90": 0.57,
   "cross90": 19.5,
-  "finRank": 13
+  "finRank": 13,
+  "crossAcc": 18.2
  },
  "Oxford United FC": {
   "gp": 46,
@@ -569,7 +587,8 @@ const TEAMS = {
   "ppda": 11.9,
   "tball90": 0.56,
   "cross90": 18.4,
-  "finRank": 21
+  "finRank": 21,
+  "crossAcc": 19.0
  },
  "Charlton Athletic FC": {
   "gp": 46,
@@ -585,7 +604,8 @@ const TEAMS = {
   "ppda": 11.7,
   "tball90": 0.54,
   "cross90": 16.0,
-  "finRank": 23
+  "finRank": 23,
+  "crossAcc": 22.4
  },
  "Swansea City AFC": {
   "gp": 46,
@@ -601,23 +621,25 @@ const TEAMS = {
   "ppda": 12.1,
   "tball90": 0.51,
   "cross90": 19.3,
-  "finRank": 14
+  "finRank": 14,
+  "crossAcc": 22.0
  },
  "Birmingham City FC": {
-   "gp": 46,
-   "sotAtk": 4.35,
-   "sotDef": 4.55,
-   "xgShAtk": 0.107,
-   "xgShDef": 0.109,
-   "shotAcc": 33.4,
-   "fb90": 1.58,
-   "da90": 3.25,
-   "bu90": 1.65,
-   "spXga": -0.03,
-   "ppda": 12.1,
-   "tball90": 0.44,
-   "cross90": 18.5,
-   "finRank": 5
+  "gp": 46,
+  "sotAtk": 4.35,
+  "sotDef": 4.55,
+  "xgShAtk": 0.107,
+  "xgShDef": 0.109,
+  "shotAcc": 33.4,
+  "fb90": 1.58,
+  "da90": 3.25,
+  "bu90": 1.65,
+  "spXga": -0.03,
+  "ppda": 12.1,
+  "tball90": 0.44,
+  "cross90": 18.5,
+  "finRank": 5,
+  "crossAcc": 19.2
  },
  "Queens Park Rangers FC": {
   "gp": 46,
@@ -633,7 +655,8 @@ const TEAMS = {
   "ppda": 13.8,
   "tball90": 0.43,
   "cross90": 19.7,
-  "finRank": 20
+  "finRank": 20,
+  "crossAcc": 24.5
  },
  "Portsmouth FC": {
   "gp": 46,
@@ -649,7 +672,8 @@ const TEAMS = {
   "ppda": 11.4,
   "tball90": 0.42,
   "cross90": 12.9,
-  "finRank": 22
+  "finRank": 22,
+  "crossAcc": 25.5
  },
  "Sheffield Wednesday FC": {
   "gp": 46,
@@ -665,7 +689,8 @@ const TEAMS = {
   "ppda": 12.0,
   "tball90": 0.53,
   "cross90": 11.3,
-  "finRank": 24
+  "finRank": 24,
+  "crossAcc": 23.6
  }
 };
 const BHAM_TREND = [38.2, 39.5, 38.9, 41.3, 42.8, 43.6];
@@ -740,6 +765,9 @@ const SCORED = [
   {k:'tball90',hi:true,  t:2, name:'Through balls /90',
    tip:'Line-breaking passes — the highest-value entry.',
    why:'Passes played through the defensive line into space. The highest-value single pass type in football — a reliable marker of creative intent.'},
+  {k:'crossAcc',hi:true, t:2, name:'Cross accuracy %',
+   tip:'Share of crosses that find a teammate — execution quality.',
+   why:'Percentage of open-play crosses that find a teammate. Cross volume is unscored (it\u2019s a style choice), but if a team chooses to cross, doing it accurately is a genuine process quality signal — the skill of the final ball independent of how often the side crosses.'},
   {k:'spXga',  hi:true,  t:3, name:'Set-piece xG diff.',
    tip:'Dead-ball threat created minus conceded, per game.',
    why:'Set-piece expected goals created minus conceded, per game. Dead balls are the most coachable phase in football — a persistent negative number here is a fixable problem.'},
@@ -816,6 +844,7 @@ function mapSnapshot(snap){
       tball90: per(t.pass_through_balls),
       spXga: (isNum(t.sp_atk_xg)&&isNum(t.sp_def_xga)&&gp)? +((t.sp_atk_xg-t.sp_def_xga)/gp).toFixed(3) : null,
       ppda: isNum(t.press_ppda)? t.press_ppda : null,
+      crossAcc: isNum(t.pass_cross_acc)? t.pass_cross_acc : null,
       cross90: per(t.pass_crosses),
       finRank: FIN_RANK_MAP[name] ?? null,
     };
@@ -872,6 +901,7 @@ const BHAM_TARGETS = [
   {k:'da90',    label:'Direct attacks /90',        target:1.50,  hi:true,  fmt:v=>v.toFixed(2)},
   {k:'bu90',    label:'Build-up sequences /90',    target:2.00,  hi:true,  fmt:v=>v.toFixed(2)},
   {k:'tball90', label:'Through balls /game',       target:1.00,  hi:true,  fmt:v=>v.toFixed(2)},
+  {k:'crossAcc',label:'Cross accuracy %',          target:'peerMedian', hi:true, fmt:v=>v.toFixed(1)+'%'},
   {k:'spXga',   label:'Set-piece xG diff /90',     target:0.03,  hi:true,  fmt:v=>(v>=0?'+':'')+v.toFixed(2)},
   {k:'ppda',    label:'PPDA (pressing intensity)', target:11.0,  hi:false, fmt:v=>v.toFixed(1)},
 ];
@@ -883,16 +913,18 @@ function renderTargets(){
     const med = peerVals.length? median(peerVals) : null;
     const min = peerVals.length? Math.min(...peerVals) : null;
     const max = peerVals.length? Math.max(...peerVals) : null;
+    // dynamic targets: 'peerMedian' means the target IS the peer median
+    const target = t.target === 'peerMedian' ? med : t.target;
     const dirIcon = t.hi ? '' : '<span class="dir-arrow" title="Lower is better">↓</span>';
     let statusHtml;
-    if(!isNum(b)){
+    if(!isNum(b) || !isNum(target)){
       statusHtml = '<span class="tg-status" style="background:#eee9df;color:#8a8070">— No data</span>';
     } else {
-      const beats = t.hi ? (b >= t.target) : (b <= t.target);
-      const closeness = t.target !== 0 ? Math.abs(b - t.target) / Math.abs(t.target) : Math.abs(b - t.target);
-      const gap = Math.abs(b - t.target);
+      const beats = t.hi ? (b >= target) : (b <= target);
+      const closeness = target !== 0 ? Math.abs(b - target) / Math.abs(target) : Math.abs(b - target);
+      const gap = Math.abs(b - target);
       const mag = v => t.fmt(v).replace(/^\+/,'').replace('%','');
-      const isSoftTarget = isNum(med) && (t.hi ? (t.target < med * 0.90) : (t.target > med * 1.10));
+      const isSoftTarget = t.target !== 'peerMedian' && isNum(med) && (t.hi ? (target < med * 0.90) : (target > med * 1.10));
       let cls, note;
       if(beats && isSoftTarget){ cls='soft';  note='On target · soft'; }
       else if(beats){             cls='hit';   note='On target'; }
@@ -902,11 +934,14 @@ function renderTargets(){
     }
     const wideBand = (isNum(med)&&med!==0&&isNum(max)&&isNum(min)&&Math.abs(max-min)/Math.abs(med)>0.30)
       ? '<span class="wide" title="Big spread across peer clubs — average is a soft benchmark">wide</span>' : '';
+    const targetDisplay = t.target === 'peerMedian'
+      ? (isNum(target) ? `${t.fmt(target)}<br><span class="rng">= peer median</span>` : '—')
+      : t.fmt(target);
     return `<tr>
       <td>${t.label}${dirIcon}</td>
       <td class="tg-bham">${isNum(b)?t.fmt(b):'—'}<span class="peer-phone">${isNum(med)?'peers '+t.fmt(med):''}</span></td>
       <td class="tg-peer">${isNum(med)?t.fmt(med):'—'} ${wideBand}<br><span class="rng">${isNum(min)?`range ${t.fmt(min)}–${t.fmt(max)}`:''}</span></td>
-      <td class="tg-target">${t.fmt(t.target)}</td>
+      <td class="tg-target">${targetDisplay}</td>
       <td>${statusHtml}</td>
     </tr>`;
   }).join('');
