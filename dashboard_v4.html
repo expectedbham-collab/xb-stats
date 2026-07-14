@@ -260,8 +260,8 @@ footer{padding:14px 0 32px;font-family:'IBM Plex Mono',monospace;font-size:9px;l
     <details>
       <summary>Methodology — what's scored, what isn't</summary>
       <div class="dbody">
-        <p><strong>What's new in this version.</strong> Two changes from the previous dashboard: (1) H1 Away rank is no longer scored — it's a results-derived metric (W/D/L/Pts), which contradicts the process-only positioning. It may return as context, but never as an index input. (2) Cross accuracy % is now scored in T2 — cross <em>volume</em> stays displayed-but-not-scored (it's a style choice), but cross <em>accuracy</em> measures execution and is a fair process signal. Both changes shift Birmingham roughly two positions, in different directions.</p>
-        <p>The <strong>xB Index</strong> ranks each club against the other 23 on 12 process metrics across three weighted tiers (T1 shot quality 50% · T2 build-up 30% · T3 context 20%). Each metric produces a score from <strong>0 to 100</strong> — 100 = best in league, 50 = middle of the pack, 0 = worst. For metrics where lower is better (like PPDA and shots conceded), the direction is flipped before scoring, so a higher score always means better process. When you tap a team, you'll see their <strong>rank out of 24</strong> for every metric, which is easier to grasp than the raw percentile. <strong>Outcomes are excluded by design</strong>: no goals, no points, no win/draw/loss records anywhere in the inputs. Cross volume is <strong>displayed but not scored</strong> — how much a team crosses tells you about style, not quality. Wage-bill ranks are estimates compiled from published accounts (source &amp; date shown here in production). Where a data point is missing for a club it shows as “—” and is excluded from that club's score, never silently imputed.</p>
+        <p><strong>What's new in this version.</strong> Three changes from the previous dashboard: (1) H1 Away rank is no longer scored — it's a results-derived metric (W/D/L/Pts), which contradicts the process-only positioning. It may return as context, but never as an index input. (2) Cross accuracy % is now scored in T2 — cross <em>volume</em> stays displayed-but-not-scored (it's a style choice), but cross <em>accuracy</em> measures execution and is a fair process signal. (3) Shots in box % added to T1 — a shot-selection signal that complements xG per shot.</p>
+        <p>The <strong>xB Index</strong> ranks each club against the other 23 on 13 process metrics across three weighted tiers (T1 shot quality 50% · T2 build-up 30% · T3 context 20%). Each metric produces a score from <strong>0 to 100</strong> — 100 = best in league, 50 = middle of the pack, 0 = worst. For metrics where lower is better (like PPDA and shots conceded), the direction is flipped before scoring, so a higher score always means better process. When you tap a team, you'll see their <strong>rank out of 24</strong> for every metric, which is easier to grasp than the raw percentile. <strong>Outcomes are excluded by design</strong>: no goals, no points, no win/draw/loss records anywhere in the inputs. Cross volume is <strong>displayed but not scored</strong> — how much a team crosses tells you about style, not quality. Wage-bill ranks are estimates compiled from published accounts (source &amp; date shown here in production). Where a data point is missing for a club it shows as “—” and is excluded from that club's score, never silently imputed.</p>
       </div>
     </details>
     <details>
@@ -299,7 +299,8 @@ const TEAMS = {
   "tball90": 0.84,
   "cross90": 14.1,
   "finRank": 7,
-  "crossAcc": 27.4
+  "crossAcc": 27.4,
+  "shotsInBox": 59.5
  },
  "Middlesbrough FC": {
   "gp": 46,
@@ -316,7 +317,8 @@ const TEAMS = {
   "tball90": 0.89,
   "cross90": 17.4,
   "finRank": 8,
-  "crossAcc": 29.1
+  "crossAcc": 29.1,
+  "shotsInBox": 63.2
  },
  "Southampton FC": {
   "gp": 46,
@@ -333,7 +335,8 @@ const TEAMS = {
   "tball90": 0.8,
   "cross90": 16.1,
   "finRank": 3,
-  "crossAcc": 27.0
+  "crossAcc": 27.0,
+  "shotsInBox": 65.1
  },
  "Derby County FC": {
   "gp": 46,
@@ -350,7 +353,8 @@ const TEAMS = {
   "tball90": 0.64,
   "cross90": 14.7,
   "finRank": 17,
-  "crossAcc": 24.5
+  "crossAcc": 24.5,
+  "shotsInBox": 61.2
  },
  "Hull City AFC": {
   "gp": 46,
@@ -367,7 +371,8 @@ const TEAMS = {
   "tball90": 0.54,
   "cross90": 16.9,
   "finRank": 11,
-  "crossAcc": 24.2
+  "crossAcc": 24.2,
+  "shotsInBox": 58.8
  },
  "Norwich City FC": {
   "gp": 46,
@@ -384,7 +389,8 @@ const TEAMS = {
   "tball90": 0.5,
   "cross90": 17.1,
   "finRank": 6,
-  "crossAcc": 26.3
+  "crossAcc": 26.3,
+  "shotsInBox": 62.4
  },
  "Sheffield United FC": {
   "gp": 46,
@@ -401,7 +407,8 @@ const TEAMS = {
   "tball90": 0.69,
   "cross90": 13.2,
   "finRank": 4,
-  "crossAcc": 29.1
+  "crossAcc": 29.1,
+  "shotsInBox": 63.2
  },
  "Wrexham FC": {
   "gp": 46,
@@ -418,7 +425,8 @@ const TEAMS = {
   "tball90": 0.6,
   "cross90": 13.7,
   "finRank": 15,
-  "crossAcc": 25.8
+  "crossAcc": 25.8,
+  "shotsInBox": 64.8
  },
  "Millwall FC": {
   "gp": 46,
@@ -435,7 +443,8 @@ const TEAMS = {
   "tball90": 0.8,
   "cross90": 12.7,
   "finRank": 12,
-  "crossAcc": 28.4
+  "crossAcc": 28.4,
+  "shotsInBox": 59.3
  },
  "Blackburn Rovers FC": {
   "gp": 46,
@@ -452,7 +461,8 @@ const TEAMS = {
   "tball90": 0.8,
   "cross90": 16.4,
   "finRank": 19,
-  "crossAcc": 25.5
+  "crossAcc": 25.5,
+  "shotsInBox": 59.1
  },
  "Bristol City FC": {
   "gp": 46,
@@ -469,7 +479,8 @@ const TEAMS = {
   "tball90": 0.47,
   "cross90": 14.3,
   "finRank": 16,
-  "crossAcc": 26.6
+  "crossAcc": 26.6,
+  "shotsInBox": 64.3
  },
  "Ipswich Town FC": {
   "gp": 46,
@@ -486,7 +497,8 @@ const TEAMS = {
   "tball90": 0.53,
   "cross90": 13.7,
   "finRank": 1,
-  "crossAcc": 26.9
+  "crossAcc": 26.9,
+  "shotsInBox": 63.3
  },
  "Preston North End FC": {
   "gp": 46,
@@ -503,7 +515,8 @@ const TEAMS = {
   "tball90": 0.57,
   "cross90": 15.7,
   "finRank": 18,
-  "crossAcc": 20.3
+  "crossAcc": 20.3,
+  "shotsInBox": 65.8
  },
  "West Bromwich Albion FC": {
   "gp": 46,
@@ -520,7 +533,8 @@ const TEAMS = {
   "tball90": 0.38,
   "cross90": 17.1,
   "finRank": 10,
-  "crossAcc": 29.2
+  "crossAcc": 29.2,
+  "shotsInBox": 64.1
  },
  "Stoke City FC": {
   "gp": 46,
@@ -537,7 +551,8 @@ const TEAMS = {
   "tball90": 0.54,
   "cross90": 18.3,
   "finRank": 9,
-  "crossAcc": 26.9
+  "crossAcc": 26.9,
+  "shotsInBox": 61.4
  },
  "Leicester City FC": {
   "gp": 46,
@@ -554,7 +569,8 @@ const TEAMS = {
   "tball90": 0.56,
   "cross90": 14.1,
   "finRank": 2,
-  "crossAcc": 27.2
+  "crossAcc": 27.2,
+  "shotsInBox": 62.2
  },
  "Watford FC": {
   "gp": 46,
@@ -571,7 +587,8 @@ const TEAMS = {
   "tball90": 0.57,
   "cross90": 19.5,
   "finRank": 13,
-  "crossAcc": 18.2
+  "crossAcc": 18.2,
+  "shotsInBox": 68.2
  },
  "Oxford United FC": {
   "gp": 46,
@@ -588,7 +605,8 @@ const TEAMS = {
   "tball90": 0.56,
   "cross90": 18.4,
   "finRank": 21,
-  "crossAcc": 19.0
+  "crossAcc": 19.0,
+  "shotsInBox": 61.1
  },
  "Charlton Athletic FC": {
   "gp": 46,
@@ -605,7 +623,8 @@ const TEAMS = {
   "tball90": 0.54,
   "cross90": 16.0,
   "finRank": 23,
-  "crossAcc": 22.4
+  "crossAcc": 22.4,
+  "shotsInBox": 60.0
  },
  "Swansea City AFC": {
   "gp": 46,
@@ -622,7 +641,8 @@ const TEAMS = {
   "tball90": 0.51,
   "cross90": 19.3,
   "finRank": 14,
-  "crossAcc": 22.0
+  "crossAcc": 22.0,
+  "shotsInBox": 58.8
  },
  "Birmingham City FC": {
   "gp": 46,
@@ -639,7 +659,8 @@ const TEAMS = {
   "tball90": 0.44,
   "cross90": 18.5,
   "finRank": 5,
-  "crossAcc": 19.2
+  "crossAcc": 19.2,
+  "shotsInBox": 60.5
  },
  "Queens Park Rangers FC": {
   "gp": 46,
@@ -656,7 +677,8 @@ const TEAMS = {
   "tball90": 0.43,
   "cross90": 19.7,
   "finRank": 20,
-  "crossAcc": 24.5
+  "crossAcc": 24.5,
+  "shotsInBox": 62.1
  },
  "Portsmouth FC": {
   "gp": 46,
@@ -673,7 +695,8 @@ const TEAMS = {
   "tball90": 0.42,
   "cross90": 12.9,
   "finRank": 22,
-  "crossAcc": 25.5
+  "crossAcc": 25.5,
+  "shotsInBox": 60.5
  },
  "Sheffield Wednesday FC": {
   "gp": 46,
@@ -690,7 +713,8 @@ const TEAMS = {
   "tball90": 0.53,
   "cross90": 11.3,
   "finRank": 24,
-  "crossAcc": 23.6
+  "crossAcc": 23.6,
+  "shotsInBox": 60.8
  }
 };
 const BHAM_TREND = [38.2, 39.5, 38.9, 41.3, 42.8, 43.6];
@@ -753,6 +777,9 @@ const SCORED = [
   {k:'shotAcc',hi:true,  t:1, name:'Shot accuracy %',
    tip:'Share of shots on target — selection discipline.',
    why:'Percentage of shots that hit the target. A proxy for shot-selection discipline: sides that shoot from good positions naturally test the keeper more often.'},
+  {k:'shotsInBox',hi:true, t:1, name:'Shots in box %',
+   tip:'Share of shots taken from inside the box.',
+   why:'Percentage of a team\u2019s shots taken from inside the penalty area. A shot-selection signal: sides that work the ball into the box before shooting are running a more efficient attack than those settling for long-range efforts. Complements xG per shot — xG measures average chance quality, this measures selection discipline.'},
   {k:'fb90',   hi:true,  t:2, name:'Fast breaks /90',
    tip:'Attacks before the opposition can reorganise.',
    why:'Attacks launched before the opposition can reorganise — the most efficient entry route into the box.'},
@@ -838,6 +865,7 @@ function mapSnapshot(snap){
       xgShAtk: isNum(t.atk_xg_per_shot)? t.atk_xg_per_shot : null,
       xgShDef: isNum(t.def_xga_per_shot)? t.def_xga_per_shot : null,
       shotAcc: (isNum(t.atk_shots_ot)&&isNum(t.atk_shots)&&t.atk_shots>0)? +(t.atk_shots_ot/t.atk_shots*100).toFixed(1) : null,
+      shotsInBox: isNum(t.atk_shots_in_box_perc)? t.atk_shots_in_box_perc : null,
       fb90: per(t.atk_fast_break_shots),
       da90: per(t.seq_direct_attacks),
       bu90: per(t.seq_buildups),
@@ -897,6 +925,7 @@ const BHAM_TARGETS = [
   {k:'xgShAtk', label:'xG per shot (attacking)',   target:0.12,  hi:true,  fmt:v=>v.toFixed(3)},
   {k:'xgShD',   label:'xG per shot differential',  target:0.010, hi:true,  fmt:v=>(v>=0?'+':'')+v.toFixed(3)},
   {k:'shotAcc', label:'Shot accuracy %',           target:33.0,  hi:true,  fmt:v=>v.toFixed(1)+'%'},
+  {k:'shotsInBox', label:'Shots in box %',         target:65.0,  hi:true,  fmt:v=>v.toFixed(1)+'%'},
   {k:'fb90',    label:'Fast breaks /90',           target:1.00,  hi:true,  fmt:v=>v.toFixed(2)},
   {k:'da90',    label:'Direct attacks /90',        target:1.50,  hi:true,  fmt:v=>v.toFixed(2)},
   {k:'bu90',    label:'Build-up sequences /90',    target:2.00,  hi:true,  fmt:v=>v.toFixed(2)},
