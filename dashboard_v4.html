@@ -147,6 +147,13 @@ tr.open .chev{transform:rotate(90deg)}
 /* ── EXPANDED ROW: single-column compact list ── */
 tr.detail td{padding:0;background:#fff;border-bottom:2px solid var(--navy)}
 .detail-inner{padding:4px 18px 16px;max-width:640px}
+.rank-legend{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0 4px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.03em;color:var(--muted)}
+.rank-legend .rl-label{text-transform:uppercase;letter-spacing:.08em;color:var(--navy);font-weight:500}
+.rank-legend .rl-scale{display:inline-flex;align-items:center;gap:4px}
+.rank-legend .rl-swatch{width:14px;height:8px;border-radius:1px;display:inline-block}
+.rank-legend .rl-arrow{color:#b8b2a8}
+.rank-legend .rl-note{color:#9a9490;margin-left:4px}
+@media(max-width:600px){.rank-legend .rl-note{width:100%;margin-left:0;margin-top:2px}}
 .dtier{display:flex;align-items:center;gap:10px;padding:14px 0 6px}
 .dtier b{font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;color:var(--navy);white-space:nowrap}
 .dtier .wt{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;white-space:nowrap}
@@ -161,9 +168,8 @@ tr.detail td{padding:0;background:#fff;border-bottom:2px solid var(--navy)}
 .dm-rank{font-family:'DM Serif Display',serif;font-size:16px;color:var(--navy);min-width:44px;text-align:right;line-height:1}
 .dm-rank sup{font-size:10px;font-family:'IBM Plex Mono',monospace;font-weight:500;margin-left:1px;top:-4px;position:relative}
 .dm-rank small{display:block;font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.06em;color:var(--muted);margin-top:1px;font-weight:400;text-transform:uppercase}
-.dm-rank .rk-flavor{display:block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.04em;color:var(--amber);margin-top:2px;font-weight:500;text-transform:none}
 .rank-bar{flex:1;max-width:100px;height:8px;background:rgba(26,58,107,.09);position:relative;border-radius:1px}
-.rank-fill{position:absolute;left:0;top:0;height:100%;background:var(--navy);border-radius:1px}
+.rank-fill{position:absolute;left:0;top:0;height:100%;background:var(--navy);border-radius:1px;transition:background .15s}
 .dm-val{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);text-align:right}
 .dm-row.unscored .dm-name{color:var(--muted)}
 .dm-row.unscored .dm-rank{color:#b8b2a8}
@@ -758,6 +764,24 @@ function monogram(club){
   return w.length===1 ? w[0].slice(0,2).toUpperCase() : (w[0][0]+w[1][0]).toUpperCase();
 }
 function ord(n){const s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0]);}
+// rank (1..pool) -> colour. Reads green→amber→red for full-colour vision,
+// but each stop ALSO differs in luminance so it works for red-green colour blindness.
+// Numbers stay visible, so colour is never the only signal.
+function rankColor(rank, pool){
+  if(rank==null || !pool) return '#b8b2a8';
+  const t = (rank - 1) / (pool - 1); // 0 = best, 1 = worst
+  // three stops, tuned for luminance separation: teal-green -> gold -> brick-red
+  const stops = [
+    [0.00, [46,110,80]],   // #2e6e50 best  (dark-ish green, high sat)
+    [0.50, [201,144,42]],  // #c9902a mid   (amber/gold, lighter)
+    [1.00, [150,58,58]],   // #963a3a worst (brick red, dark)
+  ];
+  let a=stops[0], b=stops[stops.length-1];
+  for(let i=0;i<stops.length-1;i++){ if(t>=stops[i][0] && t<=stops[i+1][0]){ a=stops[i]; b=stops[i+1]; break; } }
+  const span=(b[0]-a[0])||1, f=(t-a[0])/span;
+  const c=a[1].map((ch,i)=>Math.round(ch+(b[1][i]-ch)*f));
+  return `rgb(${c[0]},${c[1]},${c[2]})`;
+}
 function median(arr){const s=[...arr].sort((a,b)=>a-b),n=s.length;return n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2;}
 const isNum = v => v!=null && isFinite(v);
 
@@ -1051,18 +1075,26 @@ function detailRow(r){
   const dp = k => k==='xgShD'||k==='xgShAtk'?3 : k==='spXga'?2 : k==='shotAcc'||k==='ppda'||k==='cross90'?1 : 2;
   const ordSup = n => { const s=['th','st','nd','rd'],v=n%100; return `${n}<sup>${s[(v-20)%10]||s[v]||s[0]}</sup>`; };
   const barWidth = rank => ((25 - rank) / 24) * 100;
-  let html=`<td colspan="${colspan}"><div class="detail-inner">`;
+  let html=`<td colspan="${colspan}"><div class="detail-inner">
+    <div class="rank-legend">
+      <span class="rl-label">Bar colour = rank</span>
+      <span class="rl-scale"><span class="rl-swatch" style="background:rgb(46,110,80)"></span>best</span>
+      <span class="rl-arrow">→</span>
+      <span class="rl-scale"><span class="rl-swatch" style="background:rgb(201,144,42)"></span>mid</span>
+      <span class="rl-arrow">→</span>
+      <span class="rl-scale"><span class="rl-swatch" style="background:rgb(150,58,58)"></span>worst</span>
+      <span class="rl-note">longer + greener = better · numbers shown so colour is never the only signal</span>
+    </div>`;
   [1,2,3].forEach(t=>{
     html+=`<div class="dtier"><b>${groups[t][0]}</b><span class="wt">${groups[t][1]} weight</span><span class="rule"></span></div>`;
     SCORED.filter(m=>m.t===t).forEach(m=>{
       const rk = r[m.k+'_rk'];
       const pool = m.poolSize || 24;
-      const rankFlavor = m.hi===false && rk!=null ? `<small class="rk-flavor">${ordSup(rk)} fewest</small>` : '';
       html+=`<div class="dm-row">
         <span class="dm-name" tabindex="0" data-k="${m.k}">${m.name}${m.hi===false?'<span class="dir-arrow" title="Lower is better">↓</span>':''}<span class="tt">${m.tip}</span></span>
         <div class="dm-rank-vis">
           ${rk!=null
-            ? `<span class="dm-rank">${ordSup(rk)}<small>of ${pool}</small>${rankFlavor}</span><span class="rank-bar"><span class="rank-fill" style="width:${((pool+1-rk)/pool)*100}%"></span></span>`
+            ? `<span class="dm-rank">${ordSup(rk)}<small>of ${pool}</small></span><span class="rank-bar"><span class="rank-fill" style="width:${((pool+1-rk)/pool)*100}%;background:${rankColor(rk,pool)}"></span></span>`
             : `<span class="dm-rank" style="color:#b8b2a8">—</span>`}
         </div>
         <span class="dm-val">${fmtOrDash(r[m.k],dp(m.k))}</span>
