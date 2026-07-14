@@ -161,6 +161,7 @@ tr.detail td{padding:0;background:#fff;border-bottom:2px solid var(--navy)}
 .dm-rank{font-family:'DM Serif Display',serif;font-size:16px;color:var(--navy);min-width:44px;text-align:right;line-height:1}
 .dm-rank sup{font-size:10px;font-family:'IBM Plex Mono',monospace;font-weight:500;margin-left:1px;top:-4px;position:relative}
 .dm-rank small{display:block;font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.06em;color:var(--muted);margin-top:1px;font-weight:400;text-transform:uppercase}
+.dm-rank .rk-flavor{display:block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.04em;color:var(--amber);margin-top:2px;font-weight:500;text-transform:none}
 .rank-bar{flex:1;max-width:100px;height:8px;background:rgba(26,58,107,.09);position:relative;border-radius:1px}
 .rank-fill{position:absolute;left:0;top:0;height:100%;background:var(--navy);border-radius:1px}
 .dm-val{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);text-align:right}
@@ -1056,11 +1057,12 @@ function detailRow(r){
     SCORED.filter(m=>m.t===t).forEach(m=>{
       const rk = r[m.k+'_rk'];
       const pool = m.poolSize || 24;
+      const rankFlavor = m.hi===false && rk!=null ? `<small class="rk-flavor">${ordSup(rk)} fewest</small>` : '';
       html+=`<div class="dm-row">
         <span class="dm-name" tabindex="0" data-k="${m.k}">${m.name}${m.hi===false?'<span class="dir-arrow" title="Lower is better">↓</span>':''}<span class="tt">${m.tip}</span></span>
         <div class="dm-rank-vis">
           ${rk!=null
-            ? `<span class="dm-rank">${ordSup(rk)}<small>of ${pool}</small></span><span class="rank-bar"><span class="rank-fill" style="width:${((pool+1-rk)/pool)*100}%"></span></span>`
+            ? `<span class="dm-rank">${ordSup(rk)}<small>of ${pool}</small>${rankFlavor}</span><span class="rank-bar"><span class="rank-fill" style="width:${((pool+1-rk)/pool)*100}%"></span></span>`
             : `<span class="dm-rank" style="color:#b8b2a8">—</span>`}
         </div>
         <span class="dm-val">${fmtOrDash(r[m.k],dp(m.k))}</span>
