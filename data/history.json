@@ -77,7 +77,8 @@
         "misc_pens_won": 2,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 11,
-        "misc_errors_goal": 2
+        "misc_errors_goal": 2,
+        "np_xga_per_shot": 0.096
       },
       "Coventry City FC": {
         "atk_played": 41,
@@ -151,7 +152,8 @@
         "misc_pens_won": 5,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 17,
-        "misc_errors_goal": 6
+        "misc_errors_goal": 6,
+        "np_xga_per_shot": 0.089
       },
       "Leicester City FC": {
         "atk_played": 41,
@@ -225,7 +227,8 @@
         "misc_pens_won": 5,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 26,
-        "misc_errors_goal": 10
+        "misc_errors_goal": 10,
+        "np_xga_per_shot": 0.108
       },
       "Sheffield Wednesday FC": {
         "atk_played": 41,
@@ -299,7 +302,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 34,
-        "misc_errors_goal": 10
+        "misc_errors_goal": 10,
+        "np_xga_per_shot": 0.126
       },
       "Southampton FC": {
         "atk_played": 40,
@@ -373,7 +377,8 @@
         "misc_pens_won": 3,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 25,
-        "misc_errors_goal": 9
+        "misc_errors_goal": 9,
+        "np_xga_per_shot": 0.098
       },
       "Derby County FC": {
         "atk_played": 41,
@@ -447,7 +452,8 @@
         "misc_pens_won": 5,
         "misc_pens_conceded": 4,
         "misc_errors_shot": 18,
-        "misc_errors_goal": 4
+        "misc_errors_goal": 4,
+        "np_xga_per_shot": 0.09
       },
       "Middlesbrough FC": {
         "atk_played": 41,
@@ -521,7 +527,8 @@
         "misc_pens_won": 3,
         "misc_pens_conceded": 7,
         "misc_errors_shot": 28,
-        "misc_errors_goal": 2
+        "misc_errors_goal": 2,
+        "np_xga_per_shot": 0.081
       },
       "Charlton Athletic FC": {
         "atk_played": 41,
@@ -595,7 +602,8 @@
         "misc_pens_won": 3,
         "misc_pens_conceded": 5,
         "misc_errors_shot": 19,
-        "misc_errors_goal": 5
+        "misc_errors_goal": 5,
+        "np_xga_per_shot": 0.081
       },
       "West Bromwich Albion FC": {
         "atk_played": 41,
@@ -669,7 +677,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 26,
-        "misc_errors_goal": 10
+        "misc_errors_goal": 10,
+        "np_xga_per_shot": 0.094
       },
       "Ipswich Town FC": {
         "atk_played": 39,
@@ -743,7 +752,8 @@
         "misc_pens_won": 7,
         "misc_pens_conceded": 5,
         "misc_errors_shot": 26,
-        "misc_errors_goal": 6
+        "misc_errors_goal": 6,
+        "np_xga_per_shot": 0.087
       },
       "Birmingham City FC": {
         "atk_played": 41,
@@ -817,7 +827,8 @@
         "misc_pens_won": 3,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 18,
-        "misc_errors_goal": 4
+        "misc_errors_goal": 4,
+        "np_xga_per_shot": 0.095
       },
       "Norwich City FC": {
         "atk_played": 41,
@@ -891,7 +902,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 26,
-        "misc_errors_goal": 5
+        "misc_errors_goal": 5,
+        "np_xga_per_shot": 0.112
       },
       "Portsmouth FC": {
         "atk_played": 40,
@@ -965,7 +977,8 @@
         "misc_pens_won": 2,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 19,
-        "misc_errors_goal": 6
+        "misc_errors_goal": 6,
+        "np_xga_per_shot": 0.097
       },
       "Sheffield United FC": {
         "atk_played": 41,
@@ -1039,7 +1052,8 @@
         "misc_pens_won": 4,
         "misc_pens_conceded": 5,
         "misc_errors_shot": 21,
-        "misc_errors_goal": 8
+        "misc_errors_goal": 8,
+        "np_xga_per_shot": 0.095
       },
       "Queens Park Rangers FC": {
         "atk_played": 41,
@@ -1113,7 +1127,8 @@
         "misc_pens_won": 3,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 19,
-        "misc_errors_goal": 7
+        "misc_errors_goal": 7,
+        "np_xga_per_shot": 0.096
       },
       "Watford FC": {
         "atk_played": 41,
@@ -1187,7 +1202,8 @@
         "misc_pens_won": 4,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 25,
-        "misc_errors_goal": 4
+        "misc_errors_goal": 4,
+        "np_xga_per_shot": 0.099
       },
       "Swansea City AFC": {
         "atk_played": 41,
@@ -1261,7 +1277,8 @@
         "misc_pens_won": 4,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 22,
-        "misc_errors_goal": 4
+        "misc_errors_goal": 4,
+        "np_xga_per_shot": 0.095
       },
       "Hull City AFC": {
         "atk_played": 41,
@@ -1335,7 +1352,8 @@
         "misc_pens_won": 4,
         "misc_pens_conceded": 4,
         "misc_errors_shot": 20,
-        "misc_errors_goal": 7
+        "misc_errors_goal": 7,
+        "np_xga_per_shot": 0.113
       },
       "Millwall FC": {
         "atk_played": 41,
@@ -1409,7 +1427,8 @@
         "misc_pens_won": 2,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 21,
-        "misc_errors_goal": 10
+        "misc_errors_goal": 10,
+        "np_xga_per_shot": 0.1
       },
       "Oxford United FC": {
         "atk_played": 41,
@@ -1483,7 +1502,8 @@
         "misc_pens_won": 2,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 21,
-        "misc_errors_goal": 7
+        "misc_errors_goal": 7,
+        "np_xga_per_shot": 0.091
       },
       "Preston North End FC": {
         "atk_played": 41,
@@ -1557,7 +1577,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 20,
-        "misc_errors_goal": 8
+        "misc_errors_goal": 8,
+        "np_xga_per_shot": 0.1
       },
       "Wrexham FC": {
         "atk_played": 41,
@@ -1631,7 +1652,8 @@
         "misc_pens_won": 4,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 25,
-        "misc_errors_goal": 6
+        "misc_errors_goal": 6,
+        "np_xga_per_shot": 0.098
       },
       "Stoke City FC": {
         "atk_played": 41,
@@ -1705,7 +1727,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 15,
-        "misc_errors_goal": 4
+        "misc_errors_goal": 4,
+        "np_xga_per_shot": 0.105
       },
       "Bristol City FC": {
         "atk_played": 41,
@@ -1779,7 +1802,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 26,
-        "misc_errors_goal": 9
+        "misc_errors_goal": 9,
+        "np_xga_per_shot": 0.1
       }
     },
     "standings": {
@@ -3551,7 +3575,8 @@
         "misc_pens_won": 2,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 11,
-        "misc_errors_goal": 2
+        "misc_errors_goal": 2,
+        "np_xga_per_shot": 0.098
       },
       "Coventry City FC": {
         "atk_played": 42,
@@ -3625,7 +3650,8 @@
         "misc_pens_won": 5,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 17,
-        "misc_errors_goal": 6
+        "misc_errors_goal": 6,
+        "np_xga_per_shot": 0.089
       },
       "Leicester City FC": {
         "atk_played": 42,
@@ -3699,7 +3725,8 @@
         "misc_pens_won": 5,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 27,
-        "misc_errors_goal": 10
+        "misc_errors_goal": 10,
+        "np_xga_per_shot": 0.108
       },
       "Sheffield Wednesday FC": {
         "atk_played": 42,
@@ -3773,7 +3800,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 34,
-        "misc_errors_goal": 10
+        "misc_errors_goal": 10,
+        "np_xga_per_shot": 0.125
       },
       "Southampton FC": {
         "atk_played": 42,
@@ -3847,7 +3875,8 @@
         "misc_pens_won": 3,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 25,
-        "misc_errors_goal": 9
+        "misc_errors_goal": 9,
+        "np_xga_per_shot": 0.098
       },
       "Derby County FC": {
         "atk_played": 42,
@@ -3921,7 +3950,8 @@
         "misc_pens_won": 5,
         "misc_pens_conceded": 4,
         "misc_errors_shot": 19,
-        "misc_errors_goal": 4
+        "misc_errors_goal": 4,
+        "np_xga_per_shot": 0.091
       },
       "Middlesbrough FC": {
         "atk_played": 42,
@@ -3995,7 +4025,8 @@
         "misc_pens_won": 3,
         "misc_pens_conceded": 7,
         "misc_errors_shot": 28,
-        "misc_errors_goal": 2
+        "misc_errors_goal": 2,
+        "np_xga_per_shot": 0.081
       },
       "Charlton Athletic FC": {
         "atk_played": 42,
@@ -4069,7 +4100,8 @@
         "misc_pens_won": 3,
         "misc_pens_conceded": 5,
         "misc_errors_shot": 19,
-        "misc_errors_goal": 5
+        "misc_errors_goal": 5,
+        "np_xga_per_shot": 0.082
       },
       "West Bromwich Albion FC": {
         "atk_played": 42,
@@ -4143,7 +4175,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 27,
-        "misc_errors_goal": 10
+        "misc_errors_goal": 10,
+        "np_xga_per_shot": 0.094
       },
       "Ipswich Town FC": {
         "atk_played": 41,
@@ -4217,7 +4250,8 @@
         "misc_pens_won": 8,
         "misc_pens_conceded": 5,
         "misc_errors_shot": 27,
-        "misc_errors_goal": 6
+        "misc_errors_goal": 6,
+        "np_xga_per_shot": 0.088
       },
       "Birmingham City FC": {
         "atk_played": 42,
@@ -4291,7 +4325,8 @@
         "misc_pens_won": 3,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 18,
-        "misc_errors_goal": 4
+        "misc_errors_goal": 4,
+        "np_xga_per_shot": 0.094
       },
       "Norwich City FC": {
         "atk_played": 42,
@@ -4365,7 +4400,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 26,
-        "misc_errors_goal": 5
+        "misc_errors_goal": 5,
+        "np_xga_per_shot": 0.112
       },
       "Portsmouth FC": {
         "atk_played": 42,
@@ -4439,7 +4475,8 @@
         "misc_pens_won": 2,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 19,
-        "misc_errors_goal": 6
+        "misc_errors_goal": 6,
+        "np_xga_per_shot": 0.095
       },
       "Sheffield United FC": {
         "atk_played": 42,
@@ -4513,7 +4550,8 @@
         "misc_pens_won": 5,
         "misc_pens_conceded": 5,
         "misc_errors_shot": 22,
-        "misc_errors_goal": 8
+        "misc_errors_goal": 8,
+        "np_xga_per_shot": 0.094
       },
       "Queens Park Rangers FC": {
         "atk_played": 42,
@@ -4587,7 +4625,8 @@
         "misc_pens_won": 3,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 20,
-        "misc_errors_goal": 7
+        "misc_errors_goal": 7,
+        "np_xga_per_shot": 0.095
       },
       "Watford FC": {
         "atk_played": 42,
@@ -4661,7 +4700,8 @@
         "misc_pens_won": 4,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 27,
-        "misc_errors_goal": 5
+        "misc_errors_goal": 5,
+        "np_xga_per_shot": 0.1
       },
       "Swansea City AFC": {
         "atk_played": 42,
@@ -4735,7 +4775,8 @@
         "misc_pens_won": 4,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 23,
-        "misc_errors_goal": 4
+        "misc_errors_goal": 4,
+        "np_xga_per_shot": 0.095
       },
       "Hull City AFC": {
         "atk_played": 42,
@@ -4809,7 +4850,8 @@
         "misc_pens_won": 4,
         "misc_pens_conceded": 5,
         "misc_errors_shot": 20,
-        "misc_errors_goal": 7
+        "misc_errors_goal": 7,
+        "np_xga_per_shot": 0.113
       },
       "Millwall FC": {
         "atk_played": 42,
@@ -4883,7 +4925,8 @@
         "misc_pens_won": 2,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 21,
-        "misc_errors_goal": 10
+        "misc_errors_goal": 10,
+        "np_xga_per_shot": 0.099
       },
       "Oxford United FC": {
         "atk_played": 42,
@@ -4957,7 +5000,8 @@
         "misc_pens_won": 2,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 21,
-        "misc_errors_goal": 7
+        "misc_errors_goal": 7,
+        "np_xga_per_shot": 0.091
       },
       "Preston North End FC": {
         "atk_played": 42,
@@ -5031,7 +5075,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 21,
-        "misc_errors_goal": 9
+        "misc_errors_goal": 9,
+        "np_xga_per_shot": 0.1
       },
       "Wrexham FC": {
         "atk_played": 42,
@@ -5105,7 +5150,8 @@
         "misc_pens_won": 4,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 29,
-        "misc_errors_goal": 7
+        "misc_errors_goal": 7,
+        "np_xga_per_shot": 0.098
       },
       "Stoke City FC": {
         "atk_played": 42,
@@ -5179,7 +5225,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 15,
-        "misc_errors_goal": 4
+        "misc_errors_goal": 4,
+        "np_xga_per_shot": 0.104
       },
       "Bristol City FC": {
         "atk_played": 42,
@@ -5253,7 +5300,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 28,
-        "misc_errors_goal": 9
+        "misc_errors_goal": 9,
+        "np_xga_per_shot": 0.099
       }
     },
     "standings": {
@@ -7025,7 +7073,8 @@
         "misc_pens_won": 2,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 12,
-        "misc_errors_goal": 2
+        "misc_errors_goal": 2,
+        "np_xga_per_shot": 0.099
       },
       "Coventry City FC": {
         "atk_played": 43,
@@ -7099,7 +7148,8 @@
         "misc_pens_won": 5,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 18,
-        "misc_errors_goal": 6
+        "misc_errors_goal": 6,
+        "np_xga_per_shot": 0.089
       },
       "Leicester City FC": {
         "atk_played": 43,
@@ -7173,7 +7223,8 @@
         "misc_pens_won": 5,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 28,
-        "misc_errors_goal": 10
+        "misc_errors_goal": 10,
+        "np_xga_per_shot": 0.107
       },
       "Sheffield Wednesday FC": {
         "atk_played": 43,
@@ -7247,7 +7298,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 34,
-        "misc_errors_goal": 10
+        "misc_errors_goal": 10,
+        "np_xga_per_shot": 0.125
       },
       "Southampton FC": {
         "atk_played": 43,
@@ -7321,7 +7373,8 @@
         "misc_pens_won": 3,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 26,
-        "misc_errors_goal": 9
+        "misc_errors_goal": 9,
+        "np_xga_per_shot": 0.098
       },
       "Derby County FC": {
         "atk_played": 43,
@@ -7395,7 +7448,8 @@
         "misc_pens_won": 5,
         "misc_pens_conceded": 4,
         "misc_errors_shot": 20,
-        "misc_errors_goal": 4
+        "misc_errors_goal": 4,
+        "np_xga_per_shot": 0.09
       },
       "Middlesbrough FC": {
         "atk_played": 43,
@@ -7469,7 +7523,8 @@
         "misc_pens_won": 3,
         "misc_pens_conceded": 8,
         "misc_errors_shot": 30,
-        "misc_errors_goal": 2
+        "misc_errors_goal": 2,
+        "np_xga_per_shot": 0.083
       },
       "Charlton Athletic FC": {
         "atk_played": 43,
@@ -7543,7 +7598,8 @@
         "misc_pens_won": 3,
         "misc_pens_conceded": 5,
         "misc_errors_shot": 20,
-        "misc_errors_goal": 6
+        "misc_errors_goal": 6,
+        "np_xga_per_shot": 0.082
       },
       "West Bromwich Albion FC": {
         "atk_played": 43,
@@ -7617,7 +7673,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 27,
-        "misc_errors_goal": 10
+        "misc_errors_goal": 10,
+        "np_xga_per_shot": 0.095
       },
       "Ipswich Town FC": {
         "atk_played": 42,
@@ -7691,7 +7748,8 @@
         "misc_pens_won": 9,
         "misc_pens_conceded": 5,
         "misc_errors_shot": 28,
-        "misc_errors_goal": 6
+        "misc_errors_goal": 6,
+        "np_xga_per_shot": 0.091
       },
       "Birmingham City FC": {
         "atk_played": 43,
@@ -7765,7 +7823,8 @@
         "misc_pens_won": 3,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 18,
-        "misc_errors_goal": 4
+        "misc_errors_goal": 4,
+        "np_xga_per_shot": 0.094
       },
       "Norwich City FC": {
         "atk_played": 43,
@@ -7839,7 +7898,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 26,
-        "misc_errors_goal": 5
+        "misc_errors_goal": 5,
+        "np_xga_per_shot": 0.113
       },
       "Portsmouth FC": {
         "atk_played": 43,
@@ -7913,7 +7973,8 @@
         "misc_pens_won": 2,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 20,
-        "misc_errors_goal": 6
+        "misc_errors_goal": 6,
+        "np_xga_per_shot": 0.094
       },
       "Sheffield United FC": {
         "atk_played": 43,
@@ -7987,7 +8048,8 @@
         "misc_pens_won": 5,
         "misc_pens_conceded": 5,
         "misc_errors_shot": 22,
-        "misc_errors_goal": 8
+        "misc_errors_goal": 8,
+        "np_xga_per_shot": 0.094
       },
       "Queens Park Rangers FC": {
         "atk_played": 43,
@@ -8061,7 +8123,8 @@
         "misc_pens_won": 3,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 22,
-        "misc_errors_goal": 7
+        "misc_errors_goal": 7,
+        "np_xga_per_shot": 0.096
       },
       "Watford FC": {
         "atk_played": 43,
@@ -8135,7 +8198,8 @@
         "misc_pens_won": 4,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 27,
-        "misc_errors_goal": 5
+        "misc_errors_goal": 5,
+        "np_xga_per_shot": 0.099
       },
       "Swansea City AFC": {
         "atk_played": 43,
@@ -8209,7 +8273,8 @@
         "misc_pens_won": 4,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 23,
-        "misc_errors_goal": 4
+        "misc_errors_goal": 4,
+        "np_xga_per_shot": 0.094
       },
       "Hull City AFC": {
         "atk_played": 43,
@@ -8283,7 +8348,8 @@
         "misc_pens_won": 4,
         "misc_pens_conceded": 5,
         "misc_errors_shot": 20,
-        "misc_errors_goal": 7
+        "misc_errors_goal": 7,
+        "np_xga_per_shot": 0.112
       },
       "Millwall FC": {
         "atk_played": 43,
@@ -8357,7 +8423,8 @@
         "misc_pens_won": 2,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 21,
-        "misc_errors_goal": 10
+        "misc_errors_goal": 10,
+        "np_xga_per_shot": 0.099
       },
       "Oxford United FC": {
         "atk_played": 43,
@@ -8431,7 +8498,8 @@
         "misc_pens_won": 2,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 21,
-        "misc_errors_goal": 7
+        "misc_errors_goal": 7,
+        "np_xga_per_shot": 0.09
       },
       "Preston North End FC": {
         "atk_played": 43,
@@ -8505,7 +8573,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 21,
-        "misc_errors_goal": 9
+        "misc_errors_goal": 9,
+        "np_xga_per_shot": 0.101
       },
       "Wrexham FC": {
         "atk_played": 43,
@@ -8579,7 +8648,8 @@
         "misc_pens_won": 4,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 29,
-        "misc_errors_goal": 7
+        "misc_errors_goal": 7,
+        "np_xga_per_shot": 0.098
       },
       "Stoke City FC": {
         "atk_played": 43,
@@ -8653,7 +8723,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 16,
-        "misc_errors_goal": 5
+        "misc_errors_goal": 5,
+        "np_xga_per_shot": 0.104
       },
       "Bristol City FC": {
         "atk_played": 43,
@@ -8727,7 +8798,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 29,
-        "misc_errors_goal": 9
+        "misc_errors_goal": 9,
+        "np_xga_per_shot": 0.099
       }
     },
     "standings": {
@@ -10499,7 +10571,8 @@
         "misc_pens_won": 2,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 13,
-        "misc_errors_goal": 2
+        "misc_errors_goal": 2,
+        "np_xga_per_shot": 0.1
       },
       "Coventry City FC": {
         "atk_played": 44,
@@ -10573,7 +10646,8 @@
         "misc_pens_won": 5,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 19,
-        "misc_errors_goal": 7
+        "misc_errors_goal": 7,
+        "np_xga_per_shot": 0.089
       },
       "Leicester City FC": {
         "atk_played": 44,
@@ -10647,7 +10721,8 @@
         "misc_pens_won": 6,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 29,
-        "misc_errors_goal": 11
+        "misc_errors_goal": 11,
+        "np_xga_per_shot": 0.108
       },
       "Sheffield Wednesday FC": {
         "atk_played": 44,
@@ -10721,7 +10796,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 35,
-        "misc_errors_goal": 11
+        "misc_errors_goal": 11,
+        "np_xga_per_shot": 0.124
       },
       "Southampton FC": {
         "atk_played": 44,
@@ -10795,7 +10871,8 @@
         "misc_pens_won": 3,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 27,
-        "misc_errors_goal": 9
+        "misc_errors_goal": 9,
+        "np_xga_per_shot": 0.098
       },
       "Derby County FC": {
         "atk_played": 44,
@@ -10869,7 +10946,8 @@
         "misc_pens_won": 5,
         "misc_pens_conceded": 5,
         "misc_errors_shot": 21,
-        "misc_errors_goal": 4
+        "misc_errors_goal": 4,
+        "np_xga_per_shot": 0.089
       },
       "Middlesbrough FC": {
         "atk_played": 44,
@@ -10943,7 +11021,8 @@
         "misc_pens_won": 3,
         "misc_pens_conceded": 8,
         "misc_errors_shot": 30,
-        "misc_errors_goal": 2
+        "misc_errors_goal": 2,
+        "np_xga_per_shot": 0.082
       },
       "Charlton Athletic FC": {
         "atk_played": 44,
@@ -11017,7 +11096,8 @@
         "misc_pens_won": 3,
         "misc_pens_conceded": 6,
         "misc_errors_shot": 20,
-        "misc_errors_goal": 6
+        "misc_errors_goal": 6,
+        "np_xga_per_shot": 0.082
       },
       "West Bromwich Albion FC": {
         "atk_played": 44,
@@ -11091,7 +11171,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 27,
-        "misc_errors_goal": 10
+        "misc_errors_goal": 10,
+        "np_xga_per_shot": 0.095
       },
       "Ipswich Town FC": {
         "atk_played": 43,
@@ -11165,7 +11246,8 @@
         "misc_pens_won": 10,
         "misc_pens_conceded": 5,
         "misc_errors_shot": 29,
-        "misc_errors_goal": 7
+        "misc_errors_goal": 7,
+        "np_xga_per_shot": 0.09
       },
       "Birmingham City FC": {
         "atk_played": 44,
@@ -11239,7 +11321,8 @@
         "misc_pens_won": 3,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 20,
-        "misc_errors_goal": 5
+        "misc_errors_goal": 5,
+        "np_xga_per_shot": 0.095
       },
       "Norwich City FC": {
         "atk_played": 44,
@@ -11313,7 +11396,8 @@
         "misc_pens_won": 2,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 27,
-        "misc_errors_goal": 6
+        "misc_errors_goal": 6,
+        "np_xga_per_shot": 0.113
       },
       "Portsmouth FC": {
         "atk_played": 44,
@@ -11387,7 +11471,8 @@
         "misc_pens_won": 2,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 22,
-        "misc_errors_goal": 8
+        "misc_errors_goal": 8,
+        "np_xga_per_shot": 0.098
       },
       "Sheffield United FC": {
         "atk_played": 44,
@@ -11461,7 +11546,8 @@
         "misc_pens_won": 5,
         "misc_pens_conceded": 5,
         "misc_errors_shot": 22,
-        "misc_errors_goal": 8
+        "misc_errors_goal": 8,
+        "np_xga_per_shot": 0.095
       },
       "Queens Park Rangers FC": {
         "atk_played": 44,
@@ -11535,7 +11621,8 @@
         "misc_pens_won": 3,
         "misc_pens_conceded": 4,
         "misc_errors_shot": 23,
-        "misc_errors_goal": 8
+        "misc_errors_goal": 8,
+        "np_xga_per_shot": 0.096
       },
       "Watford FC": {
         "atk_played": 44,
@@ -11609,7 +11696,8 @@
         "misc_pens_won": 4,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 28,
-        "misc_errors_goal": 5
+        "misc_errors_goal": 5,
+        "np_xga_per_shot": 0.099
       },
       "Swansea City AFC": {
         "atk_played": 44,
@@ -11683,7 +11771,8 @@
         "misc_pens_won": 5,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 24,
-        "misc_errors_goal": 4
+        "misc_errors_goal": 4,
+        "np_xga_per_shot": 0.095
       },
       "Hull City AFC": {
         "atk_played": 44,
@@ -11757,7 +11846,8 @@
         "misc_pens_won": 4,
         "misc_pens_conceded": 6,
         "misc_errors_shot": 21,
-        "misc_errors_goal": 7
+        "misc_errors_goal": 7,
+        "np_xga_per_shot": 0.113
       },
       "Millwall FC": {
         "atk_played": 44,
@@ -11831,7 +11921,8 @@
         "misc_pens_won": 2,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 23,
-        "misc_errors_goal": 10
+        "misc_errors_goal": 10,
+        "np_xga_per_shot": 0.098
       },
       "Oxford United FC": {
         "atk_played": 44,
@@ -11905,7 +11996,8 @@
         "misc_pens_won": 2,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 21,
-        "misc_errors_goal": 7
+        "misc_errors_goal": 7,
+        "np_xga_per_shot": 0.091
       },
       "Preston North End FC": {
         "atk_played": 44,
@@ -11979,7 +12071,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 3,
         "misc_errors_shot": 23,
-        "misc_errors_goal": 9
+        "misc_errors_goal": 9,
+        "np_xga_per_shot": 0.101
       },
       "Wrexham FC": {
         "atk_played": 44,
@@ -12053,7 +12146,8 @@
         "misc_pens_won": 4,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 29,
-        "misc_errors_goal": 7
+        "misc_errors_goal": 7,
+        "np_xga_per_shot": 0.096
       },
       "Stoke City FC": {
         "atk_played": 44,
@@ -12127,7 +12221,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 19,
-        "misc_errors_goal": 7
+        "misc_errors_goal": 7,
+        "np_xga_per_shot": 0.106
       },
       "Bristol City FC": {
         "atk_played": 44,
@@ -12201,7 +12296,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 2,
         "misc_errors_shot": 30,
-        "misc_errors_goal": 9
+        "misc_errors_goal": 9,
+        "np_xga_per_shot": 0.102
       }
     },
     "standings": {
@@ -13909,7 +14005,8 @@
         "atk_shots": 767,
         "atk_shots_ot": 228,
         "atk_xg_per_shot": 0.095,
-        "atk_shot_conv": 8.734
+        "atk_shot_conv": 8.734,
+        "np_xg_per_shot": 0.095
       },
       "Hull City AFC": {
         "atk_played": 46,
@@ -13919,7 +14016,8 @@
         "atk_shots": 551,
         "atk_shots_ot": 200,
         "atk_xg_per_shot": 0.114,
-        "atk_shot_conv": 12.885
+        "atk_shot_conv": 12.885,
+        "np_xg_per_shot": 0.115
       },
       "Southampton FC": {
         "atk_played": 45,
@@ -13929,7 +14027,8 @@
         "atk_shots": 710,
         "atk_shots_ot": 257,
         "atk_xg_per_shot": 0.116,
-        "atk_shot_conv": 12.253
+        "atk_shot_conv": 12.253,
+        "np_xg_per_shot": 0.116
       },
       "Millwall FC": {
         "atk_played": 48,
@@ -13939,7 +14038,8 @@
         "atk_shots": 619,
         "atk_shots_ot": 203,
         "atk_xg_per_shot": 0.109,
-        "atk_shot_conv": 9.854
+        "atk_shot_conv": 9.854,
+        "np_xg_per_shot": 0.109
       },
       "Leicester City FC": {
         "atk_played": 44,
@@ -13949,7 +14049,8 @@
         "atk_shots": 591,
         "atk_shots_ot": 191,
         "atk_xg_per_shot": 0.092,
-        "atk_shot_conv": 9.477
+        "atk_shot_conv": 9.477,
+        "np_xg_per_shot": 0.094
       },
       "Blackburn Rovers FC": {
         "atk_played": 46,
@@ -13959,7 +14060,8 @@
         "atk_shots": 536,
         "atk_shots_ot": 147,
         "atk_xg_per_shot": 0.106,
-        "atk_shot_conv": 7.836
+        "atk_shot_conv": 7.836,
+        "np_xg_per_shot": 0.105
       },
       "Stoke City FC": {
         "atk_played": 45,
@@ -13969,7 +14071,8 @@
         "atk_shots": 514,
         "atk_shots_ot": 172,
         "atk_xg_per_shot": 0.102,
-        "atk_shot_conv": 9.145
+        "atk_shot_conv": 9.145,
+        "np_xg_per_shot": 0.101
       },
       "Bristol City FC": {
         "atk_played": 45,
@@ -13979,7 +14082,8 @@
         "atk_shots": 490,
         "atk_shots_ot": 164,
         "atk_xg_per_shot": 0.099,
-        "atk_shot_conv": 10.409
+        "atk_shot_conv": 10.409,
+        "np_xg_per_shot": 0.099
       },
       "Derby County FC": {
         "atk_played": 45,
@@ -13989,7 +14093,8 @@
         "atk_shots": 516,
         "atk_shots_ot": 171,
         "atk_xg_per_shot": 0.114,
-        "atk_shot_conv": 12.403
+        "atk_shot_conv": 12.403,
+        "np_xg_per_shot": 0.114
       },
       "Sheffield United FC": {
         "atk_played": 45,
@@ -13999,7 +14104,8 @@
         "atk_shots": 613,
         "atk_shots_ot": 197,
         "atk_xg_per_shot": 0.118,
-        "atk_shot_conv": 10.441
+        "atk_shot_conv": 10.441,
+        "np_xg_per_shot": 0.119
       },
       "Norwich City FC": {
         "atk_played": 43,
@@ -14009,7 +14115,8 @@
         "atk_shots": 584,
         "atk_shots_ot": 206,
         "atk_xg_per_shot": 0.109,
-        "atk_shot_conv": 10.445
+        "atk_shot_conv": 10.445,
+        "np_xg_per_shot": 0.108
       },
       "Queens Park Rangers FC": {
         "atk_played": 43,
@@ -14019,7 +14126,8 @@
         "atk_shots": 580,
         "atk_shots_ot": 188,
         "atk_xg_per_shot": 0.096,
-        "atk_shot_conv": 9.482
+        "atk_shot_conv": 9.482,
+        "np_xg_per_shot": 0.095
       },
       "Ipswich Town FC": {
         "atk_played": 46,
@@ -14029,7 +14137,8 @@
         "atk_shots": 749,
         "atk_shots_ot": 254,
         "atk_xg_per_shot": 0.114,
-        "atk_shot_conv": 10.815
+        "atk_shot_conv": 10.815,
+        "np_xg_per_shot": 0.113
       },
       "Oxford United FC": {
         "atk_played": 44,
@@ -14039,7 +14148,8 @@
         "atk_shots": 581,
         "atk_shots_ot": 166,
         "atk_xg_per_shot": 0.095,
-        "atk_shot_conv": 7.746
+        "atk_shot_conv": 7.746,
+        "np_xg_per_shot": 0.094
       },
       "Portsmouth FC": {
         "atk_played": 42,
@@ -14049,7 +14159,8 @@
         "atk_shots": 564,
         "atk_shots_ot": 164,
         "atk_xg_per_shot": 0.089,
-        "atk_shot_conv": 7.977
+        "atk_shot_conv": 7.977,
+        "np_xg_per_shot": 0.088
       },
       "Birmingham City FC": {
         "atk_played": 45,
@@ -14059,7 +14170,8 @@
         "atk_shots": 587,
         "atk_shots_ot": 181,
         "atk_xg_per_shot": 0.102,
-        "atk_shot_conv": 8.857
+        "atk_shot_conv": 8.857,
+        "np_xg_per_shot": 0.102
       },
       "Preston North End FC": {
         "atk_played": 45,
@@ -14069,7 +14181,8 @@
         "atk_shots": 512,
         "atk_shots_ot": 170,
         "atk_xg_per_shot": 0.112,
-        "atk_shot_conv": 10.936
+        "atk_shot_conv": 10.936,
+        "np_xg_per_shot": 0.112
       },
       "West Bromwich Albion FC": {
         "atk_played": 46,
@@ -14079,7 +14192,8 @@
         "atk_shots": 609,
         "atk_shots_ot": 188,
         "atk_xg_per_shot": 0.094,
-        "atk_shot_conv": 7.717
+        "atk_shot_conv": 7.717,
+        "np_xg_per_shot": 0.095
       },
       "Sheffield Wednesday FC": {
         "atk_played": 45,
@@ -14089,7 +14203,8 @@
         "atk_shots": 338,
         "atk_shots_ot": 93,
         "atk_xg_per_shot": 0.099,
-        "atk_shot_conv": 7.397
+        "atk_shot_conv": 7.397,
+        "np_xg_per_shot": 0.099
       },
       "Charlton Athletic FC": {
         "atk_played": 46,
@@ -14099,7 +14214,8 @@
         "atk_shots": 506,
         "atk_shots_ot": 160,
         "atk_xg_per_shot": 0.097,
-        "atk_shot_conv": 8.499
+        "atk_shot_conv": 8.499,
+        "np_xg_per_shot": 0.098
       },
       "Swansea City AFC": {
         "atk_played": 46,
@@ -14109,7 +14225,8 @@
         "atk_shots": 566,
         "atk_shots_ot": 179,
         "atk_xg_per_shot": 0.09,
-        "atk_shot_conv": 9.893
+        "atk_shot_conv": 9.893,
+        "np_xg_per_shot": 0.091
       },
       "Watford FC": {
         "atk_played": 43,
@@ -14119,7 +14236,8 @@
         "atk_shots": 636,
         "atk_shots_ot": 203,
         "atk_xg_per_shot": 0.09,
-        "atk_shot_conv": 8.176
+        "atk_shot_conv": 8.176,
+        "np_xg_per_shot": 0.09
       },
       "Coventry City FC": {
         "atk_played": 46,
@@ -14129,7 +14247,8 @@
         "atk_shots": 763,
         "atk_shots_ot": 261,
         "atk_xg_per_shot": 0.118,
-        "atk_shot_conv": 12.714
+        "atk_shot_conv": 12.714,
+        "np_xg_per_shot": 0.118
       },
       "Wrexham FC": {
         "atk_played": 44,
@@ -14139,7 +14258,8 @@
         "atk_shots": 579,
         "atk_shots_ot": 191,
         "atk_xg_per_shot": 0.111,
-        "atk_shot_conv": 11.399
+        "atk_shot_conv": 11.399,
+        "np_xg_per_shot": 0.11
       }
     },
     "standings": {
@@ -19505,7 +19625,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 1,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.069
       },
       "Southampton FC": {
         "atk_played": 1,
@@ -19520,7 +19641,7 @@
         "np_xg": 1.71,
         "np_shots": 17,
         "np_shots_ot": 3,
-        "np_xg_per_shot": 0.1,
+        "np_xg_per_shot": 0.101,
         "sp_atk_goals": 0,
         "sp_atk_shots": 5,
         "sp_atk_xg": 0.45,
@@ -19579,7 +19700,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 1,
-        "misc_errors_goal": 1
+        "misc_errors_goal": 1,
+        "np_xga_per_shot": 0.051
       },
       "West Ham United FC": {
         "atk_played": 1,
@@ -19653,7 +19775,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 2,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.082
       },
       "Derby County FC": {
         "atk_played": 1,
@@ -19727,7 +19850,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.075
       },
       "Middlesbrough FC": {
         "atk_played": 1,
@@ -19801,7 +19925,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 2,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.057
       },
       "Bolton Wanderers FC": {
         "atk_played": 1,
@@ -19875,7 +20000,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.112
       },
       "Charlton Athletic FC": {
         "atk_played": 1,
@@ -19949,7 +20075,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 2,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.067
       },
       "West Bromwich Albion FC": {
         "atk_played": 1,
@@ -19964,7 +20091,7 @@
         "np_xg": 1.85,
         "np_shots": 9,
         "np_shots_ot": 4,
-        "np_xg_per_shot": 0.205,
+        "np_xg_per_shot": 0.206,
         "sp_atk_goals": 0,
         "sp_atk_shots": 4,
         "sp_atk_xg": 0.66,
@@ -20023,7 +20150,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.148
       },
       "Wolverhampton Wanderers FC": {
         "atk_played": 1,
@@ -20038,7 +20166,7 @@
         "np_xg": 1.18,
         "np_shots": 17,
         "np_shots_ot": 2,
-        "np_xg_per_shot": 0.07,
+        "np_xg_per_shot": 0.069,
         "sp_atk_goals": 0,
         "sp_atk_shots": 5,
         "sp_atk_xg": 0.25,
@@ -20097,7 +20225,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.084
       },
       "Birmingham City FC": {
         "atk_played": 1,
@@ -20171,7 +20300,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.097
       },
       "Norwich City FC": {
         "atk_played": 1,
@@ -20245,7 +20375,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.206
       },
       "Portsmouth FC": {
         "atk_played": 1,
@@ -20319,7 +20450,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.159
       },
       "Sheffield United FC": {
         "atk_played": 1,
@@ -20334,7 +20466,7 @@
         "np_xg": 0.29,
         "np_shots": 3,
         "np_shots_ot": 1,
-        "np_xg_per_shot": 0.095,
+        "np_xg_per_shot": 0.097,
         "sp_atk_goals": 0,
         "sp_atk_shots": 1,
         "sp_atk_xg": 0.07,
@@ -20393,7 +20525,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 1,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.077
       },
       "Queens Park Rangers FC": {
         "atk_played": 1,
@@ -20467,7 +20600,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 1,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.128
       },
       "Watford FC": {
         "atk_played": 1,
@@ -20541,7 +20675,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.101
       },
       "Swansea City AFC": {
         "atk_played": 1,
@@ -20556,7 +20691,7 @@
         "np_xg": 0.62,
         "np_shots": 7,
         "np_shots_ot": 3,
-        "np_xg_per_shot": 0.088,
+        "np_xg_per_shot": 0.089,
         "sp_atk_goals": 0,
         "sp_atk_shots": 1,
         "sp_atk_xg": 0.06,
@@ -20615,7 +20750,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.108
       },
       "Lincoln City FC": {
         "atk_played": 1,
@@ -20689,7 +20825,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.097
       },
       "Burnley FC": {
         "atk_played": 1,
@@ -20763,7 +20900,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.121
       },
       "Cardiff City FC": {
         "atk_played": 1,
@@ -20837,7 +20975,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.083
       },
       "Millwall FC": {
         "atk_played": 1,
@@ -20911,7 +21050,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 2,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.065
       },
       "Preston North End FC": {
         "atk_played": 1,
@@ -20985,7 +21125,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 1,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.073
       },
       "Wrexham FC": {
         "atk_played": 1,
@@ -21059,7 +21200,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.09
       },
       "Stoke City FC": {
         "atk_played": 1,
@@ -21133,7 +21275,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.089
       },
       "Bristol City FC": {
         "atk_played": 1,
@@ -21207,7 +21350,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.142
       }
     },
     "standings": {
@@ -22979,7 +23123,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 1,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.067
       },
       "Southampton FC": {
         "atk_played": 2,
@@ -23053,7 +23198,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 1,
-        "misc_errors_goal": 1
+        "misc_errors_goal": 1,
+        "np_xga_per_shot": 0.056
       },
       "West Ham United FC": {
         "atk_played": 2,
@@ -23127,7 +23273,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 4,
-        "misc_errors_goal": 1
+        "misc_errors_goal": 1,
+        "np_xga_per_shot": 0.083
       },
       "Derby County FC": {
         "atk_played": 2,
@@ -23201,7 +23348,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.111
       },
       "Middlesbrough FC": {
         "atk_played": 2,
@@ -23275,7 +23423,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 3,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.092
       },
       "Bolton Wanderers FC": {
         "atk_played": 2,
@@ -23349,7 +23498,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.105
       },
       "Charlton Athletic FC": {
         "atk_played": 2,
@@ -23364,7 +23514,7 @@
         "np_xg": 1.59,
         "np_shots": 20,
         "np_shots_ot": 9,
-        "np_xg_per_shot": 0.079,
+        "np_xg_per_shot": 0.08,
         "sp_atk_goals": 2,
         "sp_atk_shots": 10,
         "sp_atk_xg": 0.87,
@@ -23423,7 +23573,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 2,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.078
       },
       "West Bromwich Albion FC": {
         "atk_played": 2,
@@ -23497,7 +23648,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.134
       },
       "Wolverhampton Wanderers FC": {
         "atk_played": 2,
@@ -23571,7 +23723,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.061
       },
       "Birmingham City FC": {
         "atk_played": 2,
@@ -23645,7 +23798,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.1
       },
       "Norwich City FC": {
         "atk_played": 2,
@@ -23719,7 +23873,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 3,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.162
       },
       "Portsmouth FC": {
         "atk_played": 2,
@@ -23793,7 +23948,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.134
       },
       "Sheffield United FC": {
         "atk_played": 2,
@@ -23867,7 +24023,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 2,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.07
       },
       "Queens Park Rangers FC": {
         "atk_played": 2,
@@ -23941,7 +24098,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 1,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.124
       },
       "Watford FC": {
         "atk_played": 2,
@@ -24015,7 +24173,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.125
       },
       "Swansea City AFC": {
         "atk_played": 2,
@@ -24089,7 +24248,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.117
       },
       "Lincoln City FC": {
         "atk_played": 2,
@@ -24163,7 +24323,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 2,
-        "misc_errors_goal": 1
+        "misc_errors_goal": 1,
+        "np_xga_per_shot": 0.096
       },
       "Burnley FC": {
         "atk_played": 2,
@@ -24237,7 +24398,8 @@
         "misc_pens_won": 1,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 2,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.103
       },
       "Cardiff City FC": {
         "atk_played": 2,
@@ -24311,7 +24473,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 3,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.1
       },
       "Millwall FC": {
         "atk_played": 2,
@@ -24385,7 +24548,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 2,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.096
       },
       "Preston North End FC": {
         "atk_played": 2,
@@ -24400,7 +24564,7 @@
         "np_xg": 1.69,
         "np_shots": 23,
         "np_shots_ot": 5,
-        "np_xg_per_shot": 0.074,
+        "np_xg_per_shot": 0.073,
         "sp_atk_goals": 0,
         "sp_atk_shots": 12,
         "sp_atk_xg": 0.66,
@@ -24459,7 +24623,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 1,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.086
       },
       "Wrexham FC": {
         "atk_played": 2,
@@ -24533,7 +24698,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 0,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.077
       },
       "Stoke City FC": {
         "atk_played": 2,
@@ -24607,7 +24773,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.089
       },
       "Bristol City FC": {
         "atk_played": 2,
@@ -24681,7 +24848,8 @@
         "misc_pens_won": 0,
         "misc_pens_conceded": 1,
         "misc_errors_shot": 0,
-        "misc_errors_goal": 0
+        "misc_errors_goal": 0,
+        "np_xga_per_shot": 0.133
       }
     },
     "standings": {

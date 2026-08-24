@@ -244,6 +244,37 @@ def build_team_stats(raw):
             "misc_errors_goal":     si(r.get("errors_lead_to_goal")),
         })
 
+    # ── Self-computed non-penalty xG per shot (both sides) ──────────────
+    # Opta's own non-penalty breakdown table (attack.non_pen / defending.non_pen)
+    # isn't reliably available every week -- in particular the defending
+    # half is often missing entirely early in a season, even when the
+    # attacking half is populated. Rather than depend on Opta having
+    # published that table, we back the penalty contribution out of the
+    # totals we always have (overall xG/shots + penalty counts), so this
+    # is guaranteed to be present every run regardless of what Opta has
+    # gotten around to computing.
+    #
+    # PENALTY_XG is the assumed xG value of a single penalty attempt --
+    # 0.79 is the widely used industry convention (FBref/Understat-style).
+    # Adjust this constant if you'd rather use a different figure.
+    PENALTY_XG = 0.79
+    for name, s in teams.items():
+        atk_shots = s.get("atk_shots")
+        atk_pens  = s.get("atk_pens") or 0
+        atk_xg    = s.get("atk_xg")
+        if atk_shots is not None and atk_xg is not None:
+            np_shots = atk_shots - atk_pens
+            np_xg    = atk_xg - (PENALTY_XG * atk_pens)
+            s["np_xg_per_shot"] = round(np_xg / np_shots, 3) if np_shots > 0 else None
+
+        def_shots     = s.get("def_shots_faced")
+        pens_conceded = s.get("misc_pens_conceded") or 0
+        def_xga       = s.get("def_xga")
+        if def_shots is not None and def_xga is not None:
+            np_shots_against = def_shots - pens_conceded
+            np_xga           = def_xga - (PENALTY_XG * pens_conceded)
+            s["np_xga_per_shot"] = round(np_xga / np_shots_against, 3) if np_shots_against > 0 else None
+
     print(f"  Teams captured: {len(teams)}")
     return teams
 
