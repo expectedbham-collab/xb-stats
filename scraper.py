@@ -2,11 +2,12 @@
 """
 xB Championship Stats Scraper
 Uses team-level data for most metrics -- verified 2026-04-11.
-Fetches all data via Playwright browser context -- no token replay.
+Auto-fetches session cookie via Playwright on each run.
 """
 
 import hashlib, json, os, sys
 from datetime import date
+import requests
 
 STATS_URL     = "https://theanalyst.com/wp-json/sdapi/v1/soccerdata/tournamentstats?tmcl=bmmk637l2a33h90zlu36kx8no"
 STANDINGS_URL = "https://theanalyst.com/wp-json/sdapi/v1/soccerdata/standings?tmcl=bmmk637l2a33h90zlu36kx8no"
@@ -20,88 +21,57 @@ BASE_HEADERS = {
 }
 
 
-def fetch_data_via_browser():
-    """Visit the stats page in a real browser and capture the JSON responses
-    for stats, standings, and expected-points as they fire naturally.
-    The browser handles all auth -- no token extraction needed.
-    Returns (stats_json, standings_json, xpts_json)."""
+def fetch_session_credentials():
+    """Use Playwright to visit theanalyst.com and capture a fresh session cookie
+    and x-sdapi-token from the actual network requests the page makes."""
     from playwright.sync_api import sync_playwright
 
-    captured = {"stats": None, "standings": None, "xpts": None}
+    cookie_str = None
+    token = None
 
-    def handle_response(response):
-        url = response.url
-        try:
-            if "tournamentstats" in url and captured["stats"] is None:
-                captured["stats"] = response.json()
-                print(f"  Captured stats ({len(response.body())} bytes)")
-            elif "standings" in url and "sdapi" in url and captured["standings"] is None:
-                captured["standings"] = response.json()
-                print(f"  Captured standings")
-            elif "expected-points" in url and captured["xpts"] is None:
-                captured["xpts"] = response.json()
-                print(f"  Captured xpts")
-        except Exception as e:
-            print(f"  Response parse warning for {url[:80]}: {e}")
-
-    print("  Launching browser...")
+    print("  Launching browser to fetch fresh session...")
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        context = browser.new_context(user_agent=BASE_HEADERS["User-Agent"])
+        context = browser.new_context(
+            user_agent=BASE_HEADERS["User-Agent"]
+        )
         page = context.new_page()
-        page.on("response", handle_response)
 
-        # Stats page triggers tournamentstats + standings naturally.
-        # Use domcontentloaded so we don't hang waiting for the page to fully
-        # settle -- the API calls fire before that anyway.
-        try:
-            page.goto(
-                "https://theanalyst.com/competition/english-championship/stats",
-                wait_until="domcontentloaded",
-                timeout=60000,
-            )
-        except Exception as e:
-            print(f"  Page load warning (continuing): {e}")
+        def handle_request(request):
+            nonlocal token
+            if "sdapi" in request.url and token is None:
+                hdrs = request.headers
+                if "x-sdapi-token" in hdrs:
+                    token = hdrs["x-sdapi-token"]
 
-        # Wait up to 20s for the API responses to arrive
-        for _ in range(20):
-            if all(v is not None for v in captured.values()):
-                break
-            page.wait_for_timeout(1000)
+        page.on("request", handle_request)
 
-        # Fallbacks: fetch any missing endpoints via the browser context
-        # (inherits cookies + auth the page already set up)
-        if captured["stats"] is None:
-            print("  Fetching stats via browser context (fallback)...")
-            resp = context.request.get(STATS_URL, timeout=30000)
-            if resp.ok:
-                captured["stats"] = resp.json()
-            else:
-                print(f"  Stats fallback failed: {resp.status}")
+        page.goto(
+            "https://theanalyst.com/competition/english-championship/stats",
+            wait_until="networkidle",
+            timeout=60000,
+        )
+        # Give JS a moment to fire the API calls
+        page.wait_for_timeout(3000)
 
-        if captured["standings"] is None:
-            print("  Fetching standings via browser context (fallback)...")
-            resp = context.request.get(STANDINGS_URL, timeout=30000)
-            if resp.ok:
-                captured["standings"] = resp.json()
-            else:
-                print(f"  Standings fallback failed: {resp.status}")
-
-        if captured["xpts"] is None:
-            print("  Fetching xpts via browser context (fallback)...")
-            resp = context.request.get(XPTS_URL, timeout=30000)
-            if resp.ok:
-                captured["xpts"] = resp.json()
-            else:
-                print(f"  xpts fallback failed: {resp.status}")
-
+        cookies = context.cookies()
         browser.close()
 
-    missing = [k for k, v in captured.items() if v is None]
-    if missing:
-        raise RuntimeError(f"Failed to capture: {', '.join(missing)}")
+    if cookies:
+        cookie_str = "; ".join(f"{c['name']}={c['value']}" for c in cookies)
 
-    return captured["stats"], captured["standings"], captured["xpts"]
+    if not cookie_str:
+        raise RuntimeError("Failed to capture session cookie from theanalyst.com")
+
+    print(f"  Cookie captured ({len(cookie_str)} chars)")
+    if token:
+        print(f"  Token captured: {token[:10]}...")
+    else:
+        # Fall back to known token if page didn't expose it
+        token = "LRkJ2MjwlC8RxUfVkne4"
+        print(f"  Token not found in requests, using fallback")
+
+    return cookie_str, token
 
 
 def sf(v, fb=0.0):
@@ -184,6 +154,16 @@ def build_team_stats(raw):
             "def_sot_faced":        si(r.get("sot_against")),
             "def_xga_per_shot":     round(sf(r.get("xg_per_shot_against")), 3),
             "def_shot_conv_against":round(sf(r.get("shot_conv_against")), 1),
+        })
+
+    for r in get_section(raw, "defending", "non_pen"):
+        n = tname(r)
+        merge(n, {
+            "np_goals_against":     si(r.get("np_goals_against")),
+            "np_xga":               round(sf(r.get("team_np_xG_against")), 2),
+            "np_shots_against":     si(r.get("np_shots_against")),
+            "np_sot_against":       si(r.get("np_sot_against")),
+            "np_xga_per_shot":      round(sf(r.get("xg_per_shot_against")), 3),
         })
 
     for r in get_section(raw, "defending", "set_piece"):
@@ -333,12 +313,26 @@ def meets_threshold(teams, min_teams=20):
 
 
 def run(dry_run=False, force=False):
-    print("Fetching data via Playwright browser...")
-    stats_raw, standings_raw, xpts_raw = fetch_data_via_browser()
+    print("Fetching fresh session credentials...")
+    cookie_str, token = fetch_session_credentials()
 
-    teams     = build_team_stats(stats_raw)
-    standings = parse_standings(standings_raw)
-    xpts      = parse_xpts(xpts_raw)
+    session = requests.Session()
+    session.headers.update({
+        **BASE_HEADERS,
+        "x-sdapi-token": token,
+        "Cookie": cookie_str,
+    })
+
+    print("1/3 Fetching stats...")
+    r1 = session.get(STATS_URL, timeout=30); r1.raise_for_status()
+    print("2/3 Fetching standings...")
+    r2 = session.get(STANDINGS_URL, timeout=30); r2.raise_for_status()
+    print("3/3 Fetching expected points...")
+    r3 = session.get(XPTS_URL, timeout=30); r3.raise_for_status()
+
+    teams     = build_team_stats(r1.json())
+    standings = parse_standings(r2.json())
+    xpts      = parse_xpts(r3.json())
 
     print(f"  Standings rows: {len(standings['total'])} | xPts rows: {len(xpts)}")
 
@@ -366,19 +360,25 @@ def run(dry_run=False, force=False):
         return
 
     today = date.today().isoformat()
+    # Identify the snapshot by gameweek (games played), not by today's date.
+    # This is what actually dedupes runs: providers revise stats daily even
+    # with no new match played, so hashing the whole payload alone creates a
+    # new entry almost every run. Keying on the label instead means repeat
+    # runs within the same gameweek refresh the existing entry in place, and
+    # a new entry is only created when the games-played count really moves.
+    label = infer_label(history, teams)
     snapshot = {
         "date": today,
-        "label": today,
-        "last_updated": stats_raw.get("team", {}).get("lastUpdated", ""),
+        "label": label,
+        "last_updated": r1.json().get("team", {}).get("lastUpdated", ""),
         "_hash": current_hash,
         **payload,
     }
 
-    label = infer_label(history, teams)
     existing = next((i for i, s in enumerate(history) if s.get("label") == label), None)
     if existing is not None:
         history[existing] = snapshot
-        print(f"Updated snapshot for {label} ({today})")
+        print(f"Updated snapshot for {label} ({today}) -- refreshed stats, same gameweek")
     else:
         history.append(snapshot)
         print(f"New snapshot: {label} ({today})")

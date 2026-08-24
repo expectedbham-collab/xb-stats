@@ -31,12 +31,8 @@ header{background:var(--navy);color:var(--cream);padding:22px 0 18px}
 .kicker{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--amber)}
 h1{font-family:'DM Serif Display',serif;font-size:clamp(26px,4vw,38px);line-height:1.1}
 h1 em{font-style:italic;color:var(--amber-light)}
-.header-sub{font-size:12.5px;color:rgba(245,240,232,.7);margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.header-sub{font-size:12.5px;color:rgba(245,240,232,.7);margin-top:4px}
 .header-sub b{color:rgba(245,240,232,.95);font-weight:600}
-.snap-select{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.03em;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:var(--cream);padding:3px 22px 3px 8px;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;border-radius:2px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c8902a'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center}
-.snap-select:hover{border-color:rgba(255,255,255,.4)}
-.snap-select option{background:var(--navy);color:var(--cream)}
-.snap-stale{color:var(--amber-light);font-weight:600}
 
 /* ── VERDICT HERO ── */
 .hero{background:var(--navy-deep);color:var(--cream);padding:24px 0 28px;border-bottom:3px solid var(--amber)}
@@ -224,13 +220,7 @@ footer{padding:14px 0 32px;font-family:'IBM Plex Mono',monospace;font-size:9px;l
   <header><div class="wrap">
     <div class="kicker">Expected Birmingham · Analytics</div>
     <h1><em>xB</em> Index</h1>
-    <div class="header-sub">
-      <span>Process quality, not results. <b>Goals, points and wins are never inputs.</b></span>
-      <span>·</span>
-      <select id="snapshotSelect" class="snap-select" aria-label="Select snapshot / gameweek"><option>—</option></select>
-      <span id="snapStale" class="snap-stale" style="display:none">viewing past data</span>
-      <span id="dataSource" style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.05em;color:rgba(245,240,232,.5)">—</span>
-    </div>
+    <div class="header-sub">Process quality, not results. <b>Goals, points and wins are never inputs.</b> · <span id="headerGw">—</span> · <span id="dataSource" style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.05em;color:rgba(245,240,232,.5)">—</span></div>
   </div></header>
 
   <section class="hero"><div class="wrap hero-grid">
@@ -278,6 +268,7 @@ footer{padding:14px 0 32px;font-family:'IBM Plex Mono',monospace;font-size:9px;l
       <summary>Methodology — what's scored, what isn't</summary>
       <div class="dbody">
         <p><strong>What's new in this version.</strong> Three changes from the previous dashboard: (1) H1 Away rank is no longer scored — it's a results-derived metric (W/D/L/Pts), which contradicts the process-only positioning. It may return as context, but never as an index input. (2) Cross accuracy % is now scored in T2 — cross <em>volume</em> stays displayed-but-not-scored (it's a style choice), but cross <em>accuracy</em> measures execution and is a fair process signal. (3) Shots in box % added to T1 — a shot-selection signal that complements xG per shot.</p>
+        <p><strong>xG per shot is now non-penalty (this version).</strong> Both the attacking and defending halves of the xG-per-shot differential now exclude penalties on both sides. A penalty is a near-guaranteed high-value chance handed out by a decision, not created or conceded through open-play process — leaving them in rewards or punishes sides for winning or conceding spot-kicks rather than for shot-creation or -suppression quality. Note: the Birmingham target for attacking xG per shot (currently 0.12) was calibrated against the old with-penalty scale and now needs re-checking against real non-penalty peer-band data before it can be trusted — treat it as stale until then.</p>
         <p>The <strong>xB Index</strong> ranks each club against the other 23 on 13 process metrics across three weighted tiers (T1 shot quality 50% · T2 build-up 30% · T3 context 20%). Each metric produces a score from <strong>0 to 100</strong> — 100 = best in league, 50 = middle of the pack, 0 = worst. For metrics where lower is better (like PPDA and shots conceded), the direction is flipped before scoring, so a higher score always means better process. When you tap a team, you'll see their <strong>rank out of 24</strong> for every metric, which is easier to grasp than the raw percentile. <strong>Outcomes are excluded by design</strong>: no goals, no points, no win/draw/loss records anywhere in the inputs. Cross volume is <strong>displayed but not scored</strong> — how much a team crosses tells you about style, not quality. Wage-bill ranks are estimates compiled from published accounts (source &amp; date shown here in production). Where a data point is missing for a club it shows as “—” and is excluded from that club's score, never silently imputed.</p>
       </div>
     </details>
@@ -809,12 +800,12 @@ const SCORED = [
   {k:'sotDef', hi:false, t:1, name:'SOT conceded /90',
    tip:'On-target chances allowed per game — fewer is better.',
    why:'On-target shots conceded per game. The purest suppression signal: a defence that limits clean looks is doing its job regardless of what the scoreline says. Lower is better; the score is already flipped.'},
-  {k:'xgShD',  hi:true,  t:1, name:'xG per shot diff.',
-   tip:'Chance quality created minus conceded — the headline signal.',
-   why:'Average chance quality created minus average chance quality conceded. The single best process signal in the index: a positive number means the side systematically manufactures better chances than it gives up.'},
-  {k:'xgShAtk',hi:true,  t:1, name:'xG per shot (attacking)',
-   tip:'Average quality of each chance created.',
-   why:'The average expected-goals value of each shot taken. High xG per shot means the side works the ball into genuinely dangerous positions rather than settling for hopeful efforts.'},
+  {k:'xgShD',  hi:true,  t:1, name:'xG per shot diff. (non-pen)',
+   tip:'Chance quality created minus conceded, penalties excluded — the headline signal.',
+   why:'Average non-penalty chance quality created minus average non-penalty chance quality conceded. Penalties are excluded on both sides so a couple of spot-kicks for or against don\u2019t distort a process signal that\u2019s meant to capture open-play chance quality. The single best process signal in the index: a positive number means the side systematically manufactures better chances than it gives up.'},
+  {k:'xgShAtk',hi:true,  t:1, name:'xG per shot, attacking (non-pen)',
+   tip:'Average quality of each open-play chance created.',
+   why:'The average expected-goals value of each non-penalty shot taken. Penalties are excluded because they\u2019re a near-guaranteed high-xG event unrelated to attacking process quality; including them inflates the figure for sides that simply win more spot-kicks. High xG per shot means the side works the ball into genuinely dangerous positions rather than settling for hopeful efforts.'},
   {k:'shotAcc',hi:true,  t:1, name:'Shot accuracy %',
    tip:'Share of shots on target — selection discipline.',
    why:'Percentage of shots that hit the target. A proxy for shot-selection discipline: sides that shoot from good positions naturally test the keeper more often.'},
@@ -903,8 +894,8 @@ function mapSnapshot(snap){
       gp,
       sotAtk: per(t.atk_shots_ot),
       sotDef: per(t.def_sot_faced),
-      xgShAtk: isNum(t.atk_xg_per_shot)? t.atk_xg_per_shot : null,
-      xgShDef: isNum(t.def_xga_per_shot)? t.def_xga_per_shot : null,
+      xgShAtk: isNum(t.np_xg_per_shot)? t.np_xg_per_shot : null,
+      xgShDef: isNum(t.np_xga_per_shot)? t.np_xga_per_shot : null,
       shotAcc: (isNum(t.atk_shots_ot)&&isNum(t.atk_shots)&&t.atk_shots>0)? +(t.atk_shots_ot/t.atk_shots*100).toFixed(1) : null,
       shotsInBox: isNum(t.atk_shots_in_box_perc)? t.atk_shots_in_box_perc : null,
       fb90: per(t.atk_fast_break_shots),
@@ -930,6 +921,7 @@ const fmtOrDash=(v,dp)=>isNum(v)?v.toFixed(dp):'—';
 
 // ── hero ──
 function renderHero(labels, trend){
+  document.getElementById('headerGw').textContent = String(labels[labels.length-1]||'').replace('GW','GW ') || '—';
   document.getElementById('heroXbi').firstChild.textContent = isNum(bham?.xbi)? bham.xbi.toFixed(1) : '—';
   document.getElementById('heroRank').textContent = bham?.rank ?? '—';
   const peerVals = peers.map(p=>p.xbi).filter(isNum);
@@ -1180,59 +1172,7 @@ function initAll(teams, labels, trend, source){
   if(badge) badge.textContent = source;
 }
 
-// ── snapshot dropdown state ──
-// ALL_HISTORY is chronological ascending (oldest first, newest last) — matches data/history.json.
-let ALL_HISTORY = [];
-
-function snapLabel(s){ return s.label || s.date || 'snapshot'; }
-
-// Load a specific snapshot by its index into ALL_HISTORY. The hero's
-// trend line/verdict only uses snapshots up to and including the one
-// picked, so "up X pts over N snapshots" always describes the view on screen.
-function loadSnapshotByIndex(idx){
-  const history = ALL_HISTORY;
-  const snap = history[idx];
-  if(!snap) return;
-  const teams = mapSnapshot(snap);
-  const upToNow = history.slice(0, idx+1);
-  const labels = upToNow.map(snapLabel);
-  const trend = upToNow.map(s=>{
-    const rs = computeRows(mapSnapshot(s));
-    const b = rs.find(r=>r.club==='Birmingham City FC');
-    return b && isNum(b.xbi) ? b.xbi : null;
-  }).filter(isNum);
-
-  const isLatest = idx === history.length-1;
-  initAll(teams, labels, trend, (isLatest?'live · ':'past snapshot · ')+snapLabel(snap));
-
-  const stale = document.getElementById('snapStale');
-  if(stale) stale.style.display = isLatest ? 'none' : 'inline';
-
-  const sel = document.getElementById('snapshotSelect');
-  if(sel && sel.value !== String(idx)) sel.value = String(idx);
-}
-
-function populateSnapshotSelect(history){
-  const sel = document.getElementById('snapshotSelect');
-  if(!sel) return;
-  sel.innerHTML = '';
-  // Newest first in the list, since that's what people scan for.
-  for(let i=history.length-1; i>=0; i--){
-    const opt = document.createElement('option');
-    opt.value = String(i);
-    const dateSuffix = history[i].date ? ' · '+history[i].date : '';
-    opt.textContent = snapLabel(history[i]) + dateSuffix + (i===history.length-1 ? ' (latest)' : '');
-    sel.appendChild(opt);
-  }
-  sel.value = String(history.length-1);
-  sel.onchange = () => loadSnapshotByIndex(parseInt(sel.value, 10));
-}
-
-// 1) boot with embedded sample data so the page always shows something.
-// Sample data isn't a real week-by-week history, so the dropdown just shows
-// a single "sample data" entry until live snapshots load in below.
-const sampleSel = document.getElementById('snapshotSelect');
-if(sampleSel){ sampleSel.innerHTML = '<option>sample data</option>'; }
+// 1) boot with embedded sample data so the page always shows something
 initAll(TEAMS, SNAPSHOT_LABELS, BHAM_TREND, 'sample data');
 
 // 2) then try the live pipeline: data/history.json written by scraper.py
@@ -1242,10 +1182,18 @@ initAll(TEAMS, SNAPSHOT_LABELS, BHAM_TREND, 'sample data');
     if(!res.ok) throw new Error('http '+res.status);
     const history = await res.json();
     if(!Array.isArray(history) || !history.length) throw new Error('empty history');
-    ALL_HISTORY = history;
-    populateSnapshotSelect(ALL_HISTORY);
-    loadSnapshotByIndex(ALL_HISTORY.length-1);
-    console.log('xB v4: live data loaded,', ALL_HISTORY.length, 'snapshots');
+    const latest = history[history.length-1];
+    const teams = mapSnapshot(latest);
+    if(!Object.keys(teams).length) throw new Error('no teams in snapshot');
+    // labels + Birmingham xB trend across snapshots (recomputed per snapshot)
+    const labels = history.map(s=>s.label||s.date||'');
+    const trend = history.map(s=>{
+      const rs = computeRows(mapSnapshot(s));
+      const b = rs.find(r=>r.club==='Birmingham City FC');
+      return b && isNum(b.xbi) ? b.xbi : null;
+    }).filter(isNum);
+    initAll(teams, labels, trend, 'live · '+(latest.label||latest.date||''));
+    console.log('xB v4: live data loaded,', Object.keys(teams).length, 'teams,', history.length, 'snapshots');
   }catch(e){
     console.warn('xB v4: live data unavailable, showing sample data —', e.message);
   }
