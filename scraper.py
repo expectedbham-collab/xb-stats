@@ -46,13 +46,23 @@ def fetch_session_credentials():
 
         page.on("request", handle_request)
 
-        page.goto(
-            "https://theanalyst.com/competition/english-championship/stats",
-            wait_until="networkidle",
-            timeout=60000,
-        )
-        # Give JS a moment to fire the API calls
-        page.wait_for_timeout(3000)
+        try:
+            # domcontentloaded fires as soon as the page's HTML is parsed --
+            # it doesn't wait for background polling (chat widgets, analytics
+            # beacons, etc.) to go fully quiet, which is what made
+            # "networkidle" prone to timing out even on a healthy page.
+            page.goto(
+                "https://theanalyst.com/competition/english-championship/stats",
+                wait_until="domcontentloaded",
+                timeout=60000,
+            )
+        except Exception as e:
+            print(f"  Warning: page.goto raised {type(e).__name__}: {e}")
+            print("  Continuing anyway -- cookies/token may still have been captured.")
+
+        # Give the page's own JS a real chance to fire its API calls and set
+        # cookies, since we're no longer waiting for network activity to stop.
+        page.wait_for_timeout(6000)
 
         cookies = context.cookies()
         browser.close()
