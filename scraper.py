@@ -62,7 +62,23 @@ def fetch_session_credentials():
 
         # Give the page's own JS a real chance to fire its API calls and set
         # cookies, since we're no longer waiting for network activity to stop.
-        page.wait_for_timeout(6000)
+        # Poll every 500ms up to 25 seconds for the token; break as soon as
+        # it appears rather than blindly waiting. Also try to nudge the page
+        # into firing API calls if it's being lazy (e.g. an unrelated tab is
+        # focused during the run, or the API response was cached from a
+        # previous visit).
+        deadline_ms = 25000
+        elapsed = 0
+        while elapsed < deadline_ms and token is None:
+            page.wait_for_timeout(500)
+            elapsed += 500
+            if elapsed == 3000 and token is None:
+                # Halfway through -- try scrolling and clicking a stats-y
+                # element to force the page to re-request data.
+                try:
+                    page.evaluate("window.scrollTo(0, document.body.scrollHeight/2)")
+                except Exception:
+                    pass
 
         cookies = context.cookies()
         browser.close()
@@ -77,9 +93,14 @@ def fetch_session_credentials():
     if token:
         print(f"  Token captured: {token[:10]}...")
     else:
-        # Fall back to known token if page didn't expose it
-        token = "LRkJ2MjwlC8RxUfVkne4"
-        print(f"  Token not found in requests, using fallback")
+        # No stale hardcoded fallback -- an expired token guarantees a 401
+        # and burns a scheduled slot without helping anyone. Fail loudly
+        # instead so the run gets marked failed and we can retry.
+        raise RuntimeError(
+            "Failed to capture x-sdapi-token from theanalyst.com within 25s. "
+            "The page loaded (cookies captured) but never fired an sdapi request "
+            "in the observed window. Re-running usually succeeds."
+        )
 
     return cookie_str, token
 

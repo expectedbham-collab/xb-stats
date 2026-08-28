@@ -144,6 +144,10 @@ td.xbi{font-family:'DM Serif Display',serif;font-size:16px;color:var(--navy)}
 #frame.phone table.rank td{padding:8px 5px}
 .gap-pos{color:var(--amber);font-weight:500}
 .gap-neg{color:#8b4040}
+.rank-arrow{font-family:'IBM Plex Mono',monospace;font-size:9px;margin-left:5px;display:inline-block;font-weight:600}
+.rank-arrow.up{color:var(--amber)}
+.rank-arrow.down{color:#8b4040}
+.rank-arrow.same{color:var(--muted);font-weight:400}
 .chev{display:inline-block;transition:transform .15s;color:var(--muted);font-size:10px;margin-left:6px}
 tr.open .chev{transform:rotate(90deg)}
 #frame.phone .hide-phone{display:none}
@@ -926,6 +930,7 @@ function mapSnapshot(snap){
 let rows=[], bham=null, peers=[];
 let sortK='rank', sortAsc=true;
 let openClub='Birmingham City FC';
+let PREV_RANKS={}; // club -> rank in the snapshot immediately before the one on screen
 
 const fmtOrDash=(v,dp)=>isNum(v)?v.toFixed(dp):'—';
 
@@ -1043,6 +1048,15 @@ function renderTargets(){
 }
 
 // ── league table ──
+function rankArrow(club, rank){
+  const prev = PREV_RANKS[club];
+  if(!isNum(prev) || !isNum(rank)) return '';
+  const diff = prev - rank; // positive = moved up (rank number got smaller)
+  if(diff > 0) return `<span class="rank-arrow up" title="Up from ${ord(prev)}">▲${diff}</span>`;
+  if(diff < 0) return `<span class="rank-arrow down" title="Down from ${ord(prev)}">▼${Math.abs(diff)}</span>`;
+  return `<span class="rank-arrow same" title="Unchanged from ${ord(prev)}">–</span>`;
+}
+
 function render(){
   const d=[...rows].sort((a,b)=>{
     let av=a[sortK],bv=b[sortK];
@@ -1057,7 +1071,7 @@ function render(){
     tr.tabIndex=0; tr.setAttribute('role','button');
     tr.setAttribute('aria-expanded', openClub===r.club);
     const color = CLUB_COLORS[r.club] || '#555';
-    tr.innerHTML=`<td class="rk">${r.rank??'—'}</td>
+    tr.innerHTML=`<td class="rk">${r.rank??'—'}${rankArrow(r.club, r.rank)}</td>
       <td class="club">
         <div class="club-row">
           <div class="club-mono" style="background:${color}">${monogram(r.club)}</div>
@@ -1202,6 +1216,17 @@ function loadSnapshotByIndex(idx){
     const b = rs.find(r=>r.club==='Birmingham City FC');
     return b && isNum(b.xbi) ? b.xbi : null;
   }).filter(isNum);
+
+  // Rank-movement arrows compare this snapshot to the one directly before
+  // it -- so they always describe "vs last time", regardless of which
+  // snapshot is currently selected in the dropdown.
+  if(idx > 0){
+    const prevRows = computeRows(mapSnapshot(history[idx-1]));
+    PREV_RANKS = {};
+    prevRows.forEach(r => { PREV_RANKS[r.club] = r.rank; });
+  } else {
+    PREV_RANKS = {};
+  }
 
   const isLatest = idx === history.length-1;
   initAll(teams, labels, trend, (isLatest?'live · ':'past snapshot · ')+snapLabel(snap));
