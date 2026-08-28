@@ -21,36 +21,24 @@ BASE_HEADERS = {
 }
 
 
-def fetch_session_credentials():
-    """Use Playwright to visit theanalyst.com and capture a fresh session cookie
-    and x-sdapi-token from the actual network requests the page makes."""
+def fetch_all_via_browser():
+    """Fetch stats/standings/xpts from inside the browser context, using the
+    site's own session. Previous approach (observe network for a fresh
+    x-sdapi-token, then replay via requests) was flaky -- the page doesn't
+    always fire an sdapi request during the wait window, and without a
+    fresh token any replay 401s. Doing the fetch inside the browser
+    sidesteps the token problem entirely: the browser already has the
+    right auth state; we just ask it to make the same requests the page
+    itself would make."""
     from playwright.sync_api import sync_playwright
 
-    cookie_str = None
-    token = None
-
-    print("  Launching browser to fetch fresh session...")
+    print("  Launching browser...")
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        context = browser.new_context(
-            user_agent=BASE_HEADERS["User-Agent"]
-        )
+        context = browser.new_context(user_agent=BASE_HEADERS["User-Agent"])
         page = context.new_page()
 
-        def handle_request(request):
-            nonlocal token
-            if "sdapi" in request.url and token is None:
-                hdrs = request.headers
-                if "x-sdapi-token" in hdrs:
-                    token = hdrs["x-sdapi-token"]
-
-        page.on("request", handle_request)
-
         try:
-            # domcontentloaded fires as soon as the page's HTML is parsed --
-            # it doesn't wait for background polling (chat widgets, analytics
-            # beacons, etc.) to go fully quiet, which is what made
-            # "networkidle" prone to timing out even on a healthy page.
             page.goto(
                 "https://theanalyst.com/competition/english-championship/stats",
                 wait_until="domcontentloaded",
@@ -58,51 +46,28 @@ def fetch_session_credentials():
             )
         except Exception as e:
             print(f"  Warning: page.goto raised {type(e).__name__}: {e}")
-            print("  Continuing anyway -- cookies/token may still have been captured.")
 
-        # Give the page's own JS a real chance to fire its API calls and set
-        # cookies, since we're no longer waiting for network activity to stop.
-        # Poll every 500ms up to 25 seconds for the token; break as soon as
-        # it appears rather than blindly waiting. Also try to nudge the page
-        # into firing API calls if it's being lazy (e.g. an unrelated tab is
-        # focused during the run, or the API response was cached from a
-        # previous visit).
-        deadline_ms = 25000
-        elapsed = 0
-        while elapsed < deadline_ms and token is None:
-            page.wait_for_timeout(500)
-            elapsed += 500
-            if elapsed == 3000 and token is None:
-                # Halfway through -- try scrolling and clicking a stats-y
-                # element to force the page to re-request data.
-                try:
-                    page.evaluate("window.scrollTo(0, document.body.scrollHeight/2)")
-                except Exception:
-                    pass
+        # Small wait so the page's own JS has time to set any session-y
+        # cookies before we start making requests.
+        page.wait_for_timeout(3000)
 
-        cookies = context.cookies()
+        def fetch(label, url):
+            print(f"  Fetching {label}...")
+            resp = page.request.get(url, headers={
+                "Accept": "application/json",
+                "Referer": "https://theanalyst.com/competition/english-championship/stats",
+            }, timeout=30000)
+            if not resp.ok:
+                raise RuntimeError(f"{label} fetch failed: HTTP {resp.status}")
+            return resp.json()
+
+        stats     = fetch("stats",     STATS_URL)
+        standings = fetch("standings", STANDINGS_URL)
+        xpts      = fetch("xPts",      XPTS_URL)
+
         browser.close()
 
-    if cookies:
-        cookie_str = "; ".join(f"{c['name']}={c['value']}" for c in cookies)
-
-    if not cookie_str:
-        raise RuntimeError("Failed to capture session cookie from theanalyst.com")
-
-    print(f"  Cookie captured ({len(cookie_str)} chars)")
-    if token:
-        print(f"  Token captured: {token[:10]}...")
-    else:
-        # No stale hardcoded fallback -- an expired token guarantees a 401
-        # and burns a scheduled slot without helping anyone. Fail loudly
-        # instead so the run gets marked failed and we can retry.
-        raise RuntimeError(
-            "Failed to capture x-sdapi-token from theanalyst.com within 25s. "
-            "The page loaded (cookies captured) but never fired an sdapi request "
-            "in the observed window. Re-running usually succeeds."
-        )
-
-    return cookie_str, token
+    return stats, standings, xpts
 
 
 def sf(v, fb=0.0):
@@ -375,26 +340,12 @@ def meets_threshold(teams, min_teams=20):
 
 
 def run(dry_run=False, force=False):
-    print("Fetching fresh session credentials...")
-    cookie_str, token = fetch_session_credentials()
+    print("Fetching data...")
+    stats_json, standings_json, xpts_json = fetch_all_via_browser()
 
-    session = requests.Session()
-    session.headers.update({
-        **BASE_HEADERS,
-        "x-sdapi-token": token,
-        "Cookie": cookie_str,
-    })
-
-    print("1/3 Fetching stats...")
-    r1 = session.get(STATS_URL, timeout=30); r1.raise_for_status()
-    print("2/3 Fetching standings...")
-    r2 = session.get(STANDINGS_URL, timeout=30); r2.raise_for_status()
-    print("3/3 Fetching expected points...")
-    r3 = session.get(XPTS_URL, timeout=30); r3.raise_for_status()
-
-    teams     = build_team_stats(r1.json())
-    standings = parse_standings(r2.json())
-    xpts      = parse_xpts(r3.json())
+    teams     = build_team_stats(stats_json)
+    standings = parse_standings(standings_json)
+    xpts      = parse_xpts(xpts_json)
 
     print(f"  Standings rows: {len(standings['total'])} | xPts rows: {len(xpts)}")
 
@@ -432,7 +383,7 @@ def run(dry_run=False, force=False):
     snapshot = {
         "date": today,
         "label": label,
-        "last_updated": r1.json().get("team", {}).get("lastUpdated", ""),
+        "last_updated": stats_json.get("team", {}).get("lastUpdated", ""),
         "_hash": current_hash,
         **payload,
     }
