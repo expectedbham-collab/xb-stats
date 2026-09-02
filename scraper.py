@@ -336,7 +336,7 @@ def meets_threshold(teams, min_teams=20):
     if not played_counts:
         return False
     most_common_count = Counter(played_counts).most_common(1)[0][1]
-    return most_common_count >= min_teams
+    return most_common_count >= 16
 
 
 def run(dry_run=False, force=False):
