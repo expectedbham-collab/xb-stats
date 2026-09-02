@@ -9,9 +9,9 @@ import hashlib, json, os, sys
 from datetime import date
 import requests
 
-STATS_URL     = "https://theanalyst.com/wp-json/sdapi/v1/soccerdata/tournamentstats?tmcl=bmmk637l2a33h90zlu36kx8no"
-STANDINGS_URL = "https://theanalyst.com/wp-json/sdapi/v1/soccerdata/standings?tmcl=bmmk637l2a33h90zlu36kx8no"
-XPTS_URL      = "https://dataviz.theanalyst.com/project-data/soccer/bmmk637l2a33h90zlu36kx8no/expected-points.json"
+STATS_URL     = "https://theanalyst.com/wp-json/sdapi/v1/soccerdata/tournamentstats?tmcl=al48ooi8acoibema226051250"
+STANDINGS_URL = "https://theanalyst.com/wp-json/sdapi/v1/soccerdata/standings?tmcl=al48ooi8acoibema226051250"
+XPTS_URL      = "https://dataviz.theanalyst.com/project-data/soccer/al48ooi8acoibema226051250/expected-points.json"
 HISTORY_PATH  = os.path.join(os.path.dirname(__file__), "data", "history.json")
 
 BASE_HEADERS = {
