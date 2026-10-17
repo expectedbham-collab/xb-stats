@@ -48108,10 +48108,10 @@
     ]
   },
   {
-    "date": "2026-10-16",
+    "date": "2026-10-17",
     "label": "GW10",
     "last_updated": "2026-10-16T08:36:45.452Z",
-    "_hash": "91c64e55e570ecb15145e3d5306a3646",
+    "_hash": "1df5a64d00314ac88dd6bac314ebc770",
     "teams": {
       "Blackburn Rovers FC": {
         "atk_played": 10,
@@ -50104,6 +50104,24 @@
         },
         {
           "rank": 6,
+          "lastRank": 4,
+          "rankStatus": "Promotion Play-off",
+          "name": "Wolverhampton Wanderers FC",
+          "shortName": "Wolves",
+          "code": "WOL",
+          "points": 17,
+          "deduction": 0,
+          "played": 10,
+          "won": 5,
+          "drawn": 2,
+          "lost": 3,
+          "gf": 18,
+          "ga": 15,
+          "gd": "+3",
+          "lastSix": "WLLWWD"
+        },
+        {
+          "rank": 7,
           "lastRank": 5,
           "rankStatus": "Promotion Play-off",
           "name": "West Bromwich Albion FC",
@@ -50121,7 +50139,7 @@
           "lastSix": "WLLDWW"
         },
         {
-          "rank": 7,
+          "rank": 8,
           "lastRank": 13,
           "rankStatus": "Promotion Play-off",
           "name": "Southampton FC",
@@ -50139,9 +50157,9 @@
           "lastSix": "WWLWWD"
         },
         {
-          "rank": 8,
+          "rank": 9,
           "lastRank": 7,
-          "rankStatus": "Promotion Play-off",
+          "rankStatus": "",
           "name": "Stoke City FC",
           "shortName": "Stoke",
           "code": "STO",
@@ -50157,7 +50175,7 @@
           "lastSix": "LWWWDW"
         },
         {
-          "rank": 9,
+          "rank": 10,
           "lastRank": 16,
           "rankStatus": "",
           "name": "Blackburn Rovers FC",
@@ -50173,24 +50191,6 @@
           "ga": 13,
           "gd": "+2",
           "lastSix": "WWDWLL"
-        },
-        {
-          "rank": 10,
-          "lastRank": 4,
-          "rankStatus": "",
-          "name": "Wolverhampton Wanderers FC",
-          "shortName": "Wolves",
-          "code": "WOL",
-          "points": 14,
-          "deduction": 0,
-          "played": 9,
-          "won": 4,
-          "drawn": 2,
-          "lost": 3,
-          "gf": 16,
-          "ga": 14,
-          "gd": "+2",
-          "lastSix": "LLWWDL"
         },
         {
           "rank": 11,
@@ -50381,14 +50381,14 @@
           "code": "BUR",
           "points": 8,
           "deduction": 0,
-          "played": 10,
+          "played": 11,
           "won": 1,
           "drawn": 5,
-          "lost": 4,
-          "gf": 15,
-          "ga": 19,
-          "gd": "-4",
-          "lastSix": "DWDLDL"
+          "lost": 5,
+          "gf": 16,
+          "ga": 21,
+          "gd": "-5",
+          "lastSix": "LDWDLD"
         },
         {
           "rank": 22,
@@ -50815,13 +50815,13 @@
           "code": "BUR",
           "points": 4,
           "deduction": 0,
-          "played": 5,
+          "played": 6,
           "won": 0,
           "drawn": 4,
-          "lost": 1,
-          "gf": 7,
-          "ga": 8,
-          "gd": "-1",
+          "lost": 2,
+          "gf": 8,
+          "ga": 10,
+          "gd": "-2",
           "lastSix": ""
         },
         {
@@ -50920,6 +50920,24 @@
           "rank": 3,
           "lastRank": null,
           "rankStatus": "",
+          "name": "Wolverhampton Wanderers FC",
+          "shortName": "Wolves",
+          "code": "WOL",
+          "points": 10,
+          "deduction": 0,
+          "played": 6,
+          "won": 3,
+          "drawn": 1,
+          "lost": 2,
+          "gf": 10,
+          "ga": 9,
+          "gd": "+1",
+          "lastSix": ""
+        },
+        {
+          "rank": 4,
+          "lastRank": null,
+          "rankStatus": "",
           "name": "West Ham United FC",
           "shortName": "West Ham",
           "code": "WHU",
@@ -50935,7 +50953,7 @@
           "lastSix": ""
         },
         {
-          "rank": 4,
+          "rank": 5,
           "lastRank": null,
           "rankStatus": "",
           "name": "Queens Park Rangers FC",
@@ -50953,7 +50971,7 @@
           "lastSix": ""
         },
         {
-          "rank": 5,
+          "rank": 6,
           "lastRank": null,
           "rankStatus": "",
           "name": "West Bromwich Albion FC",
@@ -50971,7 +50989,7 @@
           "lastSix": ""
         },
         {
-          "rank": 6,
+          "rank": 7,
           "lastRank": null,
           "rankStatus": "",
           "name": "Lincoln City FC",
@@ -50989,7 +51007,7 @@
           "lastSix": ""
         },
         {
-          "rank": 7,
+          "rank": 8,
           "lastRank": null,
           "rankStatus": "",
           "name": "Middlesbrough FC",
@@ -51007,7 +51025,7 @@
           "lastSix": ""
         },
         {
-          "rank": 8,
+          "rank": 9,
           "lastRank": null,
           "rankStatus": "",
           "name": "Bristol City FC",
@@ -51021,24 +51039,6 @@
           "lost": 1,
           "gf": 9,
           "ga": 9,
-          "gd": "0",
-          "lastSix": ""
-        },
-        {
-          "rank": 9,
-          "lastRank": null,
-          "rankStatus": "",
-          "name": "Wolverhampton Wanderers FC",
-          "shortName": "Wolves",
-          "code": "WOL",
-          "points": 7,
-          "deduction": 0,
-          "played": 5,
-          "won": 2,
-          "drawn": 1,
-          "lost": 2,
-          "gf": 8,
-          "ga": 8,
           "gd": "0",
           "lastSix": ""
         },
