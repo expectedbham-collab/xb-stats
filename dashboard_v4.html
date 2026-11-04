@@ -109,6 +109,15 @@ h1 em{font-style:italic;color:var(--amber-light)}
 
 /* ── LEAGUE TABLE ── */
 .tbl-section{padding:22px 0 8px}
+.viewtog{display:inline-flex;border:1px solid var(--navy);margin:0 0 12px}
+.viewtog button{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:7px 16px;background:#fff;color:var(--navy);border:0;cursor:pointer}
+.viewtog button+button{border-left:1px solid var(--navy)}
+.viewtog button.active{background:var(--navy);color:#f5f0e8}
+.viewtog button:disabled{opacity:.4;cursor:not-allowed}
+.venue-note{font-size:12px;color:var(--muted);margin:-4px 0 12px;max-width:760px;line-height:1.5}
+.venue-note b{color:var(--navy)}
+td.gp-cell{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--navy)}
+td.gp-cell.thin{color:#b07a1e}
 .tbl-head-row{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:10px}
 h2.sec{font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy)}
 .hint{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.03em}
@@ -261,6 +270,12 @@ footer{padding:14px 0 32px;font-family:'IBM Plex Mono',monospace;font-size:9px;l
       <span class="lbl">How to read</span>
       <span>Tier scores and the xB Index run <b style="color:var(--navy)">0&nbsp;–&nbsp;100</b> — higher = better. Tap a team to see their <b style="color:var(--navy)">rank</b> for each metric (1st = best in league, 24th = worst). ↓ marks metrics where lower is better.</span>
     </div>
+    <div class="viewtog" role="group" aria-label="Table view">
+      <button type="button" data-view="overall" class="active" aria-pressed="true">Overall</button>
+      <button type="button" data-view="home" aria-pressed="false">Home</button>
+      <button type="button" data-view="away" aria-pressed="false">Away</button>
+    </div>
+    <p class="venue-note" id="venueNote" style="display:none"></p>
     <div class="tablewrap">
     <table class="rank" aria-label="xB Index rankings">
       <thead><tr>
@@ -270,7 +285,7 @@ footer{padding:14px 0 32px;font-family:'IBM Plex Mono',monospace;font-size:9px;l
         <th data-k="t1"><button>T1 Shots<span class="u">/ 100 · 50% weight</span></button></th>
         <th data-k="t2"><button>T2 Build-up<span class="u">/ 100 · 30% weight</span></button></th>
         <th data-k="t3"><button>T3 Context<span class="u">/ 100 · 20% weight</span></button></th>
-        <th data-k="finGap" class="hide-phone"><button>Budget efficiency<span class="u">↑ over · ↓ under</span></button></th>
+        <th data-k="finGap" class="hide-phone" id="lastColHead"><button>Budget efficiency<span class="u">↑ over · ↓ under</span></button></th>
       </tr></thead>
       <tbody id="tbody"></tbody>
     </table>
@@ -931,6 +946,85 @@ let sortK='rank', sortAsc=true;
 let openClub='Birmingham City FC';
 let PREV_RANKS={}; // club -> rank in the snapshot immediately before the one on screen
 
+// ── venue split (home / away xB Index) ──
+// data/venue.json is built by venue_split.py: each club's stats from home
+// matches only and away matches only, cumulative per snapshot. The home table
+// scores every club's home process against the other 23 clubs' home process;
+// the away table does the same for away matches. Same 13 metrics, same weights.
+let VIEW='overall';          // 'overall' | 'home' | 'away'
+let VENUE=null;              // parsed data/venue.json
+let CUR_DATE=null;           // date of the snapshot on screen
+let tableRows=[];            // rows the league table is drawing
+let ACTIVE_PREV={};          // previous ranks for the arrows in the current view
+
+function mapVenue(b){
+  const gp = b && b.gp>0 ? b.gp : null;
+  const per = v => (isNum(v)&&gp) ? +(v/gp).toFixed(3) : null;
+  const ratio = (a,c,m=1) => (isNum(a)&&isNum(c)&&c>0) ? +(a/c*m).toFixed(3) : null;
+  const o = {
+    gp, played: b ? b.played : null,
+    sotAtk: per(b?.shots_ot), sotDef: per(b?.sot_faced),
+    xgShAtk: ratio(b?.np_xg,b?.np_shots), xgShDef: ratio(b?.np_xga,b?.np_sa),
+    shotAcc: ratio(b?.shots_ot,b?.shots,100), shotsInBox: ratio(b?.shots_in_box,b?.shots,100),
+    fb90: per(b?.fast_breaks), da90: per(b?.direct_attacks), bu90: per(b?.buildups),
+    tball90: per(b?.through_balls),
+    spXga: gp&&isNum(b?.sp_xg)&&isNum(b?.sp_xga) ? +((b.sp_xg-b.sp_xga)/gp).toFixed(3) : null,
+    ppda: per(b?.ppda_x_gp),
+    crossAcc: ratio(b?.crosses_ok,b?.crosses,100), cross90: per(b?.crosses),
+    finRank: null,
+  };
+  if(!gp) Object.keys(o).forEach(k=>{ if(k!=='played') o[k]=k==='gp'?0:null; });
+  return o;
+}
+function venueSnapIndex(date){
+  if(!VENUE||!date) return -1;
+  // exact match only: venue.json covers the current season's snapshots
+  return VENUE.snapshots.findIndex(s=>s.date===date);
+}
+function venueRows(i, view){
+  const snap=VENUE.snapshots[i]; const teams={};
+  Object.entries(snap.teams).forEach(([club,v])=>{ teams[club]=mapVenue(v[view]); });
+  return computeRows(teams);
+}
+function buildTableRows(){
+  const note=document.getElementById('venueNote');
+  const head=document.getElementById('lastColHead');
+  const i = VIEW==='overall' ? -1 : venueSnapIndex(CUR_DATE);
+  if(VIEW==='overall' || i<0){
+    tableRows=rows; ACTIVE_PREV=PREV_RANKS;
+    if(VIEW!=='overall'){
+      note.innerHTML='<b>No home/away split for this snapshot.</b> The split covers the current season only. Showing the overall table.';
+      note.style.display='block';
+    } else note.style.display='none';
+    head.dataset.k='finGap';
+    head.querySelector('button').innerHTML='Budget efficiency<span class="u">↑ over · ↓ under</span>';
+    return;
+  }
+  tableRows=venueRows(i, VIEW);
+  ACTIVE_PREV={};
+  if(i>0) venueRows(i-1, VIEW).forEach(r=>{ ACTIVE_PREV[r.club]=r.rank; });
+  const word = VIEW==='home'?'home':'away';
+  const tracked = tableRows.reduce((a,r)=>a+(r.gp||0),0);
+  const played = tableRows.reduce((a,r)=>a+(r.played||0),0);
+  note.innerHTML=`<b>${word[0].toUpperCase()+word.slice(1)} xB Index.</b> Each club is scored on its ${word} matches only, against the other 23 clubs' ${word} matches, on the same 13 metrics and weights as the overall table. Built from <b>${tracked} of ${played}</b> ${word} matches: where a gap between data snapshots covers both a home and an away match, that block can't be split and is left out. Samples are small this early, so read it as direction, not verdict. PPDA here is an approximation.`;
+  note.style.display='block';
+  head.dataset.k='gp';
+  head.querySelector('button').innerHTML=`${word[0].toUpperCase()+word.slice(1)} matches<span class="u">tracked of played</span>`;
+}
+function setView(v){
+  VIEW=v;
+  document.querySelectorAll('.viewtog button').forEach(b=>{
+    const on=b.dataset.view===v; b.classList.toggle('active',on); b.setAttribute('aria-pressed',on);
+  });
+  if(sortK==='finGap'||sortK==='gp'){ sortK='rank'; sortAsc=true; }
+  buildTableRows(); render();
+}
+document.querySelectorAll('.viewtog button').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+function setVenueAvailable(ok){
+  document.querySelectorAll('.viewtog button').forEach(b=>{ if(b.dataset.view!=='overall') b.disabled=!ok; });
+}
+setVenueAvailable(false);
+
 const fmtOrDash=(v,dp)=>isNum(v)?v.toFixed(dp):'—';
 
 // ── hero ──
@@ -1048,7 +1142,7 @@ function renderTargets(){
 
 // ── league table ──
 function rankArrow(club, rank){
-  const prev = PREV_RANKS[club];
+  const prev = ACTIVE_PREV[club];
   if(!isNum(prev) || !isNum(rank)) return '';
   const diff = prev - rank; // positive = moved up (rank number got smaller)
   if(diff > 0) return `<span class="rank-arrow up" title="Up from ${ord(prev)}">▲${diff}</span>`;
@@ -1057,7 +1151,7 @@ function rankArrow(club, rank){
 }
 
 function render(){
-  const d=[...rows].sort((a,b)=>{
+  const d=[...tableRows].sort((a,b)=>{
     let av=a[sortK],bv=b[sortK];
     if(av==null) return 1; if(bv==null) return -1;
     if(typeof av==='string'){av=av.toLowerCase();bv=bv.toLowerCase();}
@@ -1083,7 +1177,9 @@ function render(){
       <td><span class="tierbar"><span class="bw"><span class="bf" style="width:${isNum(r.t1)?r.t1:0}%"></span></span><span class="bv">${isNum(r.t1)?r.t1.toFixed(0):'—'}</span></span></td>
       <td><span class="tierbar"><span class="bw"><span class="bf" style="width:${isNum(r.t2)?r.t2:0}%"></span></span><span class="bv">${isNum(r.t2)?r.t2.toFixed(0):'—'}</span></span></td>
       <td><span class="tierbar"><span class="bw"><span class="bf" style="width:${isNum(r.t3)?r.t3:0}%"></span></span><span class="bv">${isNum(r.t3)?r.t3.toFixed(0):'—'}</span></span></td>
-      <td class="hide-phone ${r.finGap>0?'gap-pos':r.finGap<0?'gap-neg':''}">${r.finGap==null?'—':r.finGap>0?'↑ '+r.finGap:r.finGap<0?'↓ '+Math.abs(r.finGap):'—'}</td>`;
+      ${VIEW==='overall'
+        ? `<td class="hide-phone ${r.finGap>0?'gap-pos':r.finGap<0?'gap-neg':''}">${r.finGap==null?'—':r.finGap>0?'↑ '+r.finGap:r.finGap<0?'↓ '+Math.abs(r.finGap):'—'}</td>`
+        : `<td class="hide-phone gp-cell${(r.played||0)-(r.gp||0)>1?' thin':''}" title="${r.gp||0} of ${r.played??'?'} ${VIEW} matches in the data">${r.gp||0} of ${r.played??'—'}</td>`}`;
     const toggle=()=>{openClub=openClub===r.club?null:r.club;render();};
     tr.addEventListener('click',toggle);
     tr.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}});
@@ -1189,6 +1285,7 @@ function initAll(teams, labels, trend, source){
   peers = rows.filter(r=>r.rank>=3 && r.rank<=8);
   renderHero(labels, trend);
   renderTargets();
+  buildTableRows();
   render();
   const badge = document.getElementById('dataSource');
   if(badge) badge.textContent = source;
@@ -1228,6 +1325,7 @@ function loadSnapshotByIndex(idx){
   }
 
   const isLatest = idx === history.length-1;
+  CUR_DATE = snap.date || null;
   initAll(teams, labels, trend, (isLatest?'live · ':'past snapshot · ')+snapLabel(snap));
 
   const stale = document.getElementById('snapStale');
@@ -1268,6 +1366,10 @@ initAll(TEAMS, SNAPSHOT_LABELS, BHAM_TREND, 'sample data');
     const history = await res.json();
     if(!Array.isArray(history) || !history.length) throw new Error('empty history');
     ALL_HISTORY = history;
+    try{
+      const vr = await fetch('data/venue.json?t='+Date.now());
+      if(vr.ok){ VENUE = await vr.json(); setVenueAvailable(!!(VENUE&&VENUE.snapshots&&VENUE.snapshots.length)); }
+    }catch(err){ console.warn('xB v4: venue split unavailable —', err.message); }
     populateSnapshotSelect(ALL_HISTORY);
     loadSnapshotByIndex(ALL_HISTORY.length-1);
     console.log('xB v4: live data loaded,', ALL_HISTORY.length, 'snapshots');

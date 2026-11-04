@@ -1,0 +1,938 @@
+[
+ {
+  "date": "2026-08-14",
+  "home": "Wolverhampton Wanderers FC",
+  "away": "Blackburn Rovers FC",
+  "score": "2-2"
+ },
+ {
+  "date": "2026-08-15",
+  "home": "Sheffield United FC",
+  "away": "Birmingham City FC",
+  "score": "0-0"
+ },
+ {
+  "date": "2026-08-15",
+  "home": "Bristol City FC",
+  "away": "Millwall FC",
+  "score": "0-2"
+ },
+ {
+  "date": "2026-08-15",
+  "home": "Charlton Athletic FC",
+  "away": "Derby County FC",
+  "score": "2-1"
+ },
+ {
+  "date": "2026-08-15",
+  "home": "Middlesbrough FC",
+  "away": "Lincoln City FC",
+  "score": "2-1"
+ },
+ {
+  "date": "2026-08-15",
+  "home": "Norwich City FC",
+  "away": "West Bromwich Albion FC",
+  "score": "1-2"
+ },
+ {
+  "date": "2026-08-15",
+  "home": "Portsmouth FC",
+  "away": "Queens Park Rangers FC",
+  "score": "1-3"
+ },
+ {
+  "date": "2026-08-15",
+  "home": "Stoke City FC",
+  "away": "Swansea City AFC",
+  "score": "1-2"
+ },
+ {
+  "date": "2026-08-15",
+  "home": "Bolton Wanderers FC",
+  "away": "Preston North End FC",
+  "score": "2-1"
+ },
+ {
+  "date": "2026-08-16",
+  "home": "Burnley FC",
+  "away": "West Ham United FC",
+  "score": "2-2"
+ },
+ {
+  "date": "2026-08-16",
+  "home": "Watford FC",
+  "away": "Southampton FC",
+  "score": "2-1"
+ },
+ {
+  "date": "2026-08-17",
+  "home": "Cardiff City FC",
+  "away": "Wrexham FC",
+  "score": "1-1"
+ },
+ {
+  "date": "2026-08-22",
+  "home": "Blackburn Rovers FC",
+  "away": "Middlesbrough FC",
+  "score": "2-1"
+ },
+ {
+  "date": "2026-08-22",
+  "home": "Derby County FC",
+  "away": "Cardiff City FC",
+  "score": "2-2"
+ },
+ {
+  "date": "2026-08-22",
+  "home": "Preston North End FC",
+  "away": "Wolverhampton Wanderers FC",
+  "score": "1-3"
+ },
+ {
+  "date": "2026-08-22",
+  "home": "Queens Park Rangers FC",
+  "away": "Bolton Wanderers FC",
+  "score": "0-0"
+ },
+ {
+  "date": "2026-08-22",
+  "home": "Southampton FC",
+  "away": "Stoke City FC",
+  "score": "3-1"
+ },
+ {
+  "date": "2026-08-22",
+  "home": "Swansea City AFC",
+  "away": "Sheffield United FC",
+  "score": "0-0"
+ },
+ {
+  "date": "2026-08-22",
+  "home": "West Ham United FC",
+  "away": "Charlton Athletic FC",
+  "score": "1-2"
+ },
+ {
+  "date": "2026-08-22",
+  "home": "Wrexham FC",
+  "away": "Watford FC",
+  "score": "1-1"
+ },
+ {
+  "date": "2026-08-22",
+  "home": "Birmingham City FC",
+  "away": "Bristol City FC",
+  "score": "2-2"
+ },
+ {
+  "date": "2026-08-22",
+  "home": "Lincoln City FC",
+  "away": "Portsmouth FC",
+  "score": "1-3"
+ },
+ {
+  "date": "2026-08-22",
+  "home": "Millwall FC",
+  "away": "Norwich City FC",
+  "score": "3-0"
+ },
+ {
+  "date": "2026-08-23",
+  "home": "West Bromwich Albion FC",
+  "away": "Burnley FC",
+  "score": "3-1"
+ },
+ {
+  "date": "2026-08-28",
+  "home": "Wrexham FC",
+  "away": "Birmingham City FC",
+  "score": "1-2"
+ },
+ {
+  "date": "2026-08-29",
+  "home": "Blackburn Rovers FC",
+  "away": "Queens Park Rangers FC",
+  "score": "1-2"
+ },
+ {
+  "date": "2026-08-29",
+  "home": "Bolton Wanderers FC",
+  "away": "Lincoln City FC",
+  "score": "0-1"
+ },
+ {
+  "date": "2026-08-29",
+  "home": "Bristol City FC",
+  "away": "Portsmouth FC",
+  "score": "2-1"
+ },
+ {
+  "date": "2026-08-29",
+  "home": "Cardiff City FC",
+  "away": "Sheffield United FC",
+  "score": "2-2"
+ },
+ {
+  "date": "2026-08-29",
+  "home": "Charlton Athletic FC",
+  "away": "Preston North End FC",
+  "score": "1-0"
+ },
+ {
+  "date": "2026-08-29",
+  "home": "Norwich City FC",
+  "away": "Burnley FC",
+  "score": "4-1"
+ },
+ {
+  "date": "2026-08-29",
+  "home": "Southampton FC",
+  "away": "Millwall FC",
+  "score": "5-1"
+ },
+ {
+  "date": "2026-08-29",
+  "home": "Watford FC",
+  "away": "West Ham United FC",
+  "score": "1-1"
+ },
+ {
+  "date": "2026-08-29",
+  "home": "Derby County FC",
+  "away": "Swansea City AFC",
+  "score": "0-3"
+ },
+ {
+  "date": "2026-08-29",
+  "home": "Middlesbrough FC",
+  "away": "West Bromwich Albion FC",
+  "score": "3-1"
+ },
+ {
+  "date": "2026-08-29",
+  "home": "Wolverhampton Wanderers FC",
+  "away": "Stoke City FC",
+  "score": "4-1"
+ },
+ {
+  "date": "2026-09-01",
+  "home": "Stoke City FC",
+  "away": "Norwich City FC",
+  "score": "1-0"
+ },
+ {
+  "date": "2026-09-01",
+  "home": "Birmingham City FC",
+  "away": "Southampton FC",
+  "score": "1-1"
+ },
+ {
+  "date": "2026-09-01",
+  "home": "Lincoln City FC",
+  "away": "Blackburn Rovers FC",
+  "score": "0-0"
+ },
+ {
+  "date": "2026-09-01",
+  "home": "Portsmouth FC",
+  "away": "Derby County FC",
+  "score": "0-2"
+ },
+ {
+  "date": "2026-09-01",
+  "home": "Preston North End FC",
+  "away": "Bristol City FC",
+  "score": "1-3"
+ },
+ {
+  "date": "2026-09-01",
+  "home": "Sheffield United FC",
+  "away": "Bolton Wanderers FC",
+  "score": "3-2"
+ },
+ {
+  "date": "2026-09-01",
+  "home": "Swansea City AFC",
+  "away": "Watford FC",
+  "score": "2-0"
+ },
+ {
+  "date": "2026-09-01",
+  "home": "West Ham United FC",
+  "away": "Wolverhampton Wanderers FC",
+  "score": "4-2"
+ },
+ {
+  "date": "2026-09-02",
+  "home": "Burnley FC",
+  "away": "Middlesbrough FC",
+  "score": "1-1"
+ },
+ {
+  "date": "2026-09-02",
+  "home": "Millwall FC",
+  "away": "Wrexham FC",
+  "score": "0-3"
+ },
+ {
+  "date": "2026-09-02",
+  "home": "Queens Park Rangers FC",
+  "away": "Cardiff City FC",
+  "score": "2-1"
+ },
+ {
+  "date": "2026-09-02",
+  "home": "West Bromwich Albion FC",
+  "away": "Charlton Athletic FC",
+  "score": "1-1"
+ },
+ {
+  "date": "2026-09-05",
+  "home": "Swansea City AFC",
+  "away": "Wrexham FC",
+  "score": "0-0"
+ },
+ {
+  "date": "2026-09-05",
+  "home": "Burnley FC",
+  "away": "Bristol City FC",
+  "score": "1-2"
+ },
+ {
+  "date": "2026-09-05",
+  "home": "Millwall FC",
+  "away": "Bolton Wanderers FC",
+  "score": "4-0"
+ },
+ {
+  "date": "2026-09-05",
+  "home": "Portsmouth FC",
+  "away": "Cardiff City FC",
+  "score": "2-0"
+ },
+ {
+  "date": "2026-09-05",
+  "home": "Queens Park Rangers FC",
+  "away": "Middlesbrough FC",
+  "score": "0-1"
+ },
+ {
+  "date": "2026-09-05",
+  "home": "Sheffield United FC",
+  "away": "Norwich City FC",
+  "score": "1-3"
+ },
+ {
+  "date": "2026-09-05",
+  "home": "West Bromwich Albion FC",
+  "away": "Watford FC",
+  "score": "1-0"
+ },
+ {
+  "date": "2026-09-05",
+  "home": "West Ham United FC",
+  "away": "Derby County FC",
+  "score": "3-0"
+ },
+ {
+  "date": "2026-09-05",
+  "home": "Lincoln City FC",
+  "away": "Southampton FC",
+  "score": "1-1"
+ },
+ {
+  "date": "2026-09-05",
+  "home": "Preston North End FC",
+  "away": "Blackburn Rovers FC",
+  "score": "2-1"
+ },
+ {
+  "date": "2026-09-05",
+  "home": "Stoke City FC",
+  "away": "Charlton Athletic FC",
+  "score": "4-0"
+ },
+ {
+  "date": "2026-09-06",
+  "home": "Birmingham City FC",
+  "away": "Wolverhampton Wanderers FC",
+  "score": "2-2"
+ },
+ {
+  "date": "2026-09-08",
+  "home": "Bolton Wanderers FC",
+  "away": "West Ham United FC",
+  "score": "2-3"
+ },
+ {
+  "date": "2026-09-08",
+  "home": "Southampton FC",
+  "away": "Swansea City AFC",
+  "score": "3-1"
+ },
+ {
+  "date": "2026-09-08",
+  "home": "Watford FC",
+  "away": "Preston North End FC",
+  "score": "2-1"
+ },
+ {
+  "date": "2026-09-08",
+  "home": "Blackburn Rovers FC",
+  "away": "Sheffield United FC",
+  "score": "1-2"
+ },
+ {
+  "date": "2026-09-08",
+  "home": "Cardiff City FC",
+  "away": "Stoke City FC",
+  "score": "1-1"
+ },
+ {
+  "date": "2026-09-08",
+  "home": "Wrexham FC",
+  "away": "Burnley FC",
+  "score": "1-1"
+ },
+ {
+  "date": "2026-09-09",
+  "home": "Charlton Athletic FC",
+  "away": "Queens Park Rangers FC",
+  "score": "0-0"
+ },
+ {
+  "date": "2026-09-09",
+  "home": "Derby County FC",
+  "away": "West Bromwich Albion FC",
+  "score": "0-1"
+ },
+ {
+  "date": "2026-09-09",
+  "home": "Norwich City FC",
+  "away": "Birmingham City FC",
+  "score": "2-1"
+ },
+ {
+  "date": "2026-09-11",
+  "home": "West Ham United FC",
+  "away": "Wrexham FC",
+  "score": "6-0"
+ },
+ {
+  "date": "2026-09-12",
+  "home": "Blackburn Rovers FC",
+  "away": "Millwall FC",
+  "score": "3-1"
+ },
+ {
+  "date": "2026-09-12",
+  "home": "Charlton Athletic FC",
+  "away": "Portsmouth FC",
+  "score": "0-0"
+ },
+ {
+  "date": "2026-09-12",
+  "home": "Middlesbrough FC",
+  "away": "Norwich City FC",
+  "score": "4-3"
+ },
+ {
+  "date": "2026-09-12",
+  "home": "Preston North End FC",
+  "away": "Lincoln City FC",
+  "score": "0-1"
+ },
+ {
+  "date": "2026-09-12",
+  "home": "Southampton FC",
+  "away": "Bristol City FC",
+  "score": "4-1"
+ },
+ {
+  "date": "2026-09-12",
+  "home": "Swansea City AFC",
+  "away": "Burnley FC",
+  "score": "3-1"
+ },
+ {
+  "date": "2026-09-12",
+  "home": "Watford FC",
+  "away": "Stoke City FC",
+  "score": "1-2"
+ },
+ {
+  "date": "2026-09-12",
+  "home": "Bolton Wanderers FC",
+  "away": "Cardiff City FC",
+  "score": "1-0"
+ },
+ {
+  "date": "2026-09-12",
+  "home": "Derby County FC",
+  "away": "Birmingham City FC",
+  "score": "1-2"
+ },
+ {
+  "date": "2026-09-12",
+  "home": "West Bromwich Albion FC",
+  "away": "Queens Park Rangers FC",
+  "score": "1-1"
+ },
+ {
+  "date": "2026-09-13",
+  "home": "Sheffield United FC",
+  "away": "Wolverhampton Wanderers FC",
+  "score": "0-1"
+ },
+ {
+  "date": "2026-09-15",
+  "home": "Middlesbrough FC",
+  "away": "Millwall FC",
+  "score": "2-2"
+ },
+ {
+  "date": "2026-09-15",
+  "home": "Bristol City FC",
+  "away": "Lincoln City FC",
+  "score": "0-1"
+ },
+ {
+  "date": "2026-09-18",
+  "home": "Bristol City FC",
+  "away": "Watford FC",
+  "score": "1-0"
+ },
+ {
+  "date": "2026-09-19",
+  "home": "Birmingham City FC",
+  "away": "Middlesbrough FC",
+  "score": "2-2"
+ },
+ {
+  "date": "2026-09-19",
+  "home": "Burnley FC",
+  "away": "Derby County FC",
+  "score": "1-1"
+ },
+ {
+  "date": "2026-09-19",
+  "home": "Lincoln City FC",
+  "away": "Swansea City AFC",
+  "score": "1-2"
+ },
+ {
+  "date": "2026-09-19",
+  "home": "Portsmouth FC",
+  "away": "Blackburn Rovers FC",
+  "score": "2-2"
+ },
+ {
+  "date": "2026-09-19",
+  "home": "Queens Park Rangers FC",
+  "away": "Preston North End FC",
+  "score": "2-2"
+ },
+ {
+  "date": "2026-09-19",
+  "home": "Wrexham FC",
+  "away": "Southampton FC",
+  "score": "2-1"
+ },
+ {
+  "date": "2026-09-19",
+  "home": "Cardiff City FC",
+  "away": "Charlton Athletic FC",
+  "score": "3-1"
+ },
+ {
+  "date": "2026-09-19",
+  "home": "Millwall FC",
+  "away": "West Ham United FC",
+  "score": "2-2"
+ },
+ {
+  "date": "2026-09-19",
+  "home": "Stoke City FC",
+  "away": "Sheffield United FC",
+  "score": "2-1"
+ },
+ {
+  "date": "2026-09-20",
+  "home": "Norwich City FC",
+  "away": "Bolton Wanderers FC",
+  "score": "3-4"
+ },
+ {
+  "date": "2026-09-20",
+  "home": "Wolverhampton Wanderers FC",
+  "away": "West Bromwich Albion FC",
+  "score": "1-0"
+ },
+ {
+  "date": "2026-10-09",
+  "home": "West Ham United FC",
+  "away": "Queens Park Rangers FC",
+  "score": "1-1"
+ },
+ {
+  "date": "2026-10-10",
+  "home": "Blackburn Rovers FC",
+  "away": "Cardiff City FC",
+  "score": "2-1"
+ },
+ {
+  "date": "2026-10-10",
+  "home": "Bolton Wanderers FC",
+  "away": "Stoke City FC",
+  "score": "1-2"
+ },
+ {
+  "date": "2026-10-10",
+  "home": "Derby County FC",
+  "away": "Wrexham FC",
+  "score": "1-1"
+ },
+ {
+  "date": "2026-10-10",
+  "home": "Middlesbrough FC",
+  "away": "Wolverhampton Wanderers FC",
+  "score": "1-0"
+ },
+ {
+  "date": "2026-10-10",
+  "home": "Preston North End FC",
+  "away": "Millwall FC",
+  "score": "0-1"
+ },
+ {
+  "date": "2026-10-10",
+  "home": "Sheffield United FC",
+  "away": "Lincoln City FC",
+  "score": "3-0"
+ },
+ {
+  "date": "2026-10-10",
+  "home": "Watford FC",
+  "away": "Burnley FC",
+  "score": "0-4"
+ },
+ {
+  "date": "2026-10-10",
+  "home": "Charlton Athletic FC",
+  "away": "Bristol City FC",
+  "score": "1-1"
+ },
+ {
+  "date": "2026-10-10",
+  "home": "Swansea City AFC",
+  "away": "Norwich City FC",
+  "score": "2-1"
+ },
+ {
+  "date": "2026-10-10",
+  "home": "West Bromwich Albion FC",
+  "away": "Birmingham City FC",
+  "score": "0-1"
+ },
+ {
+  "date": "2026-10-11",
+  "home": "Southampton FC",
+  "away": "Portsmouth FC",
+  "score": "1-0"
+ },
+ {
+  "date": "2026-10-13",
+  "home": "Birmingham City FC",
+  "away": "Preston North End FC",
+  "score": "4-0"
+ },
+ {
+  "date": "2026-10-13",
+  "home": "Stoke City FC",
+  "away": "Middlesbrough FC",
+  "score": "2-3"
+ },
+ {
+  "date": "2026-10-13",
+  "home": "Bristol City FC",
+  "away": "Blackburn Rovers FC",
+  "score": "0-1"
+ },
+ {
+  "date": "2026-10-13",
+  "home": "Burnley FC",
+  "away": "Charlton Athletic FC",
+  "score": "2-2"
+ },
+ {
+  "date": "2026-10-13",
+  "home": "Cardiff City FC",
+  "away": "Watford FC",
+  "score": "5-1"
+ },
+ {
+  "date": "2026-10-13",
+  "home": "Millwall FC",
+  "away": "Swansea City AFC",
+  "score": "0-1"
+ },
+ {
+  "date": "2026-10-13",
+  "home": "Wolverhampton Wanderers FC",
+  "away": "Bolton Wanderers FC",
+  "score": "1-3"
+ },
+ {
+  "date": "2026-10-13",
+  "home": "Wrexham FC",
+  "away": "West Bromwich Albion FC",
+  "score": "1-2"
+ },
+ {
+  "date": "2026-10-14",
+  "home": "Lincoln City FC",
+  "away": "West Ham United FC",
+  "score": "0-6"
+ },
+ {
+  "date": "2026-10-14",
+  "home": "Norwich City FC",
+  "away": "Southampton FC",
+  "score": "0-1"
+ },
+ {
+  "date": "2026-10-14",
+  "home": "Portsmouth FC",
+  "away": "Sheffield United FC",
+  "score": "3-2"
+ },
+ {
+  "date": "2026-10-14",
+  "home": "Queens Park Rangers FC",
+  "away": "Derby County FC",
+  "score": "4-1"
+ },
+ {
+  "date": "2026-10-16",
+  "home": "Burnley FC",
+  "away": "Wolverhampton Wanderers FC",
+  "score": "1-2"
+ },
+ {
+  "date": "2026-10-17",
+  "home": "Birmingham City FC",
+  "away": "Queens Park Rangers FC",
+  "score": "3-0"
+ },
+ {
+  "date": "2026-10-17",
+  "home": "Bristol City FC",
+  "away": "Sheffield United FC",
+  "score": "0-1"
+ },
+ {
+  "date": "2026-10-17",
+  "home": "Derby County FC",
+  "away": "Stoke City FC",
+  "score": "0-1"
+ },
+ {
+  "date": "2026-10-17",
+  "home": "Norwich City FC",
+  "away": "Portsmouth FC",
+  "score": "0-1"
+ },
+ {
+  "date": "2026-10-17",
+  "home": "Southampton FC",
+  "away": "Bolton Wanderers FC",
+  "score": "0-0"
+ },
+ {
+  "date": "2026-10-17",
+  "home": "Swansea City AFC",
+  "away": "West Ham United FC",
+  "score": "0-1"
+ },
+ {
+  "date": "2026-10-17",
+  "home": "West Bromwich Albion FC",
+  "away": "Blackburn Rovers FC",
+  "score": "3-2"
+ },
+ {
+  "date": "2026-10-17",
+  "home": "Wrexham FC",
+  "away": "Preston North End FC",
+  "score": "4-1"
+ },
+ {
+  "date": "2026-10-17",
+  "home": "Middlesbrough FC",
+  "away": "Cardiff City FC",
+  "score": "2-2"
+ },
+ {
+  "date": "2026-10-17",
+  "home": "Millwall FC",
+  "away": "Lincoln City FC",
+  "score": "2-2"
+ },
+ {
+  "date": "2026-10-17",
+  "home": "Watford FC",
+  "away": "Charlton Athletic FC",
+  "score": "2-0"
+ },
+ {
+  "date": "2026-10-20",
+  "home": "Wolverhampton Wanderers FC",
+  "away": "Portsmouth FC",
+  "score": "1-1"
+ },
+ {
+  "date": "2026-10-23",
+  "home": "Bolton Wanderers FC",
+  "away": "Middlesbrough FC",
+  "score": "1-5"
+ },
+ {
+  "date": "2026-10-24",
+  "home": "Blackburn Rovers FC",
+  "away": "Wrexham FC",
+  "score": "2-0"
+ },
+ {
+  "date": "2026-10-24",
+  "home": "Cardiff City FC",
+  "away": "Birmingham City FC",
+  "score": "1-0"
+ },
+ {
+  "date": "2026-10-24",
+  "home": "Lincoln City FC",
+  "away": "Burnley FC",
+  "score": "4-1"
+ },
+ {
+  "date": "2026-10-24",
+  "home": "Preston North End FC",
+  "away": "West Bromwich Albion FC",
+  "score": "1-1"
+ },
+ {
+  "date": "2026-10-24",
+  "home": "Queens Park Rangers FC",
+  "away": "Swansea City AFC",
+  "score": "5-0"
+ },
+ {
+  "date": "2026-10-24",
+  "home": "Stoke City FC",
+  "away": "Bristol City FC",
+  "score": "0-0"
+ },
+ {
+  "date": "2026-10-24",
+  "home": "West Ham United FC",
+  "away": "Southampton FC",
+  "score": "2-3"
+ },
+ {
+  "date": "2026-10-24",
+  "home": "Wolverhampton Wanderers FC",
+  "away": "Watford FC",
+  "score": "1-0"
+ },
+ {
+  "date": "2026-10-24",
+  "home": "Charlton Athletic FC",
+  "away": "Norwich City FC",
+  "score": "1-3"
+ },
+ {
+  "date": "2026-10-24",
+  "home": "Portsmouth FC",
+  "away": "Millwall FC",
+  "score": "2-1"
+ },
+ {
+  "date": "2026-10-24",
+  "home": "Sheffield United FC",
+  "away": "Derby County FC",
+  "score": "1-1"
+ },
+ {
+  "date": "2026-10-30",
+  "home": "Sheffield United FC",
+  "away": "Wrexham FC",
+  "score": "1-0"
+ },
+ {
+  "date": "2026-10-31",
+  "home": "Bolton Wanderers FC",
+  "away": "Bristol City FC",
+  "score": "2-3"
+ },
+ {
+  "date": "2026-10-31",
+  "home": "Burnley FC",
+  "away": "Portsmouth FC",
+  "score": "0-0"
+ },
+ {
+  "date": "2026-10-31",
+  "home": "Middlesbrough FC",
+  "away": "Charlton Athletic FC",
+  "score": "3-0"
+ },
+ {
+  "date": "2026-10-31",
+  "home": "Millwall FC",
+  "away": "Derby County FC",
+  "score": "4-1"
+ },
+ {
+  "date": "2026-10-31",
+  "home": "Southampton FC",
+  "away": "Queens Park Rangers FC",
+  "score": "4-1"
+ },
+ {
+  "date": "2026-10-31",
+  "home": "Swansea City AFC",
+  "away": "Blackburn Rovers FC",
+  "score": "4-0"
+ },
+ {
+  "date": "2026-10-31",
+  "home": "West Ham United FC",
+  "away": "West Bromwich Albion FC",
+  "score": "1-3"
+ },
+ {
+  "date": "2026-10-31",
+  "home": "Wolverhampton Wanderers FC",
+  "away": "Cardiff City FC",
+  "score": "3-0"
+ },
+ {
+  "date": "2026-10-31",
+  "home": "Lincoln City FC",
+  "away": "Birmingham City FC",
+  "score": "1-3"
+ },
+ {
+  "date": "2026-10-31",
+  "home": "Norwich City FC",
+  "away": "Watford FC",
+  "score": "3-2"
+ },
+ {
+  "date": "2026-10-31",
+  "home": "Stoke City FC",
+  "away": "Preston North End FC",
+  "score": "2-0"
+ }
+]

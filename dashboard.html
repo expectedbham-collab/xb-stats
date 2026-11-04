@@ -3,1554 +3,1381 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>xB Index — Championship Process Quality Rankings</title>
+<title>xB Index — v4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --cream: #f5f0e8;
-  --navy: #1a3a6b;
-  --navy-light: #243f72;
-  --amber: #c8902a;
-  --amber-light: #d9a84a;
-  --green: #6b7c45;
-  --neutral: #d4cfc7;
-  --red: #8b4040;
-  --border: #ddd8cf;
-  --text-primary: #1a1a1a;
-  --text-secondary: #5a5550;
-  --row-alt: #f0ebe2;
-  --row-hover: #ede7dc;
-  --bham-border: var(--amber);
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#f5f0e8; --navy:#1a3a6b; --navy-deep:#12294d; --amber:#c8902a; --amber-light:#d9a84a;
+  --border:#ddd8cf; --ink:#1a1a1a; --muted:#5a5550; --row-alt:#f0ebe2;
 }
+body{background:#e6e1d7;color:var(--ink);font-family:'Barlow',sans-serif;font-size:14px}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 
-body {
-  background: var(--cream);
-  color: var(--text-primary);
-  font-family: 'Barlow', sans-serif;
-  font-size: 14px;
-  min-height: 100vh;
-}
+/* ── prototype chrome (viewport simulator) ── */
+.proto-bar{background:#111;color:#eee;padding:10px 16px;display:flex;gap:12px;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:11px;flex-wrap:wrap}
+.proto-bar b{color:var(--amber-light)}
+.proto-bar button{background:#333;color:#eee;border:1px solid #555;padding:5px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px}
+.proto-bar button.active{background:var(--amber);color:#111;border-color:var(--amber)}
+#frame{margin:0 auto;background:var(--cream);transition:max-width .25s}
+#frame.phone{max-width:390px;box-shadow:0 0 0 10px #111,0 20px 60px rgba(0,0,0,.4);margin:16px auto 40px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+#frame.phone .wrap{padding:0 14px}
 
 /* ── HEADER ── */
-.site-header {
-  background: var(--navy);
-  color: var(--cream);
-  padding: 28px 32px 24px;
-  position: relative;
-}
+header{background:var(--navy);color:var(--cream);padding:22px 0 18px}
+.kicker{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--amber)}
+h1{font-family:'DM Serif Display',serif;font-size:clamp(26px,4vw,38px);line-height:1.1}
+h1 em{font-style:italic;color:var(--amber-light)}
+.header-sub{font-size:12.5px;color:rgba(245,240,232,.7);margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.header-sub b{color:rgba(245,240,232,.95);font-weight:600}
+.snap-select{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.03em;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:var(--cream);padding:3px 22px 3px 8px;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;border-radius:2px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c8902a'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center}
+.snap-select:hover{border-color:rgba(255,255,255,.4)}
+.snap-select option{background:var(--navy);color:var(--cream)}
+.snap-stale{color:var(--amber-light);font-weight:600}
 
-.header-inner {
-  max-width: 1440px;
-  margin: 0 auto;
-}
+/* ── VERDICT HERO ── */
+.hero{background:var(--navy-deep);color:var(--cream);padding:24px 0 28px;border-bottom:3px solid var(--amber)}
+.hero-grid{display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:center}
+.hero-num{font-family:'DM Serif Display',serif;font-size:72px;line-height:1;color:var(--amber-light)}
+.hero-num small{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,240,232,.6);margin-top:6px}
+.verdict{font-family:'DM Serif Display',serif;font-size:clamp(17px,2.4vw,22px);line-height:1.35;max-width:520px}
+.verdict .up{color:#9ab86a}
+.hero-facts{display:flex;gap:14px;margin-top:12px;flex-wrap:wrap}
+.fact{font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(245,240,232,.75);border:1px solid rgba(245,240,232,.2);padding:4px 9px}
+.fact b{color:var(--amber-light);font-weight:500}
+.peer-card{border-left:2px solid rgba(245,240,232,.25);padding-left:20px}
+.peer-card .lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,240,232,.5);margin-bottom:4px}
+.peer-card .peer-num{font-family:'DM Serif Display',serif;font-size:42px;line-height:1;color:rgba(245,240,232,.9)}
+.peer-card .peer-gap{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--amber-light);margin-top:5px}
+@media(max-width:760px){.hero-grid{grid-template-columns:1fr;gap:16px}.peer-card{border-left:none;border-top:1px solid rgba(245,240,232,.15);padding-left:0;padding-top:12px}}
+#frame.phone .hero-num{font-size:56px}
+#frame.phone .hero-grid{grid-template-columns:1fr;gap:14px}
+#frame.phone .peer-card{border-left:none;border-top:1px solid rgba(245,240,232,.15);padding-left:0;padding-top:12px}
+#frame.phone .peer-card .peer-num{font-size:32px}
 
-.header-kicker {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--amber);
-  margin-bottom: 8px;
-}
+/* ── BIRMINGHAM TARGETS PANEL ── */
+.targets{background:#fff;border:1px solid var(--border);border-top:3px solid var(--amber);margin:22px 0 0;padding:16px 20px 4px}
+.targets-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.targets-head h2{font-family:'DM Serif Display',serif;font-size:19px;color:var(--navy)}
+.targets-head h2 em{color:var(--amber);font-style:normal}
+.targets-head .anchor{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--muted)}
+.targets-head .anchor b{color:var(--navy)}
+.targets-sub{font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:10px;max-width:680px}
+.targets-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.targets-table col.c-metric{width:32%}
+.targets-table col.c-val{width:15%}
+.targets-table col.c-status{width:23%}
+.targets-table thead tr{background:var(--navy)}
+.targets-table th{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,240,232,.85);padding:7px 10px 6px;text-align:right;white-space:nowrap}
+.targets-table th:first-child{text-align:left}
+.targets-table td{padding:6px 10px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;text-align:right;border-bottom:1px solid var(--border);vertical-align:middle;line-height:1.3}
+.targets-table td:first-child{text-align:left;font-family:'Barlow',sans-serif;font-size:14px;color:var(--navy);font-weight:500}
+.targets-table tr:last-child td{border-bottom:none}
+.tg-bham{font-family:'DM Serif Display',serif;font-size:15px;color:var(--navy)}
+.tg-bham .peer-phone{display:none}
+#frame.phone .tg-bham .peer-phone{display:block;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--muted);letter-spacing:.03em;margin-top:2px}
+.tg-peer{color:var(--muted)}
+.tg-peer .rng{color:#9a9490;font-size:10px;letter-spacing:.02em;display:block;margin-top:0}
+.tg-target{color:var(--ink);font-weight:500}
+.tg-status{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.03em;border-radius:2px;white-space:nowrap}
+.tg-status.hit{background:#eef1e2;color:#4a6320}
+.tg-status.soft{background:#f0ecdd;color:#6a5a20;border:1px dashed #b5a870;padding:3px 9px}
+.tg-status.close{background:#fbf1d9;color:#8a6415}
+.tg-status.miss{background:#f2e4e0;color:#7a3a3a}
+.tg-status .g{font-size:9px}
+.dir-arrow{display:inline-block;margin-left:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);font-weight:600;vertical-align:1px}
+.wide{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--amber);border:1px solid var(--amber);padding:0 4px;margin-left:4px;vertical-align:1px}
+.targets-foot{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.03em;color:var(--muted);padding:10px 0 4px;display:flex;gap:14px;flex-wrap:wrap}
+.targets-foot .sw{display:inline-block;width:10px;height:10px;vertical-align:-1px;margin-right:4px;border-radius:2px}
+.targets-foot .sw.h{background:#c8dcaa}
+.targets-foot .sw.s{background:#f0ecdd;border:1px dashed #b5a870}
+.targets-foot .sw.c{background:#f2d888}
+.targets-foot .sw.m{background:#e2b8ac}
+#frame.phone .targets{padding:14px 14px 4px;margin:16px 0 0}
+#frame.phone .targets-table{table-layout:auto}
+#frame.phone .targets-table th.col-peer,#frame.phone .targets-table td.tg-peer{display:none}
+#frame.phone .targets-table td{padding:9px 6px;font-size:12px}
+#frame.phone .tg-bham{font-size:14px}
+#frame.phone .tg-status{font-size:10px;padding:3px 7px}
 
-.header-title {
-  font-family: 'DM Serif Display', serif;
-  font-size: clamp(28px, 4vw, 44px);
-  line-height: 1.1;
-  color: var(--cream);
-  letter-spacing: -0.01em;
-}
+/* ── HOW TO READ ── */
+.howto{display:flex;gap:14px;padding:10px 14px;margin-bottom:12px;background:#fff;border:1px solid var(--border);flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted)}
+.howto .lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--navy)}
 
-.header-title em {
-  font-style: italic;
-  color: var(--amber-light);
-}
+/* ── LEAGUE TABLE ── */
+.tbl-section{padding:22px 0 8px}
+.viewtog{display:inline-flex;border:1px solid var(--navy);margin:0 0 12px}
+.viewtog button{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:7px 16px;background:#fff;color:var(--navy);border:0;cursor:pointer}
+.viewtog button+button{border-left:1px solid var(--navy)}
+.viewtog button.active{background:var(--navy);color:#f5f0e8}
+.viewtog button:disabled{opacity:.4;cursor:not-allowed}
+.venue-note{font-size:12px;color:var(--muted);margin:-4px 0 12px;max-width:760px;line-height:1.5}
+.venue-note b{color:var(--navy)}
+td.gp-cell{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--navy)}
+td.gp-cell.thin{color:#b07a1e}
+.tbl-head-row{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+h2.sec{font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy)}
+.hint{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.03em}
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.rank{width:100%;border-collapse:collapse}
+table.rank thead th{background:var(--navy);color:var(--cream);font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:9px 8px;text-align:right;white-space:nowrap;position:sticky;top:0;z-index:2}
+table.rank thead th:first-child{text-align:center;width:38px}
+table.rank thead th:nth-child(2){text-align:left}
+table.rank thead th .u{display:block;font-size:7.5px;color:rgba(245,240,232,.5);letter-spacing:.04em;margin-top:2px;font-weight:400}
+table.rank thead th button{all:unset;cursor:pointer;display:inline-block}
+tbody tr.datarow{border-bottom:1px solid var(--border);cursor:pointer}
+tbody tr.datarow:nth-child(4n+3){background:var(--row-alt)}
+tbody tr.datarow:hover{background:#ede7dc}
+tbody tr.bham{border-left:4px solid var(--amber);background:#fdf6e9 !important}
+table.rank td{padding:8px;font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:right;vertical-align:middle}
+td.rk{text-align:center;color:var(--muted);width:38px}
+td.club{text-align:left;font-family:'Barlow',sans-serif;font-size:13px;font-weight:500}
+td.xbi{font-family:'DM Serif Display',serif;font-size:16px;color:var(--navy)}
+.club-row{display:flex;align-items:center;gap:9px}
+.club-mono{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow',sans-serif;font-size:9px;font-weight:700;color:#fff;flex-shrink:0;letter-spacing:.02em;text-transform:uppercase}
+.club-name-full{line-height:1.2}
+.club-name-short{display:none;line-height:1.2}
+#frame.phone .club-name-full{display:none}
+#frame.phone .club-name-short{display:inline}
+#frame.phone td.club{font-size:12.5px;padding:8px 4px}
+.tierbar{display:inline-flex;align-items:center;gap:8px;justify-content:flex-end;min-width:110px}
+.tierbar .bw{width:60px;height:9px;background:rgba(26,58,107,.1);position:relative;border-radius:1px}
+.tierbar .bf{position:absolute;left:0;top:0;height:100%;background:var(--navy);border-radius:1px}
+.tierbar .bv{font-family:'IBM Plex Mono',monospace;font-size:12px;min-width:22px;text-align:right}
+#frame.phone .tierbar{min-width:0;gap:0}
+#frame.phone .tierbar .bw{display:none}
+#frame.phone .tierbar .bv{min-width:24px}
+#frame.phone table.rank td{padding:8px 5px}
+.gap-pos{color:var(--amber);font-weight:500}
+.gap-neg{color:#8b4040}
+.rank-arrow{font-family:'IBM Plex Mono',monospace;font-size:9px;margin-left:5px;display:inline-block;font-weight:600}
+.rank-arrow.up{color:var(--amber)}
+.rank-arrow.down{color:#8b4040}
+.rank-arrow.same{color:var(--muted);font-weight:400}
+.chev{display:inline-block;transition:transform .15s;color:var(--muted);font-size:10px;margin-left:6px}
+tr.open .chev{transform:rotate(90deg)}
+#frame.phone .hide-phone{display:none}
 
-.header-meta-row {
-  display: flex;
-  align-items: baseline;
-  gap: 24px;
-  margin-top: 10px;
-  flex-wrap: wrap;
-}
+/* ── EXPANDED ROW: single-column compact list ── */
+tr.detail td{padding:0;background:#fff;border-bottom:2px solid var(--navy)}
+.detail-inner{padding:4px 18px 16px;max-width:640px}
+.rank-legend{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0 4px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.03em;color:var(--muted)}
+.rank-legend .rl-label{text-transform:uppercase;letter-spacing:.08em;color:var(--navy);font-weight:500}
+.rank-legend .rl-scale{display:inline-flex;align-items:center;gap:4px}
+.rank-legend .rl-swatch{width:14px;height:8px;border-radius:1px;display:inline-block}
+.rank-legend .rl-arrow{color:#b8b2a8}
+.rank-legend .rl-note{color:#9a9490;margin-left:4px}
+@media(max-width:600px){.rank-legend .rl-note{width:100%;margin-left:0;margin-top:2px}}
+.dtier{display:flex;align-items:center;gap:10px;padding:14px 0 6px}
+.dtier b{font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;color:var(--navy);white-space:nowrap}
+.dtier .wt{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;white-space:nowrap}
+.dtier .rule{flex:1;height:1px;background:var(--border)}
+.dm-row{display:grid;grid-template-columns:1fr 170px 64px;gap:12px;align-items:center;min-height:34px;border-bottom:1px solid #eee9df;padding:2px 0}
+.dm-row:last-child{border-bottom:none}
+.dm-name{position:relative;font-size:13px;color:var(--navy);cursor:pointer;display:inline-flex;align-items:center;gap:5px;justify-self:start}
+.dm-name:hover{text-decoration:underline;text-decoration-color:var(--amber)}
+.dm-name .tt{position:absolute;left:0;bottom:calc(100% + 5px);background:var(--navy-deep);color:var(--cream);font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:400;padding:5px 9px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .12s;z-index:20;box-shadow:0 3px 12px rgba(0,0,0,.25)}
+.dm-name:hover .tt{opacity:1}
+.dm-rank-vis{display:flex;align-items:center;gap:10px;justify-content:flex-end}
+.dm-rank{font-family:'DM Serif Display',serif;font-size:16px;color:var(--navy);min-width:44px;text-align:right;line-height:1}
+.dm-rank sup{font-size:10px;font-family:'IBM Plex Mono',monospace;font-weight:500;margin-left:1px;top:-4px;position:relative}
+.dm-rank small{display:block;font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.06em;color:var(--muted);margin-top:1px;font-weight:400;text-transform:uppercase}
+.rank-bar{flex:1;max-width:100px;height:8px;background:rgba(26,58,107,.09);position:relative;border-radius:1px}
+.rank-fill{position:absolute;left:0;top:0;height:100%;background:var(--navy);border-radius:1px;transition:background .15s}
+.dm-val{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);text-align:right}
+.dm-row.unscored .dm-name{color:var(--muted)}
+.dm-row.unscored .dm-rank{color:#b8b2a8}
+.dm-row.unscored .rank-fill{background:#b8b2a8}
+.tag-ns{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.08em;border:1px solid var(--border);color:var(--muted);padding:1px 4px;text-transform:uppercase}
+#frame.phone .detail-inner{max-width:none;padding:2px 12px 14px}
+#frame.phone .dm-row{grid-template-columns:1fr 130px 50px;gap:8px}
+#frame.phone .dm-name{font-size:12px}
+#frame.phone .dm-name .tt{display:none}
+#frame.phone .rank-bar{max-width:70px}
+#frame.phone .dm-rank{font-size:14px;min-width:38px}
 
-.header-desc {
-  font-family: 'Barlow', sans-serif;
-  font-size: 13px;
-  color: rgba(245, 240, 232, 0.75);
-  letter-spacing: 0.01em;
-}
+/* ── GLOSSARY DRAWER (right side) ── */
+.drawer{position:fixed;top:0;right:-400px;width:min(400px,94vw);height:100vh;background:#fff;border-left:3px solid var(--navy);box-shadow:-8px 0 30px rgba(0,0,0,.18);transition:right .22s;z-index:100;overflow-y:auto;padding:22px}
+.drawer.open{right:0}
+.drawer h2{font-family:'DM Serif Display',serif;color:var(--navy);font-size:20px;margin-bottom:3px}
+.drawer .dsub{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.drawer .close{position:absolute;top:14px;right:14px;background:none;border:none;font-size:18px;color:var(--muted)}
+.gitem{padding:12px 0;border-bottom:1px solid var(--border);scroll-margin-top:16px}
+.gitem.active{background:#fdf6e9;margin:0 -10px;padding:12px 10px;border-left:3px solid var(--amber)}
+.gitem b{font-family:'Barlow',sans-serif;font-size:13.5px;font-weight:700;color:var(--navy)}
+.gitem .dir{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--amber);margin-left:8px}
+.gitem p{font-size:12.5px;color:var(--muted);line-height:1.55;margin-top:4px}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .2s;z-index:99}
+.scrim.show{opacity:1;pointer-events:auto}
 
-.header-timestamp {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  color: rgba(245, 240, 232, 0.45);
-  letter-spacing: 0.06em;
-}
-
-.header-controls {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 16px;
-  flex-wrap: wrap;
-}
-
-.methodology-btn {
-  font-family: 'Barlow', sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--amber);
-  background: transparent;
-  border: 1px solid rgba(200, 144, 42, 0.4);
-  padding: 5px 12px;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.methodology-btn:hover { background: rgba(200, 144, 42, 0.12); border-color: var(--amber); }
-
-.club-select-wrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.club-select-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(245, 240, 232, 0.5);
-}
-.club-select {
-  font-family: 'Barlow', sans-serif;
-  font-size: 12px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.2);
-  color: var(--cream);
-  padding: 5px 10px;
-  cursor: pointer;
-  outline: none;
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c8902a'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 8px center;
-  padding-right: 26px;
-}
-.club-select option { background: var(--navy); color: var(--cream); }
-
-/* ── METHODOLOGY PANEL ── */
-.methodology-panel {
-  background: #162f58;
-  border-top: 1px solid rgba(200, 144, 42, 0.3);
-  overflow: hidden;
-  max-height: 0;
-  transition: max-height 0.3s ease, padding 0.3s ease;
-}
-.methodology-panel.open {
-  max-height: 300px;
-}
-.methodology-inner {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 20px 32px 24px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-}
-.methodology-inner p {
-  font-family: 'Barlow', sans-serif;
-  font-size: 12.5px;
-  line-height: 1.7;
-  color: rgba(245, 240, 232, 0.75);
-}
-.methodology-inner strong { color: var(--amber-light); font-weight: 600; }
-@media (max-width: 680px) { .methodology-inner { grid-template-columns: 1fr; } }
-
-/* ── TIER LEGEND ── */
-.tier-legend {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 10px 32px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  border-bottom: 1px solid var(--border);
-  flex-wrap: wrap;
-}
-.tier-legend-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-}
-.tier-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.tier-badge {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  padding: 2px 5px;
-  border: 1px solid currentColor;
-}
-.t1 { color: var(--navy); border-color: var(--navy); }
-.t2 { color: #5a6e3a; border-color: #5a6e3a; }
-.t3 { color: var(--text-secondary); border-color: var(--text-secondary); }
-
-.tier-item span:last-child {
-  font-family: 'Barlow', sans-serif;
-  font-size: 11px;
-  color: var(--text-secondary);
-}
-.legend-divider { width: 1px; height: 14px; background: var(--border); }
-.fin-gap-legend {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.fin-gap-legend-item {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-family: 'Barlow', sans-serif;
-  font-size: 11px;
-  color: var(--text-secondary);
-}
-.fin-dot { width: 8px; height: 8px; border-radius: 50%; }
-.fin-dot.over { background: var(--amber); }
-.fin-dot.under { background: var(--red); }
-
-/* ── TABLE WRAPPER ── */
-.table-wrapper {
-  max-width: 1440px;
-  margin: 0 auto;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* ── TABLE ── */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-  min-width: 1100px;
-}
-
-/* Column widths */
-col.c-rank  { width: 42px; }
-col.c-club  { width: 200px; }
-col.c-xbi   { width: 82px; }
-col.c-fin   { width: 100px; }
-col.c-gap   { width: 90px; }
-col.c-metric { width: 72px; }
-
-thead th {
-  position: sticky;
-  top: 0;
-  background: var(--navy);
-  color: var(--cream);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9.5px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 10px 6px 8px;
-  text-align: right;
-  cursor: pointer;
-  user-select: none;
-  white-space: nowrap;
-  border-right: 1px solid rgba(255,255,255,0.06);
-  transition: background 0.12s;
-}
-thead th:hover { background: var(--navy-light); }
-thead th.sticky-col { position: sticky; z-index: 3; }
-thead th.th-rank { text-align: center; }
-thead th.th-club { text-align: left; }
-
-.th-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 3px;
-}
-.th-rank .th-inner, .th-club .th-inner { align-items: flex-start; }
-
-.th-abbr { font-size: 9.5px; }
-.th-tier {
-  display: inline-flex;
-  align-items: center;
-  padding: 1px 4px;
-  font-size: 7.5px;
-  letter-spacing: 0.08em;
-  border: 1px solid rgba(255,255,255,0.2);
-  color: rgba(245,240,232,0.55);
-  line-height: 1.2;
-}
-.sort-indicator {
-  display: inline-block;
-  font-size: 8px;
-  margin-left: 3px;
-  opacity: 0.5;
-  vertical-align: middle;
-}
-.sort-active .sort-indicator { opacity: 1; color: var(--amber); }
-
-/* Sticky columns */
-th.col-rank, td.col-rank { position: sticky; left: 0; z-index: 2; }
-th.col-club, td.col-club { position: sticky; left: 42px; z-index: 2; }
-
-td.col-rank { background: inherit; }
-td.col-club { background: inherit; }
-
-/* Tooltip */
-.th-tooltip-wrap { position: relative; }
-.th-tooltip {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%);
-  background: #0d2347;
-  color: var(--cream);
-  font-family: 'Barlow', sans-serif;
-  font-size: 11px;
-  font-weight: 400;
-  letter-spacing: 0;
-  text-transform: none;
-  white-space: nowrap;
-  padding: 6px 10px;
-  border: 1px solid rgba(200,144,42,0.4);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.15s;
-  z-index: 100;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-}
-.th-tooltip strong { display: block; color: var(--amber-light); margin-bottom: 2px; }
-thead th:hover .th-tooltip { opacity: 1; }
-
-/* ── TABLE BODY ── */
-tbody tr {
-  background: var(--cream);
-  border-bottom: 1px solid var(--border);
-  transition: background 0.1s;
-}
-tbody tr:nth-child(even) { background: var(--row-alt); }
-tbody tr:hover { background: var(--row-hover) !important; }
-
-/* Birmingham highlighted row */
-tbody tr.bham-row { border-left: 3px solid var(--amber); }
-tbody tr.bham-row td.col-rank { padding-left: 5px; }
-
-/* Highlighted club row */
-tbody tr.highlight-row { border-left: 3px solid var(--amber); }
-
-td {
-  padding: 7px 6px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  text-align: right;
-  border-right: 1px solid var(--border);
-  vertical-align: middle;
-  white-space: nowrap;
-}
-
-td.col-rank {
-  text-align: center;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--text-secondary);
-  font-weight: 500;
-  padding: 7px 4px;
-  width: 42px;
-}
-
-td.col-club {
-  text-align: left;
-  padding: 6px 8px 6px 10px;
-  font-family: 'Barlow', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-primary);
-  min-width: 180px;
-}
-
-td.col-xbi {
-  font-family: 'DM Serif Display', serif;
-  font-size: 15px;
-  color: var(--navy);
-  text-align: right;
-}
-
-td.col-fin { text-align: right; font-size: 12px; }
-
-/* Club monogram */
-.club-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.club-mono {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Barlow', sans-serif;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: #fff;
-  flex-shrink: 0;
-  text-transform: uppercase;
-}
-.club-name { line-height: 1.2; }
-.club-name-short { display: none; }
-
-/* Financial gap cell */
-.fin-gap-cell {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 6px;
-}
-.fin-gap-bar-wrap {
-  width: 40px;
-  height: 6px;
-  background: rgba(0,0,0,0.08);
-  border-radius: 1px;
-  position: relative;
-  overflow: hidden;
-}
-.fin-gap-bar {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  border-radius: 1px;
-}
-.fin-gap-bar.positive { right: 50%; background: var(--amber); }
-.fin-gap-bar.negative { left: 50%; background: var(--red); }
-.fin-gap-val {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  min-width: 28px;
-  text-align: right;
-}
-.fin-gap-val.positive { color: var(--amber); }
-.fin-gap-val.negative { color: var(--red); }
-
-/* Metric cells */
-.metric-cell {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11.5px;
-  font-weight: 400;
-  padding: 7px 8px;
-}
-
-/* Tier column group indicators */
-.tier1-group { border-left: 2px solid rgba(26,58,107,0.2); }
-.tier2-group { border-left: 2px solid rgba(90,110,58,0.2); }
-.tier3-group { border-left: 2px solid rgba(90,85,80,0.2); }
-
-/* Colgroup visuals */
-colgroup col { }
-
-/* ── RESPONSIVE ── */
-@media (max-width: 768px) {
-  .site-header { padding: 16px; }
-  .header-title { font-size: 28px; }
-  .tier-legend { display: none; }
-  .table-wrapper { margin: 0; padding: 0; }
-
-  /* Remove min-width so table fits mobile */
-  table { min-width: 0; table-layout: auto; }
-
-  /* On mobile: show all columns but scroll horizontally */
-  /* Keep rank and club sticky, rest scrolls */
-  table { min-width: 900px; }
-  .hide-mobile { display: table-cell !important; }
-
-  /* Club cell adjustments */
-  td.col-club { min-width: 120px; max-width: 160px; }
-  .club-name { display: none; }
-  .club-name-short { display: inline; }
-  .club-mono { width: 28px; height: 28px; font-size: 10px; }
-
-  /* xBI cell */
-  td.col-xbi { font-size: 13px; padding: 8px 6px; }
-
-  /* Rank cell */
-  td.col-rank { font-size: 11px; padding: 8px 4px; }
-
-  /* Fin gap bar -- hide bar, keep number */
-  .fin-gap-bar-wrap { display: none; }
-  .fin-gap-val { font-size: 11px; }
-
-  /* Birmingham card */
-  #bhamCard { padding: 10px 14px; gap: 12px; }
-
-  /* Halftime tables -- stack on mobile */
-  #bhamCard + div, .table-wrapper + div { padding: 0 12px; }
-  #fhaTable, #shaTable { font-size: 11px; }
-
-  .methodology-inner { padding: 16px; grid-template-columns: 1fr; }
-
-  /* Scroll hint */
-  .table-wrapper::after {
-    content: '';
-    display: none;
-  }
-}
-
-.mobile-scroll-hint { display: block !important; }
-
-/* Extra small phones */
-@media (max-width: 400px) {
-  td.col-club { min-width: 100px; }
-  .club-name-short { font-size: 11px; }
-}
-
-/* ── FOOTER ── */
-.site-footer {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 16px 32px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.footer-note {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.08em;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-}
-.footer-brand {
-  font-family: 'DM Serif Display', serif;
-  font-size: 13px;
-  color: var(--navy);
-  opacity: 0.6;
-}
+/* ── APPENDIX ── */
+.appendix{margin:26px 0 40px;border-top:2px solid var(--navy);padding-top:16px}
+details{border:1px solid var(--border);background:#fff;margin-bottom:10px}
+summary{padding:12px 16px;font-family:'Barlow',sans-serif;font-weight:600;font-size:13px;color:var(--navy);cursor:pointer;list-style:none;display:flex;justify-content:space-between}
+summary::after{content:'+';font-family:'IBM Plex Mono',monospace;color:var(--amber)}
+details[open] summary::after{content:'−'}
+.dbody{padding:0 16px 16px;font-size:13px;line-height:1.65;color:var(--muted)}
+.dbody strong{color:var(--navy)}
+footer{padding:14px 0 32px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
 </style>
 </head>
 <body>
 
-<!-- ── HEADER ── -->
-<header class="site-header">
-  <div class="header-inner">
-    <div class="header-kicker">Expected Birmingham · Analytics</div>
-    <h1 class="header-title"><em>xB</em> Index</h1>
-    <div class="header-meta-row">
-      <span class="header-desc">Process quality rankings — 2025/26 Championship, GW 41</span>
-      <span class="header-timestamp" id="headerTimestamp">Updated 21 Apr 2026 · 06:00 UTC</span>
+<div class="proto-bar">
+  <b>xB Index v4.</b>
+  <span>Live data from data/history.json when deployed · sample data otherwise:</span>
+  <button id="btnDesk" class="active">Desktop</button>
+  <button id="btnPhone">Phone (390px)</button>
+</div>
+
+<div id="frame">
+  <header><div class="wrap">
+    <div class="kicker">Expected Birmingham · Analytics</div>
+    <h1><em>xB</em> Index</h1>
+    <div class="header-sub">
+      <span>Process quality, not results. <b>Goals, points and wins are never inputs.</b></span>
+      <span>·</span>
+      <select id="snapshotSelect" class="snap-select" aria-label="Select snapshot / gameweek"><option>—</option></select>
+      <span id="snapStale" class="snap-stale" style="display:none">viewing past data</span>
+      <span id="dataSource" style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.05em;color:rgba(245,240,232,.5)">—</span>
     </div>
-    <div class="header-controls">
-      <button class="methodology-btn" id="methBtn" aria-expanded="false">Methodology ↓</button>
-      <div class="club-select-wrap">
-        <span class="club-select-label">Snapshot</span>
-        <select class="club-select" id="snapshotSelect"></select>
-      </div>
-      <div class="club-select-wrap">
-        <span class="club-select-label">Highlight club</span>
-        <select class="club-select" id="highlightSelect">
-          <option value="">— none —</option>
-        </select>
-      </div>
-    </div>
-  </div>
-</header>
+  </div></header>
 
-<!-- ── METHODOLOGY PANEL ── -->
-<div class="methodology-panel" id="methPanel" aria-hidden="true">
-  <div class="methodology-inner">
-    <p>The <strong>xB Index</strong> is a composite process-quality score built from three weighted tiers of on-ball and off-ball metrics. Tier 1 (shot creation and suppression) carries 50% of the weight; Tier 2 (build-up and ball-progression) 30%; Tier 3 (set-piece and pressing context) 20%. Each metric is percentile-ranked against the 24-club Championship population and direction-corrected, so a higher xB Index always indicates stronger underlying process regardless of metric polarity.</p>
-    <p>The index deliberately <strong>excludes outcomes</strong>: goals, points, wins and losses are not inputs. Conversion rates and goalkeeper save percentages are similarly excluded. The Financial Efficiency column compares a club's xB process rank to its wage-bill rank — a positive gap means the club is outperforming its budget allocation on process quality. It is not a prediction of future results.</p>
-  </div>
-</div>
-
-<!-- ── TIER LEGEND ── -->
-<div class="tier-legend">
-  <span class="tier-legend-label">Tier weights</span>
-  <div class="tier-item"><span class="tier-badge t1">T1</span><span>Shot quality · 50%</span></div>
-  <div class="tier-item"><span class="tier-badge t2">T2</span><span>Build-up · 30%</span></div>
-  <div class="tier-item"><span class="tier-badge t3">T3</span><span>Context · 20%</span></div>
-  <div class="legend-divider"></div>
-  <div class="fin-gap-legend">
-    <div class="fin-gap-legend-item"><span class="fin-dot over"></span> Overperforming budget</div>
-    <div class="fin-gap-legend-item"><span class="fin-dot under"></span> Underperforming budget</div>
-  </div>
-</div>
-
-<!-- ── BIRMINGHAM KPI CARD ── -->
-<div style="max-width:1440px;margin:0 auto;padding:12px 32px 0">
-  <div id="bhamCard" style="background:#fff;border:2px solid #c8902a;padding:14px 20px;display:inline-flex;gap:32px;align-items:baseline;flex-wrap:wrap">
-    <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#5a5550">Birmingham City</span>
-    <span id="bhamXbi" style="font-family:'DM Serif Display',serif;font-size:28px;color:#1a3a6b"></span>
-    <span id="bhamRank" style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5a5550"></span>
-    <span id="bhamGap" style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#c8902a">Fin rank: 6th · Gap: −9</span>
-  </div>
-</div>
-
-<!-- ── TABLE ── -->
-<div class="mobile-scroll-hint" style="display:none;background:#1a3a6b;color:#f5f0e8;text-align:center;padding:6px 16px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em">
-  SWIPE LEFT TO SEE ALL METRICS →
-</div>
-<div class="table-wrapper">
-  <table id="xbTable" aria-label="xB Index Championship rankings">
-    <colgroup>
-      <col class="c-rank">
-      <col class="c-club">
-      <col class="c-xbi">
-      <col class="c-fin">
-      <col class="c-gap">
-      <col class="c-metric"><col class="c-metric"><col class="c-metric"><col class="c-metric">
-      <col class="c-metric"><col class="c-metric"><col class="c-metric"><col class="c-metric">
-      <col class="c-metric"><col class="c-metric"><col class="c-metric"><col class="c-metric">
-    </colgroup>
-    <thead>
-      <tr>
-        <th class="col-rank sticky-col th-rank" data-col="rank" data-dir="asc">
-          <div class="th-inner"><span class="th-abbr">#<span class="sort-indicator sort-active">↑</span></span></div>
-        </th>
-        <th class="col-club sticky-col th-club" data-col="club" data-dir="asc">
-          <div class="th-inner"><span class="th-abbr">Club<span class="sort-indicator">↕</span></span></div>
-        </th>
-        <th data-col="xbIndex" data-dir="desc" class="sort-default">
-          <div class="th-inner th-tooltip-wrap">
-            <span class="th-abbr">xB IDX<span class="sort-indicator">↕</span></span>
-            <div class="th-tooltip"><strong>xB Index</strong>Composite process score · higher = better</div>
-          </div>
-        </th>
-        <th data-col="finRank" data-dir="asc" class="hide-mobile">
-          <div class="th-inner th-tooltip-wrap">
-            <span class="th-abbr">FIN RK<span class="sort-indicator">↕</span></span>
-            <div class="th-tooltip"><strong>Financial Rank</strong>Club wage-bill rank (1 = highest spend)</div>
-          </div>
-        </th>
-        <th data-col="finGap" data-dir="desc">
-          <div class="th-inner th-tooltip-wrap">
-            <span class="th-abbr">FIN GAP<span class="sort-indicator">↕</span></span>
-            <div class="th-tooltip"><strong>Financial Efficiency Gap</strong>xB rank minus wage rank · positive = overperforming</div>
-          </div>
-        </th>
-
-        <!-- T1 -->
-        <th data-col="sotAtk" data-dir="desc" class="tier1-group hide-mobile">
-          <div class="th-inner th-tooltip-wrap">
-            <span class="th-tier">T1</span>
-            <span class="th-abbr">SOT ATK<span class="sort-indicator">↕</span></span>
-            <div class="th-tooltip"><strong>Shots on Target (Att) per 90</strong>higher = better</div>
-          </div>
-        </th>
-        <th data-col="sotDef" data-dir="asc" class="hide-mobile">
-          <div class="th-inner th-tooltip-wrap">
-            <span class="th-tier">T1</span>
-            <span class="th-abbr">SOT DEF<span class="sort-indicator">↕</span></span>
-            <div class="th-tooltip"><strong>Shots on Target (Def) per 90</strong>lower = better (fewer conceded)</div>
-          </div>
-        </th>
-        <th data-col="xgSh" data-dir="desc" class="hide-mobile">
-          <div class="th-inner th-tooltip-wrap">
-            <span class="th-tier">T1</span>
-            <span class="th-abbr">xG/Sh<span class="sort-indicator">↕</span></span>
-            <div class="th-tooltip"><strong>xG per Shot Differential</strong>xG/shot created minus xG/shot conceded · positive = better</div>
-          </div>
-        </th>
-        <th data-col="shotAcc" data-dir="desc" class="hide-mobile">
-          <div class="th-inner th-tooltip-wrap">
-            <span class="th-tier">T1</span>
-            <span class="th-abbr">SH ACC%<span class="sort-indicator">↕</span></span>
-            <div class="th-tooltip"><strong>Shot Accuracy %</strong>higher = better</div>
-          </div>
-        </th>
-
-        <!-- T2 -->
-        <th data-col="fb90" data-dir="desc" class="tier2-group hide-mobile">
-          <div class="th-inner th-tooltip-wrap">
-            <span class="th-tier">T2</span>
-            <span class="th-abbr">FB/90<span class="sort-indicator">↕</span></span>
-            <div class="th-tooltip"><strong>Fast Breaks per 90</strong>Attacks before opposition can reorganise · higher = better</div>
-          </div>
-        </th>
-        <th data-col="da90" data-dir="desc" class="hide-mobile">
-          <div class="th-inner th-tooltip-wrap">
-            <span class="th-tier">T2</span>
-            <span class="th-abbr">DA/90<span class="sort-indicator">↕</span></span>
-            <div class="th-tooltip"><strong>Direct Attacks per 90</strong>Quick vertical progressions into final third · higher = better</div>
-          </div>
-        </th>
-        <th data-col="bu90" data-dir="desc" class="hide-mobile">
-          <div class="th-inner th-tooltip-wrap">
-            <span class="th-tier">T2</span>
-            <span class="th-abbr">BU/90<span class="sort-indicator">↕</span></span>
-            <div class="th-tooltip"><strong>Build-up Sequences per 90</strong>higher = better</div>
-          </div>
-        </th>
-        <th data-col="h1Away" data-dir="asc" class="hide-mobile">
-          <div class="th-inner th-tooltip-wrap">
-            <span class="th-tier">T2</span>
-            <span class="th-abbr">H1 AWY<span class="sort-indicator">↕</span></span>
-            <div class="th-tooltip"><strong>First-Half Away Rank</strong>League position based on first 45 mins of away fixtures only · 1 = best, 24 = worst</div>
-          </div>
-        </th>
-
-        <!-- T3 -->
-        <th data-col="spXga" data-dir="desc" class="tier3-group hide-mobile">
-          <div class="th-inner th-tooltip-wrap">
-            <span class="th-tier">T3</span>
-            <span class="th-abbr">SP xGA<span class="sort-indicator">↕</span></span>
-            <div class="th-tooltip"><strong>Set-Piece xG Differential</strong>xG created minus xG conceded from set pieces · positive = better</div>
-          </div>
-        </th>
-        <th data-col="ppda" data-dir="asc" class="hide-mobile">
-          <div class="th-inner th-tooltip-wrap">
-            <span class="th-tier">T3</span>
-            <span class="th-abbr">PPDA<span class="sort-indicator">↕</span></span>
-            <div class="th-tooltip"><strong>Passes Allowed per Defensive Action</strong>lower = better (higher pressing intensity)</div>
-          </div>
-        </th>
-        <th data-col="tball90" data-dir="desc" class="hide-mobile">
-          <div class="th-inner th-tooltip-wrap">
-            <span class="th-tier">T3</span>
-            <span class="th-abbr">TBALL<span class="sort-indicator">↕</span></span>
-            <div class="th-tooltip"><strong>Through Balls per 90</strong>higher = better</div>
-          </div>
-        </th>
-        <th data-col="cross90" data-dir="desc" class="hide-mobile">
-          <div class="th-inner th-tooltip-wrap">
-            <span class="th-tier">T3</span>
-            <span class="th-abbr">CROSS<span class="sort-indicator">↕</span></span>
-            <div class="th-tooltip"><strong>Crosses per 90</strong>higher = better</div>
-          </div>
-        </th>
-      </tr>
-    </thead>
-    <tbody id="tableBody"></tbody>
-  </table>
-</div>
-
-<!-- ── HALFTIME TABLES ── -->
-<div style="max-width:1440px;margin:24px auto 0;padding:0 32px">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px">
+  <section class="hero"><div class="wrap hero-grid">
+    <div class="hero-num" id="heroXbi">—<small>xB Index · rank <span id="heroRank">—</span>/24</small></div>
     <div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:10px;display:flex;justify-content:space-between">
-        <span>First Half Away</span>
-        <span style="color:var(--amber)">Birmingham target: top 10</span>
-      </div>
-      <table style="width:100%;border-collapse:collapse;font-size:12px" id="fhaTable">
-        <thead><tr style="background:var(--navy);color:var(--cream)">
-          <th style="padding:6px 8px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500">#</th>
-          <th style="padding:6px 8px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500">Club</th>
-          <th style="padding:6px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500">GP</th>
-          <th style="padding:6px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500">W</th>
-          <th style="padding:6px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500">D</th>
-          <th style="padding:6px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500">L</th>
-          <th style="padding:6px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500">GF</th>
-          <th style="padding:6px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500">GA</th>
-          <th style="padding:6px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500">GD</th>
-          <th style="padding:6px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500">Pts</th>
-        </tr></thead>
-        <tbody id="fhaBody"><tr><td colspan="10" style="padding:12px 8px;color:var(--text-secondary);font-family:'IBM Plex Mono',monospace;font-size:11px">Loading...</td></tr></tbody>
-      </table>
+      <div class="verdict" id="heroVerdict"></div>
+      <div class="hero-facts" id="heroFacts"></div>
     </div>
-    <div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:10px">
-        <span>Second Half Away</span>
-      </div>
-      <table style="width:100%;border-collapse:collapse;font-size:12px" id="shaTable">
-        <thead><tr style="background:var(--navy);color:var(--cream)">
-          <th style="padding:6px 8px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500">#</th>
-          <th style="padding:6px 8px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500">Club</th>
-          <th style="padding:6px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500">GP</th>
-          <th style="padding:6px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500">W</th>
-          <th style="padding:6px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500">D</th>
-          <th style="padding:6px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500">L</th>
-          <th style="padding:6px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500">GF</th>
-          <th style="padding:6px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500">GA</th>
-          <th style="padding:6px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500">GD</th>
-          <th style="padding:6px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500">Pts</th>
-        </tr></thead>
-        <tbody id="shaBody"><tr><td colspan="10" style="padding:12px 8px;color:var(--text-secondary);font-family:'IBM Plex Mono',monospace;font-size:11px">Loading...</td></tr></tbody>
-      </table>
+    <div class="peer-card">
+      <div class="lbl">Peer avg (3rd–8th)</div>
+      <div class="peer-num" id="peerXbi">—</div>
+      <div class="peer-gap" id="peerGap">—</div>
     </div>
+  </div></section>
+
+  <div class="wrap"><section class="targets" id="targetsPanel"></section></div>
+
+  <main class="wrap tbl-section">
+    <div class="tbl-head-row">
+      <h2 class="sec">League ranking</h2>
+      <span class="hint">Tap any row for the full metric breakdown · click a metric name for its definition</span>
+    </div>
+    <div class="howto">
+      <span class="lbl">How to read</span>
+      <span>Tier scores and the xB Index run <b style="color:var(--navy)">0&nbsp;–&nbsp;100</b> — higher = better. Tap a team to see their <b style="color:var(--navy)">rank</b> for each metric (1st = best in league, 24th = worst). ↓ marks metrics where lower is better.</span>
+    </div>
+    <div class="viewtog" role="group" aria-label="Table view">
+      <button type="button" data-view="overall" class="active" aria-pressed="true">Overall</button>
+      <button type="button" data-view="home" aria-pressed="false">Home</button>
+      <button type="button" data-view="away" aria-pressed="false">Away</button>
+    </div>
+    <p class="venue-note" id="venueNote" style="display:none"></p>
+    <div class="tablewrap">
+    <table class="rank" aria-label="xB Index rankings">
+      <thead><tr>
+        <th data-k="rank" aria-sort="ascending"><button>#</button></th>
+        <th data-k="club"><button>Club</button></th>
+        <th data-k="xbi"><button>xB IDX<span class="u">/ 100</span></button></th>
+        <th data-k="t1"><button>T1 Shots<span class="u">/ 100 · 50% weight</span></button></th>
+        <th data-k="t2"><button>T2 Build-up<span class="u">/ 100 · 30% weight</span></button></th>
+        <th data-k="t3"><button>T3 Context<span class="u">/ 100 · 20% weight</span></button></th>
+        <th data-k="finGap" class="hide-phone" id="lastColHead"><button>Budget efficiency<span class="u">↑ over · ↓ under</span></button></th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    </div>
+  </main>
+
+  <div class="wrap appendix">
+    <details>
+      <summary>Methodology — what's scored, what isn't</summary>
+      <div class="dbody">
+        <p><strong>What's new in this version.</strong> Three changes from the previous dashboard: (1) H1 Away rank is no longer scored — it's a results-derived metric (W/D/L/Pts), which contradicts the process-only positioning. It may return as context, but never as an index input. (2) Cross accuracy % is now scored in T2 — cross <em>volume</em> stays displayed-but-not-scored (it's a style choice), but cross <em>accuracy</em> measures execution and is a fair process signal. (3) Shots in box % added to T1 — a shot-selection signal that complements xG per shot.</p>
+        <p><strong>xG per shot is now non-penalty (this version).</strong> Both the attacking and defending halves of the xG-per-shot differential now exclude penalties on both sides. A penalty is a near-guaranteed high-value chance handed out by a decision, not created or conceded through open-play process — leaving them in rewards or punishes sides for winning or conceding spot-kicks rather than for shot-creation or -suppression quality. Note: the Birmingham target for attacking xG per shot (currently 0.12) was calibrated against the old with-penalty scale and now needs re-checking against real non-penalty peer-band data before it can be trusted — treat it as stale until then.</p>
+        <p>The <strong>xB Index</strong> ranks each club against the other 23 on 13 process metrics across three weighted tiers (T1 shot quality 50% · T2 build-up 30% · T3 context 20%). Each metric produces a score from <strong>0 to 100</strong> — 100 = best in league, 50 = middle of the pack, 0 = worst. For metrics where lower is better (like PPDA and shots conceded), the direction is flipped before scoring, so a higher score always means better process. When you tap a team, you'll see their <strong>rank out of 24</strong> for every metric, which is easier to grasp than the raw percentile. <strong>Outcomes are excluded by design</strong>: no goals, no points, no win/draw/loss records anywhere in the inputs. Cross volume is <strong>displayed but not scored</strong> — how much a team crosses tells you about style, not quality. Wage-bill ranks are estimates compiled from published accounts (source &amp; date shown here in production). Where a data point is missing for a club it shows as “—” and is excluded from that club's score, never silently imputed.</p>
+      </div>
+    </details>
+    <details>
+      <summary>Data appendix — half-time away tables</summary>
+      <div class="dbody"><p>The first/second-half away tables live here as supporting context. Because they're derived from results, they never feed the index — keeping them here keeps the ranking clean.</p></div>
+    </details>
   </div>
+
+  <footer class="wrap"><span>Data: Opta Analyst · xB internal model</span><span>Expected Birmingham</span></footer>
 </div>
 
-
-<!-- ── METRIC TREND CHART ── -->
-<div style="max-width:1440px;margin:32px auto 0;padding:0 32px 40px">
-  <div style="border-top:2px solid var(--navy);padding-top:24px">
-
-    <!-- Section header -->
-    <div style="display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
-      <div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:6px">Metric Trend</div>
-        <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--navy)">How is a metric changing over time?</div>
-      </div>
-      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-        <div>
-          <label style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-secondary);display:block;margin-bottom:4px">Club</label>
-          <select id="trendClub" style="font-family:'IBM Plex Mono',monospace;font-size:12px;padding:6px 10px;border:1px solid var(--border);background:white;color:var(--text-primary);cursor:pointer;min-width:180px"></select>
-        </div>
-        <div>
-          <label style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-secondary);display:block;margin-bottom:4px">Metric</label>
-          <select id="trendMetric" style="font-family:'IBM Plex Mono',monospace;font-size:12px;padding:6px 10px;border:1px solid var(--border);background:white;color:var(--text-primary);cursor:pointer;min-width:200px">
-            <option value="xbIndex">xB Index (overall)</option>
-            <optgroup label="Tier 1 — Shot Quality &amp; Volume">
-              <option value="sotAtk">SOT ATK — Shots on target per game</option>
-              <option value="sotDef">SOT DEF — Shots conceded per game</option>
-              <option value="xgSh">XG/SH — xG per shot differential</option>
-              <option value="shotAcc">SHOT ACC% — Shot accuracy</option>
-            </optgroup>
-            <optgroup label="Tier 2 — Attack Variety">
-              <option value="fb90">FB/90 — Fast breaks per game</option>
-              <option value="da90">DA/90 — Direct attacks per game</option>
-              <option value="bu90">BU/90 — Build-up sequences per game</option>
-              <option value="h1Away">H1 AWY — First-half away rank</option>
-            </optgroup>
-            <optgroup label="Tier 3 — Context">
-              <option value="spXga">SP XGA — Set piece differential</option>
-              <option value="ppda">PPDA — Pressing intensity</option>
-              <option value="tball90">TBALL/90 — Through balls per game</option>
-              <option value="cross90">CROSS/90 — Crosses per game</option>
-            </optgroup>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <!-- Chart canvas -->
-    <div style="position:relative;background:white;border:1px solid var(--border);padding:20px 20px 12px">
-      <canvas id="trendCanvas" height="200" style="width:100%;display:block"></canvas>
-      <div id="trendEmpty" style="display:none;text-align:center;padding:40px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-secondary)">
-        Not enough snapshots yet. The chart will populate as weekly data builds up.
-      </div>
-    </div>
-
-    <!-- Chart legend / latest value -->
-    <div id="trendLegend" style="margin-top:12px;display:flex;gap:24px;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-secondary)"></div>
-  </div>
-</div>
-
-<footer class="site-footer">
-  <span class="footer-note">Data: Opta Analyst · xB internal model · 2025–26 · Updates Mon &amp; Fri</span>
-  <span class="footer-brand">Expected Birmingham</span>
-</footer>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Metric glossary">
+  <button class="close" id="drawerClose" aria-label="Close glossary">✕</button>
+  <h2>Metric glossary</h2>
+  <div class="dsub">Click any metric name in an expanded row to jump here</div>
+  <div id="gloss"></div>
+</aside>
 
 <script>
-// ── DATA (loaded from history.json) ──────────────────────────────────────────
-let DATA = [];
-let ALL_SNAPSHOTS = [];
-let CURRENT_SNAPSHOT_IDX = 0;
-
-const FIN_RANK_MAP = {
-  'Ipswich Town FC':1,'Leicester City FC':2,'Southampton FC':3,'Sheffield United FC':4,
-  'Birmingham City FC':5,'Norwich City FC':6,'Coventry City FC':7,'Middlesbrough FC':8,
-  'Stoke City FC':9,'West Bromwich Albion FC':10,'Hull City AFC':11,'Millwall FC':12,
-  'Watford FC':13,'Swansea City AFC':14,'Wrexham FC':15,'Bristol City FC':16,
-  'Derby County FC':17,'Preston North End FC':18,'Blackburn Rovers FC':19,
-  'Queens Park Rangers FC':20,'Oxford United FC':21,'Portsmouth FC':22,
-  'Charlton Athletic FC':23,'Sheffield Wednesday FC':24,
+// Representative sample data — same shape the real build derives from history.json
+const TEAMS = {
+ "Coventry City FC": {
+  "gp": 46,
+  "sotAtk": 5.33,
+  "sotDef": 3.34,
+  "xgShAtk": 0.122,
+  "xgShDef": 0.092,
+  "shotAcc": 37.3,
+  "fb90": 1.22,
+  "da90": 3.41,
+  "bu90": 3.25,
+  "spXga": 0.07,
+  "ppda": 9.1,
+  "tball90": 0.84,
+  "cross90": 14.1,
+  "finRank": 7,
+  "crossAcc": 27.4,
+  "shotsInBox": 59.5
+ },
+ "Middlesbrough FC": {
+  "gp": 46,
+  "sotAtk": 5.28,
+  "sotDef": 4.23,
+  "xgShAtk": 0.113,
+  "xgShDef": 0.091,
+  "shotAcc": 34.0,
+  "fb90": 1.19,
+  "da90": 3.62,
+  "bu90": 3.07,
+  "spXga": 0.05,
+  "ppda": 8.9,
+  "tball90": 0.89,
+  "cross90": 17.4,
+  "finRank": 8,
+  "crossAcc": 29.1,
+  "shotsInBox": 63.2
+ },
+ "Southampton FC": {
+  "gp": 46,
+  "sotAtk": 5.2,
+  "sotDef": 3.84,
+  "xgShAtk": 0.122,
+  "xgShDef": 0.085,
+  "shotAcc": 37.1,
+  "fb90": 1.08,
+  "da90": 2.35,
+  "bu90": 2.7,
+  "spXga": 0.03,
+  "ppda": 10.7,
+  "tball90": 0.8,
+  "cross90": 16.1,
+  "finRank": 3,
+  "crossAcc": 27.0,
+  "shotsInBox": 65.1
+ },
+ "Derby County FC": {
+  "gp": 46,
+  "sotAtk": 4.44,
+  "sotDef": 3.55,
+  "xgShAtk": 0.12,
+  "xgShDef": 0.096,
+  "shotAcc": 35.7,
+  "fb90": 1.35,
+  "da90": 3.03,
+  "bu90": 3.08,
+  "spXga": 0.04,
+  "ppda": 11.4,
+  "tball90": 0.64,
+  "cross90": 14.7,
+  "finRank": 17,
+  "crossAcc": 24.5,
+  "shotsInBox": 61.2
+ },
+ "Hull City AFC": {
+  "gp": 46,
+  "sotAtk": 4.83,
+  "sotDef": 4.77,
+  "xgShAtk": 0.109,
+  "xgShDef": 0.088,
+  "shotAcc": 36.9,
+  "fb90": 1.49,
+  "da90": 3.13,
+  "bu90": 3.2,
+  "spXga": 0.09,
+  "ppda": 10.1,
+  "tball90": 0.54,
+  "cross90": 16.9,
+  "finRank": 11,
+  "crossAcc": 24.2,
+  "shotsInBox": 58.8
+ },
+ "Norwich City FC": {
+  "gp": 46,
+  "sotAtk": 4.93,
+  "sotDef": 3.64,
+  "xgShAtk": 0.12,
+  "xgShDef": 0.097,
+  "shotAcc": 35.4,
+  "fb90": 1.36,
+  "da90": 3.49,
+  "bu90": 2.45,
+  "spXga": 0.02,
+  "ppda": 11.6,
+  "tball90": 0.5,
+  "cross90": 17.1,
+  "finRank": 6,
+  "crossAcc": 26.3,
+  "shotsInBox": 62.4
+ },
+ "Sheffield United FC": {
+  "gp": 46,
+  "sotAtk": 4.77,
+  "sotDef": 4.29,
+  "xgShAtk": 0.107,
+  "xgShDef": 0.096,
+  "shotAcc": 32.2,
+  "fb90": 1.04,
+  "da90": 2.73,
+  "bu90": 2.86,
+  "spXga": 0.07,
+  "ppda": 10.5,
+  "tball90": 0.69,
+  "cross90": 13.2,
+  "finRank": 4,
+  "crossAcc": 29.1,
+  "shotsInBox": 63.2
+ },
+ "Wrexham FC": {
+  "gp": 46,
+  "sotAtk": 4.23,
+  "sotDef": 3.6,
+  "xgShAtk": 0.108,
+  "xgShDef": 0.101,
+  "shotAcc": 30.9,
+  "fb90": 1.53,
+  "da90": 2.09,
+  "bu90": 2.34,
+  "spXga": 0.03,
+  "ppda": 10.6,
+  "tball90": 0.6,
+  "cross90": 13.7,
+  "finRank": 15,
+  "crossAcc": 25.8,
+  "shotsInBox": 64.8
+ },
+ "Millwall FC": {
+  "gp": 46,
+  "sotAtk": 4.61,
+  "sotDef": 4.68,
+  "xgShAtk": 0.116,
+  "xgShDef": 0.105,
+  "shotAcc": 30.8,
+  "fb90": 1.27,
+  "da90": 2.95,
+  "bu90": 2.26,
+  "spXga": 0.0,
+  "ppda": 10.8,
+  "tball90": 0.8,
+  "cross90": 12.7,
+  "finRank": 12,
+  "crossAcc": 28.4,
+  "shotsInBox": 59.3
+ },
+ "Blackburn Rovers FC": {
+  "gp": 46,
+  "sotAtk": 4.28,
+  "sotDef": 3.78,
+  "xgShAtk": 0.116,
+  "xgShDef": 0.111,
+  "shotAcc": 31.7,
+  "fb90": 1.07,
+  "da90": 2.75,
+  "bu90": 2.46,
+  "spXga": 0.02,
+  "ppda": 11.1,
+  "tball90": 0.8,
+  "cross90": 16.4,
+  "finRank": 19,
+  "crossAcc": 25.5,
+  "shotsInBox": 59.1
+ },
+ "Bristol City FC": {
+  "gp": 46,
+  "sotAtk": 4.53,
+  "sotDef": 4.35,
+  "xgShAtk": 0.12,
+  "xgShDef": 0.09,
+  "shotAcc": 35.8,
+  "fb90": 1.22,
+  "da90": 3.16,
+  "bu90": 2.73,
+  "spXga": 0.02,
+  "ppda": 10.5,
+  "tball90": 0.47,
+  "cross90": 14.3,
+  "finRank": 16,
+  "crossAcc": 26.6,
+  "shotsInBox": 64.3
+ },
+ "Ipswich Town FC": {
+  "gp": 46,
+  "sotAtk": 4.81,
+  "sotDef": 3.98,
+  "xgShAtk": 0.109,
+  "xgShDef": 0.111,
+  "shotAcc": 33.9,
+  "fb90": 1.0,
+  "da90": 2.35,
+  "bu90": 3.73,
+  "spXga": -0.01,
+  "ppda": 10.3,
+  "tball90": 0.53,
+  "cross90": 13.7,
+  "finRank": 1,
+  "crossAcc": 26.9,
+  "shotsInBox": 63.3
+ },
+ "Preston North End FC": {
+  "gp": 46,
+  "sotAtk": 4.17,
+  "sotDef": 4.79,
+  "xgShAtk": 0.106,
+  "xgShDef": 0.109,
+  "shotAcc": 35.7,
+  "fb90": 1.16,
+  "da90": 2.71,
+  "bu90": 3.23,
+  "spXga": 0.01,
+  "ppda": 11.1,
+  "tball90": 0.57,
+  "cross90": 15.7,
+  "finRank": 18,
+  "crossAcc": 20.3,
+  "shotsInBox": 65.8
+ },
+ "West Bromwich Albion FC": {
+  "gp": 46,
+  "sotAtk": 5.01,
+  "sotDef": 5.07,
+  "xgShAtk": 0.098,
+  "xgShDef": 0.102,
+  "shotAcc": 34.1,
+  "fb90": 0.77,
+  "da90": 2.65,
+  "bu90": 2.39,
+  "spXga": -0.03,
+  "ppda": 11.9,
+  "tball90": 0.38,
+  "cross90": 17.1,
+  "finRank": 10,
+  "crossAcc": 29.2,
+  "shotsInBox": 64.1
+ },
+ "Stoke City FC": {
+  "gp": 46,
+  "sotAtk": 4.53,
+  "sotDef": 4.43,
+  "xgShAtk": 0.099,
+  "xgShDef": 0.109,
+  "shotAcc": 34.1,
+  "fb90": 0.94,
+  "da90": 2.68,
+  "bu90": 2.61,
+  "spXga": -0.03,
+  "ppda": 12.0,
+  "tball90": 0.54,
+  "cross90": 18.3,
+  "finRank": 9,
+  "crossAcc": 26.9,
+  "shotsInBox": 61.4
+ },
+ "Leicester City FC": {
+  "gp": 46,
+  "sotAtk": 4.65,
+  "sotDef": 4.09,
+  "xgShAtk": 0.129,
+  "xgShDef": 0.115,
+  "shotAcc": 35.4,
+  "fb90": 0.67,
+  "da90": 3.04,
+  "bu90": 1.73,
+  "spXga": 0.01,
+  "ppda": 12.6,
+  "tball90": 0.56,
+  "cross90": 14.1,
+  "finRank": 2,
+  "crossAcc": 27.2,
+  "shotsInBox": 62.2
+ },
+ "Watford FC": {
+  "gp": 46,
+  "sotAtk": 3.48,
+  "sotDef": 5.28,
+  "xgShAtk": 0.102,
+  "xgShDef": 0.119,
+  "shotAcc": 31.5,
+  "fb90": 1.05,
+  "da90": 3.41,
+  "bu90": 1.67,
+  "spXga": -0.06,
+  "ppda": 11.2,
+  "tball90": 0.57,
+  "cross90": 19.5,
+  "finRank": 13,
+  "crossAcc": 18.2,
+  "shotsInBox": 68.2
+ },
+ "Oxford United FC": {
+  "gp": 46,
+  "sotAtk": 3.8,
+  "sotDef": 4.35,
+  "xgShAtk": 0.102,
+  "xgShDef": 0.106,
+  "shotAcc": 31.2,
+  "fb90": 0.88,
+  "da90": 2.57,
+  "bu90": 1.78,
+  "spXga": -0.0,
+  "ppda": 11.9,
+  "tball90": 0.56,
+  "cross90": 18.4,
+  "finRank": 21,
+  "crossAcc": 19.0,
+  "shotsInBox": 61.1
+ },
+ "Charlton Athletic FC": {
+  "gp": 46,
+  "sotAtk": 4.22,
+  "sotDef": 4.79,
+  "xgShAtk": 0.105,
+  "xgShDef": 0.105,
+  "shotAcc": 30.9,
+  "fb90": 0.85,
+  "da90": 2.13,
+  "bu90": 2.26,
+  "spXga": -0.09,
+  "ppda": 11.7,
+  "tball90": 0.54,
+  "cross90": 16.0,
+  "finRank": 23,
+  "crossAcc": 22.4,
+  "shotsInBox": 60.0
+ },
+ "Swansea City AFC": {
+  "gp": 46,
+  "sotAtk": 3.72,
+  "sotDef": 4.97,
+  "xgShAtk": 0.099,
+  "xgShDef": 0.115,
+  "shotAcc": 32.6,
+  "fb90": 0.9,
+  "da90": 1.47,
+  "bu90": 2.36,
+  "spXga": -0.01,
+  "ppda": 12.1,
+  "tball90": 0.51,
+  "cross90": 19.3,
+  "finRank": 14,
+  "crossAcc": 22.0,
+  "shotsInBox": 58.8
+ },
+ "Birmingham City FC": {
+  "gp": 46,
+  "sotAtk": 4.35,
+  "sotDef": 4.55,
+  "xgShAtk": 0.107,
+  "xgShDef": 0.109,
+  "shotAcc": 33.4,
+  "fb90": 1.58,
+  "da90": 3.25,
+  "bu90": 1.65,
+  "spXga": -0.03,
+  "ppda": 12.1,
+  "tball90": 0.44,
+  "cross90": 18.5,
+  "finRank": 5,
+  "crossAcc": 19.2,
+  "shotsInBox": 60.5
+ },
+ "Queens Park Rangers FC": {
+  "gp": 46,
+  "sotAtk": 4.2,
+  "sotDef": 4.72,
+  "xgShAtk": 0.1,
+  "xgShDef": 0.114,
+  "shotAcc": 30.7,
+  "fb90": 0.85,
+  "da90": 1.96,
+  "bu90": 1.29,
+  "spXga": -0.02,
+  "ppda": 13.8,
+  "tball90": 0.43,
+  "cross90": 19.7,
+  "finRank": 20,
+  "crossAcc": 24.5,
+  "shotsInBox": 62.1
+ },
+ "Portsmouth FC": {
+  "gp": 46,
+  "sotAtk": 4.06,
+  "sotDef": 4.7,
+  "xgShAtk": 0.092,
+  "xgShDef": 0.116,
+  "shotAcc": 34.4,
+  "fb90": 0.88,
+  "da90": 2.14,
+  "bu90": 1.41,
+  "spXga": -0.04,
+  "ppda": 11.4,
+  "tball90": 0.42,
+  "cross90": 12.9,
+  "finRank": 22,
+  "crossAcc": 25.5,
+  "shotsInBox": 60.5
+ },
+ "Sheffield Wednesday FC": {
+  "gp": 46,
+  "sotAtk": 4.4,
+  "sotDef": 4.46,
+  "xgShAtk": 0.081,
+  "xgShDef": 0.112,
+  "shotAcc": 30.2,
+  "fb90": 0.75,
+  "da90": 2.32,
+  "bu90": 1.75,
+  "spXga": -0.01,
+  "ppda": 12.0,
+  "tball90": 0.53,
+  "cross90": 11.3,
+  "finRank": 24,
+  "crossAcc": 23.6,
+  "shotsInBox": 60.8
+ }
 };
+const BHAM_TREND = [38.2, 39.5, 38.9, 41.3, 42.8, 43.6];
+const SNAPSHOT_LABELS = ['GW36','GW37','GW38','GW39','GW40','GW41'];
 
-function buildDataFromSnapshot(snap, htData) {
-  if (!snap || !snap.teams) return [];
-  if (!htData) htData = HALFTIME_DATA;
-  const teams = snap.teams;
-  // Use modal games played (most common value across teams)
-  const gpVals = Object.values(teams).map(t=>t.atk_played||0).filter(v=>v>0);
-  const gpCounts = {};
-  gpVals.forEach(v=>{ gpCounts[v]=(gpCounts[v]||0)+1; });
-  const games = parseInt(Object.entries(gpCounts).sort((a,b)=>b[1]-a[1])[0]?.[0] || 1);
+// ── club branding ──
+const CLUB_COLORS = {
+  'Southampton FC':'#D71920','Coventry City FC':'#58A7CC','Ipswich Town FC':'#0044A9',
+  'Sheffield United FC':'#EE2737','Middlesbrough FC':'#E03A3E','Norwich City FC':'#00A650',
+  'Millwall FC':'#1D3461','Bristol City FC':'#C8102E','Watford FC':'#D8A800',
+  'Stoke City FC':'#E03A3E','Derby County FC':'#1B1B1B','Hull City AFC':'#F5A12E',
+  'Wrexham FC':'#DC143C','Birmingham City FC':'#0056A2','Leicester City FC':'#003090',
+  'Queens Park Rangers FC':'#1D5BA4','West Bromwich Albion FC':'#0B2B5A',
+  'Charlton Athletic FC':'#D4021D','Preston North End FC':'#1E3A5F',
+  'Blackburn Rovers FC':'#009EE0','Oxford United FC':'#F5A800','Swansea City AFC':'#333333',
+  'Portsmouth FC':'#013B70','Sheffield Wednesday FC':'#003399',
+  'West Ham United FC':'#7A263A','Wolverhampton Wanderers FC':'#FDB913',
+  'Burnley FC':'#6C1D45','Cardiff City FC':'#0070B5',
+  'Lincoln City FC':'#E31B23','Bolton Wanderers FC':'#263B7A',
+};
+const CLUB_SHORT = {
+  'Southampton FC':'SOU','Coventry City FC':'COV','Ipswich Town FC':'IPS',
+  'Sheffield United FC':'SHU','Middlesbrough FC':'MBO','Norwich City FC':'NOR',
+  'Millwall FC':'MIL','Bristol City FC':'BRS','Watford FC':'WAT','Stoke City FC':'STK',
+  'Derby County FC':'DER','Hull City AFC':'HUL','Wrexham FC':'WRX',
+  'Birmingham City FC':'BIR','Leicester City FC':'LEI','Queens Park Rangers FC':'QPR',
+  'West Bromwich Albion FC':'WBA','Charlton Athletic FC':'CHA','Preston North End FC':'PNE',
+  'Blackburn Rovers FC':'BLB','Oxford United FC':'OXF','Swansea City AFC':'SWA',
+  'Portsmouth FC':'POM','Sheffield Wednesday FC':'SWE',
+  'West Ham United FC':'WHU','Wolverhampton Wanderers FC':'WOL',
+  'Burnley FC':'BUR','Cardiff City FC':'CAR',
+  'Lincoln City FC':'LIN','Bolton Wanderers FC':'BOL',
+};
+// same wage-rank map as the live dashboard
+const FIN_RANK_MAP = {
+  'Wolverhampton Wanderers FC':1,'West Ham United FC':2,'Southampton FC':3,'Burnley FC':4,
+  'Middlesbrough FC':5,'Sheffield United FC':6,'Norwich City FC':7,'Birmingham City FC':8,
+  'Swansea City AFC':9,'Wrexham FC':10,'Stoke City FC':11,'Millwall FC':12,
+  'Queens Park Rangers FC':13,'Watford FC':14,'Bristol City FC':15,'West Bromwich Albion FC':16,
+  'Derby County FC':17,'Preston North End FC':18,'Blackburn Rovers FC':19,'Cardiff City FC':20,
+  'Charlton Athletic FC':21,'Portsmouth FC':22,'Bolton Wanderers FC':23,'Lincoln City FC':24,
+};
+function monogram(club){
+  const w = club.replace(/ FC$| AFC$/,'').split(' ');
+  return w.length===1 ? w[0].slice(0,2).toUpperCase() : (w[0][0]+w[1][0]).toUpperCase();
+}
+function ord(n){const s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0]);}
+// rank (1..pool) -> colour. Reads green→amber→red for full-colour vision,
+// but each stop ALSO differs in luminance so it works for red-green colour blindness.
+// Numbers stay visible, so colour is never the only signal.
+function rankColor(rank, pool){
+  if(rank==null || !pool) return '#b8b2a8';
+  const t = (rank - 1) / (pool - 1); // 0 = best, 1 = worst
+  // three stops, tuned for luminance separation: teal-green -> gold -> brick-red
+  const stops = [
+    [0.00, [46,110,80]],   // #2e6e50 best  (dark-ish green, high sat)
+    [0.50, [201,144,42]],  // #c9902a mid   (amber/gold, lighter)
+    [1.00, [150,58,58]],   // #963a3a worst (brick red, dark)
+  ];
+  let a=stops[0], b=stops[stops.length-1];
+  for(let i=0;i<stops.length-1;i++){ if(t>=stops[i][0] && t<=stops[i+1][0]){ a=stops[i]; b=stops[i+1]; break; } }
+  const span=(b[0]-a[0])||1, f=(t-a[0])/span;
+  const c=a[1].map((ch,i)=>Math.round(ch+(b[1][i]-ch)*f));
+  return `rgb(${c[0]},${c[1]},${c[2]})`;
+}
+function median(arr){const s=[...arr].sort((a,b)=>a-b),n=s.length;return n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2;}
+const isNum = v => v!=null && isFinite(v);
 
-  const rows = Object.entries(teams).map(([name, t]) => {
-    const fr = FIN_RANK_MAP[name] || 12;
-    const gp   = t.atk_played || games;
-    const xgA  = t.atk_xg || 0;
-    const xgD  = t.def_xga || 0;
-    const shots = t.atk_shots || 1;
-    const defShots = t.def_shots_faced || 1;
-    const sot   = t.atk_shots_ot || 0;
-    const sotD  = t.def_sot_faced || 0;
-    const spXgA = t.sp_atk_xg || 0;
-    const spXgD = t.sp_def_xga || 0;
-    // xG/shot: use pre-calculated per-shot values if available, else compute
-    const xgShAtk = t.atk_xg_per_shot != null ? t.atk_xg_per_shot : (xgA/shots);
-    const xgShDef = t.def_xga_per_shot != null ? t.def_xga_per_shot : (xgD/defShots);
-    return {
-      club:    name,
-      finRank: fr,
-      sotAtk:  parseFloat((sot/gp).toFixed(2)),
-      sotDef:  parseFloat((sotD/gp).toFixed(2)),
-      xgSh:    parseFloat((xgShAtk - xgShDef).toFixed(3)),
-      shotAcc: parseFloat(((sot/shots)*100).toFixed(1)),
-      fb90:    parseFloat(((t.atk_fast_break_shots||0)/gp).toFixed(2)),
-      da90:    parseFloat(((t.seq_direct_attacks||0)/gp).toFixed(2)),
-      bu90:    parseFloat(((t.seq_buildups||0)/gp).toFixed(2)),
-      h1Away:  (()=>{
-        if (!htData) return 12;
-        const fha = htData.first_half_away || [];
-        const HT_NAME = {
-          'Coventry City FC':'Coventry City','Derby County FC':'Derby County',
-          'Norwich City FC':'Norwich City','Hull City AFC':'Hull City',
-          'Sheffield United FC':'Sheffield United','Blackburn Rovers FC':'Blackburn Rovers',
-          'Southampton FC':'Southampton','Middlesbrough FC':'Middlesbrough',
-          'Bristol City FC':'Bristol City','Wrexham FC':'Wrexham',
-          'Preston North End FC':'Preston','Stoke City FC':'Stoke City',
-          'Oxford United FC':'Oxford United','Millwall FC':'Millwall',
-          'Charlton Athletic FC':'Charlton Athletic','West Bromwich Albion FC':'West Brom',
-          'Leicester City FC':'Leicester City','Swansea City AFC':'Swansea City',
-          'Ipswich Town FC':'Ipswich Town','Watford FC':'Watford',
-          'Queens Park Rangers FC':'QPR','Portsmouth FC':'Portsmouth',
-          'Sheffield Wednesday FC':'Sheffield Wednesday','Birmingham City FC':'Birmingham City',
-        };
-        const shortName = HT_NAME[name];
-        const entry = fha.find(x => x.name === shortName);
-        if (!entry && fha.length > 0) console.log('H1Away no match:', name, '->', shortName);
-        return entry ? entry.rank : 12;
-      })(),
-      spXga:   parseFloat(((spXgA - spXgD)/gp).toFixed(2)),
-      ppda:    parseFloat((t.press_ppda||12).toFixed(1)),
-      tball90: parseFloat(((t.pass_through_balls||0)/gp).toFixed(2)),
-      cross90: parseFloat(((t.pass_crosses||0)/gp).toFixed(1)),
-    };
-  });
-  // compute xbIndex
-  const metrics = ['sotAtk','sotDef','xgSh','shotAcc','fb90','da90','bu90','h1Away','spXga','ppda','tball90','cross90'];
-  const dirs =    [true,    false,   true,  true,     true,  true,  true,  false,   true,   false, true,     false  ];
-  const weights = [3,3,3,3, 2,2,2,2, 1,1,1,1];
-  metrics.forEach((m,i) => {
-    const vals = rows.map(r=>r[m]).sort((a,b)=>a-b);
-    rows.forEach(r => {
-      const rank = vals.indexOf(r[m]);
-      const pct = vals.length > 1 ? rank/(vals.length-1)*100 : 50;
-      r[m+'_pct'] = dirs[i] ? pct : 100-pct;
+// ── metric definitions ──
+const SCORED = [
+  {k:'sotAtk', hi:true,  t:1, name:'Shots on target /90',
+   tip:'Volume of on-target chances created per game.',
+   why:'How many shots the side puts on target per game. The raw material of scoring — high volume with decent quality is the foundation of a repeatable attack.'},
+  {k:'sotDef', hi:false, t:1, name:'SOT conceded /90',
+   tip:'On-target chances allowed per game — fewer is better.',
+   why:'On-target shots conceded per game. The purest suppression signal: a defence that limits clean looks is doing its job regardless of what the scoreline says. Lower is better; the score is already flipped.'},
+  {k:'xgShD',  hi:true,  t:1, name:'xG per shot diff. (non-pen)',
+   tip:'Chance quality created minus conceded, penalties excluded — the headline signal.',
+   why:'Average non-penalty chance quality created minus average non-penalty chance quality conceded. Penalties are excluded on both sides so a couple of spot-kicks for or against don\u2019t distort a process signal that\u2019s meant to capture open-play chance quality. The single best process signal in the index: a positive number means the side systematically manufactures better chances than it gives up.'},
+  {k:'xgShAtk',hi:true,  t:1, name:'xG per shot, attacking (non-pen)',
+   tip:'Average quality of each open-play chance created.',
+   why:'The average expected-goals value of each non-penalty shot taken. Penalties are excluded because they\u2019re a near-guaranteed high-xG event unrelated to attacking process quality; including them inflates the figure for sides that simply win more spot-kicks. High xG per shot means the side works the ball into genuinely dangerous positions rather than settling for hopeful efforts.'},
+  {k:'shotAcc',hi:true,  t:1, name:'Shot accuracy %',
+   tip:'Share of shots on target — selection discipline.',
+   why:'Percentage of shots that hit the target. A proxy for shot-selection discipline: sides that shoot from good positions naturally test the keeper more often.'},
+  {k:'shotsInBox',hi:true, t:1, name:'Shots in box %',
+   tip:'Share of shots taken from inside the box.',
+   why:'Percentage of a team\u2019s shots taken from inside the penalty area. A shot-selection signal: sides that work the ball into the box before shooting are running a more efficient attack than those settling for long-range efforts. Complements xG per shot — xG measures average chance quality, this measures selection discipline.'},
+  {k:'fb90',   hi:true,  t:2, name:'Fast breaks /90',
+   tip:'Attacks before the opposition can reorganise.',
+   why:'Attacks launched before the opposition can reorganise — the most efficient entry route into the box.'},
+  {k:'da90',   hi:true,  t:2, name:'Direct attacks /90',
+   tip:'Quick vertical moves into the final third.',
+   why:'Quick vertical progressions from the defensive half into the final third. Captures a side\u2019s ability to move the ball forward with purpose rather than sterile possession.'},
+  {k:'bu90',   hi:true,  t:2, name:'Build-up sequences /90',
+   tip:'Sustained passing chains reaching the final third.',
+   why:'Sustained possession chains that reach the final third. Complements the transition metrics: a good process mixes fast entries with the ability to break down a set defence.'},
+  {k:'tball90',hi:true,  t:2, name:'Through balls /90',
+   tip:'Line-breaking passes — the highest-value entry.',
+   why:'Passes played through the defensive line into space. The highest-value single pass type in football — a reliable marker of creative intent.'},
+  {k:'crossAcc',hi:true, t:2, name:'Cross accuracy %',
+   tip:'Share of crosses that find a teammate — execution quality.',
+   why:'Percentage of open-play crosses that find a teammate. Cross volume is unscored (it\u2019s a style choice), but if a team chooses to cross, doing it accurately is a genuine process quality signal — the skill of the final ball independent of how often the side crosses.'},
+  {k:'spXga',  hi:true,  t:3, name:'Set-piece xG diff.',
+   tip:'Dead-ball threat created minus conceded, per game.',
+   why:'Set-piece expected goals created minus conceded, per game. Dead balls are the most coachable phase in football — a persistent negative number here is a fixable problem.'},
+  {k:'ppda',   hi:false, t:3, name:'PPDA',
+   tip:'Passes allowed per defensive action — lower means a fiercer press.',
+   why:'Passes allowed per defensive action. Measures pressing intensity: a low PPDA means the side hunts the ball rather than sitting off. Lower is better; the score is already flipped.'},
+];
+const DISPLAY_ONLY = [
+  {k:'cross90', name:'Crosses /90',
+   tip:'Volume only — crossing is the least efficient entry.',
+   why:'Cross volume per game, shown for style context only. Crossing is the least efficient way into the box, so volume carries no weight in the index — a side can cross a lot or a little and neither is inherently good.'},
+];
+const ALL_METRICS = [...SCORED, ...DISPLAY_ONLY];
+
+// ── scoring (null-safe: missing values are excluded, never imputed) ──
+function computeRows(teams){
+  const rows = Object.entries(teams).map(([club,t])=>({
+    club,
+    ...t,
+    xgShD: (isNum(t.xgShAtk)&&isNum(t.xgShDef)) ? +(t.xgShAtk-t.xgShDef).toFixed(3) : null,
+  }));
+  SCORED.forEach(m=>{
+    const pool = rows.filter(r=>isNum(r[m.k]));
+    const vals = pool.map(r=>r[m.k]).sort((a,b)=>a-b);
+    rows.forEach(r=>{
+      if(!isNum(r[m.k])){ r[m.k+'_p']=null; return; }
+      const i=vals.indexOf(r[m.k]);
+      const p=vals.length>1? i/(vals.length-1)*100 : 50;
+      r[m.k+'_p']= m.hi? p : 100-p;
     });
+    // rank out of pool size, standard ties
+    const sorted=[...pool].sort((a,b)=>b[m.k+'_p']-a[m.k+'_p']);
+    let curRank=1, prev=null;
+    sorted.forEach((r,i)=>{
+      if(prev!==null && r[m.k+'_p']!==prev) curRank=i+1;
+      r[m.k+'_rk']=curRank; prev=r[m.k+'_p'];
+    });
+    rows.forEach(r=>{ if(r[m.k+'_rk']===undefined) r[m.k+'_rk']=null; });
+    m.poolSize = pool.length;
   });
-  rows.forEach(r => {
-    let score = 0, tw = 0;
-    metrics.forEach((m,i) => { score += r[m+'_pct']*weights[i]; tw += weights[i]; });
-    r.xbIndex = parseFloat((score/tw).toFixed(1));
+  rows.forEach(r=>{
+    const tier=n=>{
+      const ps=SCORED.filter(m=>m.t===n).map(m=>r[m.k+'_p']).filter(isNum);
+      return ps.length? ps.reduce((a,b)=>a+b,0)/ps.length : null;
+    };
+    r.t1=tier(1); r.t2=tier(2); r.t3=tier(3);
+    r.xbi=(isNum(r.t1)&&isNum(r.t2)&&isNum(r.t3)) ? +(r.t1*.5+r.t2*.3+r.t3*.2).toFixed(1) : null;
+    if(isNum(r.t1))r.t1=+r.t1.toFixed(1); if(isNum(r.t2))r.t2=+r.t2.toFixed(1); if(isNum(r.t3))r.t3=+r.t3.toFixed(1);
   });
-  // sort by xbIndex desc, add rank and finGap
-  rows.sort((a,b)=>b.xbIndex-a.xbIndex);
-  rows.forEach((r,i) => {
-    r.rank = rows.filter(x=>Math.round(x.xbIndex*10)>Math.round(r.xbIndex*10)).length+1;
-    r.finGap = r.finRank - r.rank;
+  rows.sort((a,b)=>(b.xbi??-1)-(a.xbi??-1));
+  rows.forEach(r=>{
+    r.rank = isNum(r.xbi) ? rows.filter(x=>isNum(x.xbi)&&x.xbi>r.xbi).length+1 : null;
+    r.finGap = (isNum(r.finRank)&&isNum(r.rank)) ? r.finRank-r.rank : null;
   });
   return rows;
 }
 
-// Club brand colours for monograms
-const CLUB_COLORS = {
-  'Southampton FC':          '#D71920',
-  'Coventry City FC':        '#58A7CC',
-  'Ipswich Town FC':         '#0044A9',
-  'Sheffield United FC':     '#EE2737',
-  'Middlesbrough FC':        '#E03A3E',
-  'Norwich City FC':         '#00A650',
-  'Millwall FC':             '#1D3461',
-  'Bristol City FC':         '#C8102E',
-  'Watford FC':              '#D8A800',
-  'Stoke City FC':           '#E03A3E',
-  'Derby County FC':         '#1B1B1B',
-  'Hull City AFC':           '#F5A12E',
-  'Wrexham FC':              '#DC143C',
-  'Birmingham City FC':      '#0056A2',
-  'Leicester City FC':       '#003090',
-  'Queens Park Rangers FC':  '#1D5BA4',
-  'West Bromwich Albion FC': '#0B2B5A',
-  'Charlton Athletic FC':    '#D4021D',
-  'Preston North End FC':    '#1E3A5F',
-  'Blackburn Rovers FC':     '#009EE0',
-  'Oxford United FC':        '#F5A800',
-  'Swansea City AFC':        '#333333',
-  'Portsmouth FC':           '#013B70',
-  'Sheffield Wednesday FC':  '#003399',
-  'West Ham United FC':          '#7A263A',
-  'Wolverhampton Wanderers FC':  '#FDB913',
-  'Burnley FC':                  '#6C1D45',
-  'Cardiff City FC':             '#0070B5',
-  'Lincoln City FC':             '#E31B23',
-  'Bolton Wanderers FC':         '#263B7A',
-};
+// ── map a scraper snapshot (data/history.json shape) into this dashboard's shape ──
+function mapSnapshot(snap){
+  const out={};
+  for(const [name,t] of Object.entries(snap.teams||{})){
+    const gp = isNum(t.atk_played)&&t.atk_played>0 ? t.atk_played : null;
+    const per = v => (isNum(v)&&gp) ? +(v/gp).toFixed(3) : null;
+    out[name]={
+      gp,
+      sotAtk: per(t.atk_shots_ot),
+      sotDef: per(t.def_sot_faced),
+      xgShAtk: isNum(t.np_xg_per_shot)? t.np_xg_per_shot : null,
+      xgShDef: isNum(t.np_xga_per_shot)? t.np_xga_per_shot : null,
+      shotAcc: (isNum(t.atk_shots_ot)&&isNum(t.atk_shots)&&t.atk_shots>0)? +(t.atk_shots_ot/t.atk_shots*100).toFixed(1) : null,
+      shotsInBox: isNum(t.atk_shots_in_box_perc)? t.atk_shots_in_box_perc : null,
+      fb90: per(t.atk_fast_break_shots),
+      da90: per(t.seq_direct_attacks),
+      bu90: per(t.seq_buildups),
+      tball90: per(t.pass_through_balls),
+      spXga: (isNum(t.sp_atk_xg)&&isNum(t.sp_def_xga)&&gp)? +((t.sp_atk_xg-t.sp_def_xga)/gp).toFixed(3) : null,
+      ppda: isNum(t.press_ppda)? t.press_ppda : null,
+      crossAcc: isNum(t.pass_cross_acc)? t.pass_cross_acc : null,
+      cross90: per(t.pass_crosses),
+      finRank: FIN_RANK_MAP[name] ?? null,
+    };
+  }
+  return out;
+}
 
-// Short names for mobile
-const CLUB_SHORT = {
-  'Southampton FC':          'SOU',
-  'Coventry City FC':        'COV',
-  'Ipswich Town FC':         'IPS',
-  'Sheffield United FC':     'SHU',
-  'Middlesbrough FC':        'MBO',
-  'Norwich City FC':         'NOR',
-  'Millwall FC':             'MIL',
-  'Bristol City FC':         'BRS',
-  'Watford FC':              'WAT',
-  'Stoke City FC':           'STK',
-  'Derby County FC':         'DER',
-  'Hull City AFC':           'HUL',
-  'Wrexham FC':              'WRX',
-  'Birmingham City FC':      'BIR',
-  'Leicester City FC':       'LEI',
-  'Queens Park Rangers FC':  'QPR',
-  'West Bromwich Albion FC': 'WBA',
-  'Charlton Athletic FC':    'CHA',
-  'Preston North End FC':    'PNE',
-  'Blackburn Rovers FC':     'BLB',
-  'Oxford United FC':        'OXF',
-  'Swansea City AFC':        'SWA',
-  'Portsmouth FC':           'POM',
-  'Sheffield Wednesday FC':  'SWE',
-  'West Ham United FC':          'WHU',
-  'Wolverhampton Wanderers FC':  'WOL',
-  'Burnley FC':                  'BUR',
-  'Cardiff City FC':             'CAR',
-  'Lincoln City FC':             'LIN',
-  'Bolton Wanderers FC':         'BOL',
-};
+// ── state ──
+let rows=[], bham=null, peers=[];
+let sortK='rank', sortAsc=true;
+let openClub='Birmingham City FC';
+let PREV_RANKS={}; // club -> rank in the snapshot immediately before the one on screen
 
-// Column metadata: key, higher/lower better
-const METRIC_COLS = [
-  { key:'sotAtk',   higherBetter:true  },
-  { key:'sotDef',   higherBetter:false },
-  { key:'xgSh',     higherBetter:true  },
-  { key:'shotAcc',  higherBetter:true  },
-  { key:'fb90',     higherBetter:true  },
-  { key:'da90',     higherBetter:true  },
-  { key:'bu90',     higherBetter:true  },
-  { key:'h1Away',   higherBetter:false },
-  { key:'spXga',    higherBetter:true  },
-  { key:'ppda',     higherBetter:false },
-  { key:'tball90',  higherBetter:true  },
-  { key:'cross90',  higherBetter:false },
+// ── venue split (home / away xB Index) ──
+// data/venue.json is built by venue_split.py: each club's stats from home
+// matches only and away matches only, cumulative per snapshot. The home table
+// scores every club's home process against the other 23 clubs' home process;
+// the away table does the same for away matches. Same 13 metrics, same weights.
+let VIEW='overall';          // 'overall' | 'home' | 'away'
+let VENUE=null;              // parsed data/venue.json
+let CUR_DATE=null;           // date of the snapshot on screen
+let tableRows=[];            // rows the league table is drawing
+let ACTIVE_PREV={};          // previous ranks for the arrows in the current view
+
+function mapVenue(b){
+  const gp = b && b.gp>0 ? b.gp : null;
+  const per = v => (isNum(v)&&gp) ? +(v/gp).toFixed(3) : null;
+  const ratio = (a,c,m=1) => (isNum(a)&&isNum(c)&&c>0) ? +(a/c*m).toFixed(3) : null;
+  const o = {
+    gp, played: b ? b.played : null,
+    sotAtk: per(b?.shots_ot), sotDef: per(b?.sot_faced),
+    xgShAtk: ratio(b?.np_xg,b?.np_shots), xgShDef: ratio(b?.np_xga,b?.np_sa),
+    shotAcc: ratio(b?.shots_ot,b?.shots,100), shotsInBox: ratio(b?.shots_in_box,b?.shots,100),
+    fb90: per(b?.fast_breaks), da90: per(b?.direct_attacks), bu90: per(b?.buildups),
+    tball90: per(b?.through_balls),
+    spXga: gp&&isNum(b?.sp_xg)&&isNum(b?.sp_xga) ? +((b.sp_xg-b.sp_xga)/gp).toFixed(3) : null,
+    ppda: per(b?.ppda_x_gp),
+    crossAcc: ratio(b?.crosses_ok,b?.crosses,100), cross90: per(b?.crosses),
+    finRank: null,
+  };
+  if(!gp) Object.keys(o).forEach(k=>{ if(k!=='played') o[k]=k==='gp'?0:null; });
+  return o;
+}
+function venueSnapIndex(date){
+  if(!VENUE||!date) return -1;
+  // exact match only: venue.json covers the current season's snapshots
+  return VENUE.snapshots.findIndex(s=>s.date===date);
+}
+function venueRows(i, view){
+  const snap=VENUE.snapshots[i]; const teams={};
+  Object.entries(snap.teams).forEach(([club,v])=>{ teams[club]=mapVenue(v[view]); });
+  return computeRows(teams);
+}
+function buildTableRows(){
+  const note=document.getElementById('venueNote');
+  const head=document.getElementById('lastColHead');
+  const i = VIEW==='overall' ? -1 : venueSnapIndex(CUR_DATE);
+  if(VIEW==='overall' || i<0){
+    tableRows=rows; ACTIVE_PREV=PREV_RANKS;
+    if(VIEW!=='overall'){
+      note.innerHTML='<b>No home/away split for this snapshot.</b> The split covers the current season only. Showing the overall table.';
+      note.style.display='block';
+    } else note.style.display='none';
+    head.dataset.k='finGap';
+    head.querySelector('button').innerHTML='Budget efficiency<span class="u">↑ over · ↓ under</span>';
+    return;
+  }
+  tableRows=venueRows(i, VIEW);
+  ACTIVE_PREV={};
+  if(i>0) venueRows(i-1, VIEW).forEach(r=>{ ACTIVE_PREV[r.club]=r.rank; });
+  const word = VIEW==='home'?'home':'away';
+  const tracked = tableRows.reduce((a,r)=>a+(r.gp||0),0);
+  const played = tableRows.reduce((a,r)=>a+(r.played||0),0);
+  note.innerHTML=`<b>${word[0].toUpperCase()+word.slice(1)} xB Index.</b> Each club is scored on its ${word} matches only, against the other 23 clubs' ${word} matches, on the same 13 metrics and weights as the overall table. Built from <b>${tracked} of ${played}</b> ${word} matches: where a gap between data snapshots covers both a home and an away match, that block can't be split and is left out. Samples are small this early, so read it as direction, not verdict. PPDA here is an approximation.`;
+  note.style.display='block';
+  head.dataset.k='gp';
+  head.querySelector('button').innerHTML=`${word[0].toUpperCase()+word.slice(1)} matches<span class="u">tracked of played</span>`;
+}
+function setView(v){
+  VIEW=v;
+  document.querySelectorAll('.viewtog button').forEach(b=>{
+    const on=b.dataset.view===v; b.classList.toggle('active',on); b.setAttribute('aria-pressed',on);
+  });
+  if(sortK==='finGap'||sortK==='gp'){ sortK='rank'; sortAsc=true; }
+  buildTableRows(); render();
+}
+document.querySelectorAll('.viewtog button').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+function setVenueAvailable(ok){
+  document.querySelectorAll('.viewtog button').forEach(b=>{ if(b.dataset.view!=='overall') b.disabled=!ok; });
+}
+setVenueAvailable(false);
+
+const fmtOrDash=(v,dp)=>isNum(v)?v.toFixed(dp):'—';
+
+// ── hero ──
+function renderHero(labels, trend){
+  document.getElementById('heroXbi').firstChild.textContent = isNum(bham?.xbi)? bham.xbi.toFixed(1) : '—';
+  document.getElementById('heroRank').textContent = bham?.rank ?? '—';
+  const peerVals = peers.map(p=>p.xbi).filter(isNum);
+  const peerAvgXbi = peerVals.length? peerVals.reduce((a,b)=>a+b,0)/peerVals.length : null;
+  document.getElementById('peerXbi').textContent = isNum(peerAvgXbi)? peerAvgXbi.toFixed(1) : '—';
+  if(isNum(peerAvgXbi)&&isNum(bham?.xbi)){
+    const g = bham.xbi - peerAvgXbi;
+    document.getElementById('peerGap').innerHTML = g>=0
+      ? `Birmingham <b>+${g.toFixed(1)}</b> above peer band`
+      : `Birmingham <b>${g.toFixed(1)}</b> pts below · ${(-g).toFixed(1)} to close`;
+  } else document.getElementById('peerGap').textContent='—';
+  const tierPlain = {t1:'shot quality', t2:'build-up', t3:'set pieces & pressing'};
+  const tierRank = t => isNum(bham?.[t]) ? rows.filter(x=>isNum(x[t])&&x[t]>bham[t]).length+1 : null;
+  if(bham && isNum(bham.t1)&&isNum(bham.t2)&&isNum(bham.t3)){
+    const bt=[['t1',bham.t1],['t2',bham.t2],['t3',bham.t3]].sort((a,b)=>b[1]-a[1]);
+    const td = (trend&&trend.length>1)? trend[trend.length-1]-trend[0] : null;
+    document.getElementById('heroVerdict').innerHTML=
+      `Birmingham's underlying process ranks <b>${ord(bham.rank)}</b> of 24`+
+      (td!=null?` — <span class="up">${td>=0?'up':'down'} ${Math.abs(td).toFixed(1)} pts over ${trend.length} snapshots</span>,`:' —')+
+      ` carried by ${tierPlain[bt[0][0]]}, held back by ${tierPlain[bt[2][0]]}.`;
+    document.getElementById('heroFacts').innerHTML=
+      `<span class="fact">T1 shots <b>${bham.t1.toFixed(0)}</b> · ${ord(tierRank('t1'))}</span>`+
+      `<span class="fact">T2 build-up <b>${bham.t2.toFixed(0)}</b> · ${ord(tierRank('t2'))}</span>`+
+      `<span class="fact">T3 context <b>${bham.t3.toFixed(0)}</b> · ${ord(tierRank('t3'))}</span>`+
+      `<span class="fact">wage rank <b>${ord(bham.finRank)}</b> · process rank <b>${ord(bham.rank)}</b></span>`;
+  }
+}
+
+// ── BIRMINGHAM TARGETS (edit target values here) ──
+const BHAM_TARGETS = [
+  {k:'sotAtk',  label:'Shots on target /90',       target:5.00,  hi:true,  fmt:v=>v.toFixed(2)},
+  {k:'sotDef',  label:'SOT conceded /90',          target:3.80,  hi:false, fmt:v=>v.toFixed(2)},
+  {k:'xgShAtk', label:'xG per shot (attacking)',   target:0.12,  hi:true,  fmt:v=>v.toFixed(3)},
+  {k:'xgShD',   label:'xG per shot differential',  target:0.010, hi:true,  fmt:v=>(v>=0?'+':'')+v.toFixed(3)},
+  {k:'shotAcc', label:'Shot accuracy %',           target:33.0,  hi:true,  fmt:v=>v.toFixed(1)+'%'},
+  {k:'shotsInBox', label:'Shots in box %',         target:65.0,  hi:true,  fmt:v=>v.toFixed(1)+'%'},
+  {k:'fb90',    label:'Fast breaks /90',           target:1.00,  hi:true,  fmt:v=>v.toFixed(2)},
+  {k:'da90',    label:'Direct attacks /90',        target:1.50,  hi:true,  fmt:v=>v.toFixed(2)},
+  {k:'bu90',    label:'Build-up sequences /90',    target:2.00,  hi:true,  fmt:v=>v.toFixed(2)},
+  {k:'tball90', label:'Through balls /game',       target:1.00,  hi:true,  fmt:v=>v.toFixed(2)},
+  {k:'crossAcc',label:'Cross accuracy %',          target:'peerMedian', hi:true, fmt:v=>v.toFixed(1)+'%'},
+  {k:'spXga',   label:'Set-piece xG diff /90',     target:0.03,  hi:true,  fmt:v=>(v>=0?'+':'')+v.toFixed(2)},
+  {k:'ppda',    label:'PPDA (pressing intensity)', target:11.0,  hi:false, fmt:v=>v.toFixed(1)},
 ];
 
-// METRIC_RANGES computed dynamically inside renderTable from live DATA
-const METRIC_RANGES = {};
-let MAX_FINGAP = 12;
-
-function recomputeRanges(data) {
-  METRIC_COLS.forEach(({ key }) => {
-    const vals = data.map(d => d[key]);
-    METRIC_RANGES[key] = { min: Math.min(...vals), max: Math.max(...vals) };
-  });
-  MAX_FINGAP = Math.max(...data.map(d => Math.abs(d.finGap))) || 12;
-}
-
-// ── COLOUR INTERPOLATION ──────────────────────────────────────────────────────
-// olive green → neutral → muted red
-const C_GREEN   = [107, 124, 69];   // #6b7c45
-const C_NEUTRAL = [212, 207, 199];  // #d4cfc7
-const C_RED     = [139, 64, 64];    // #8b4040
-
-function lerp(a, b, t) { return a + (b - a) * t; }
-
-function metricColor(value, min, max, higherBetter) {
-  if (max === min) return `rgb(${C_NEUTRAL.join(',')})`;
-  let t = (value - min) / (max - min); // 0=worst…1=best
-  if (!higherBetter) t = 1 - t;        // flip for lower=better
-  // t: 0=red, 0.5=neutral, 1=green
-  let r, g, b;
-  if (t < 0.5) {
-    const s = t * 2;
-    r = lerp(C_RED[0], C_NEUTRAL[0], s);
-    g = lerp(C_RED[1], C_NEUTRAL[1], s);
-    b = lerp(C_RED[2], C_NEUTRAL[2], s);
-  } else {
-    const s = (t - 0.5) * 2;
-    r = lerp(C_NEUTRAL[0], C_GREEN[0], s);
-    g = lerp(C_NEUTRAL[1], C_GREEN[1], s);
-    b = lerp(C_NEUTRAL[2], C_GREEN[2], s);
-  }
-  // Light alpha overlay approach: return bg color
-  return `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
-}
-
-function textColorFor(bgRgb) {
-  // parse r,g,b from "rgb(r,g,b)"
-  const m = bgRgb.match(/(\d+),(\d+),(\d+)/);
-  if (!m) return '#1a1a1a';
-  const lum = (0.299 * m[1] + 0.587 * m[2] + 0.114 * m[3]) / 255;
-  return lum > 0.55 ? '#2a2520' : '#f5f0e8';
-}
-
-// ── FORMAT HELPERS ────────────────────────────────────────────────────────────
-function fmt(v, decimals=1) {
-  if (v === null || v === undefined) return '—';
-  return Number(v).toFixed(decimals);
-}
-
-function monogram(club) {
-  // Take first letter of first two words
-  const words = club.replace(/ FC$| AFC$| City$/, '').split(' ');
-  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
-  return (words[0][0] + words[1][0]).toUpperCase();
-}
-
-// ── SORT STATE ────────────────────────────────────────────────────────────────
-let sortCol = 'rank';
-let sortDir = 'asc';
-let highlightClub = '';
-
-// ── RENDER ────────────────────────────────────────────────────────────────────
-function renderTable(data) {
-  recomputeRanges(data);
-  const tbody = document.getElementById('tableBody');
-  tbody.innerHTML = '';
-
-  data.forEach((d, i) => {
-    const isBham = d.club === 'Birmingham City FC';
-    const isHighlight = d.club === highlightClub;
-
-    const tr = document.createElement('tr');
-    if (isBham) tr.classList.add('bham-row');
-    if (isHighlight && !isBham) tr.classList.add('highlight-row');
-
-    const color = CLUB_COLORS[d.club] || '#555';
-    const mono = monogram(d.club);
-    const short = CLUB_SHORT[d.club] || d.club.slice(0, 3).toUpperCase();
-
-    // Rank
-    // Joint rank: count teams with strictly higher rounded xbIndex
-    const trueRank = data.filter(x => Math.round(x.xbIndex*10) > Math.round(d.xbIndex*10)).length + 1;
-
-    // Position change arrow -- only show on default xBI descending sort
-    let arrowHtml = '<span style="display:inline-block;width:20px"></span>';
-    if (sortCol === 'xbIndex' && sortDir === 'desc' && ALL_SNAPSHOTS.length > 1) {
-      const prevSnap = ALL_SNAPSHOTS[1];
-      const prevData = buildDataFromSnapshot(prevSnap);
-      const prevTeam = prevData.find(x => x.club === d.club);
-      if (prevTeam) {
-        const prevRank = prevData.filter(x => Math.round(x.xbIndex*10) > Math.round(prevTeam.xbIndex*10)).length + 1;
-        const diff = prevRank - trueRank;
-        if (diff > 0) {
-          arrowHtml = `<span style="color:var(--green);font-size:9px;display:inline-block;width:20px">▲${diff}</span>`;
-        } else if (diff < 0) {
-          arrowHtml = `<span style="color:var(--red);font-size:9px;display:inline-block;width:20px">▼${Math.abs(diff)}</span>`;
-        } else {
-          arrowHtml = '<span style="color:var(--neutral);font-size:9px;display:inline-block;width:20px">–</span>';
-        }
-      }
+function renderTargets(){
+  const rowsHtml = BHAM_TARGETS.map(t=>{
+    const b = bham?.[t.k];
+    const peerVals = peers.map(p=>p[t.k]).filter(isNum);
+    const med = peerVals.length? median(peerVals) : null;
+    const min = peerVals.length? Math.min(...peerVals) : null;
+    const max = peerVals.length? Math.max(...peerVals) : null;
+    // dynamic targets: 'peerMedian' means the target IS the peer median
+    const target = t.target === 'peerMedian' ? med : t.target;
+    const dirIcon = t.hi ? '' : '<span class="dir-arrow" title="Lower is better">↓</span>';
+    let statusHtml;
+    if(!isNum(b) || !isNum(target)){
+      statusHtml = '<span class="tg-status" style="background:#eee9df;color:#8a8070">— No data</span>';
+    } else {
+      const beats = t.hi ? (b >= target) : (b <= target);
+      const closeness = target !== 0 ? Math.abs(b - target) / Math.abs(target) : Math.abs(b - target);
+      const gap = Math.abs(b - target);
+      const mag = v => t.fmt(v).replace(/^\+/,'').replace('%','');
+      const isSoftTarget = t.target !== 'peerMedian' && isNum(med) && (t.hi ? (target < med * 0.90) : (target > med * 1.10));
+      let cls, note;
+      if(beats && isSoftTarget){ cls='soft';  note='On target · soft'; }
+      else if(beats){             cls='hit';   note='On target'; }
+      else if(closeness <= 0.10){ cls='close'; note=`Close · ${t.hi?'short':'above'} ${mag(gap)}`; }
+      else {                       cls='miss';  note=`Off target · ${t.hi?'short':'above'} ${mag(gap)}`; }
+      statusHtml = `<span class="tg-status ${cls}"><span class="g">${cls==='hit'?'●':cls==='soft'?'◒':cls==='close'?'◐':'○'}</span>${note}</span>`;
     }
-    tr.innerHTML += `<td class="col-rank"><span style="display:inline-block;min-width:16px;text-align:right">${trueRank}</span>${arrowHtml}</td>`;
+    const wideBand = (isNum(med)&&med!==0&&isNum(max)&&isNum(min)&&Math.abs(max-min)/Math.abs(med)>0.30)
+      ? '<span class="wide" title="Big spread across peer clubs — average is a soft benchmark">wide</span>' : '';
+    const targetDisplay = t.target === 'peerMedian'
+      ? (isNum(target) ? `${t.fmt(target)}<br><span class="rng">= peer median</span>` : '—')
+      : t.fmt(target);
+    return `<tr>
+      <td>${t.label}${dirIcon}</td>
+      <td class="tg-bham">${isNum(b)?t.fmt(b):'—'}<span class="peer-phone">${isNum(med)?'peers '+t.fmt(med):''}</span></td>
+      <td class="tg-peer">${isNum(med)?t.fmt(med):'—'} ${wideBand}<br><span class="rng">${isNum(min)?`range ${t.fmt(min)}–${t.fmt(max)}`:''}</span></td>
+      <td class="tg-target">${targetDisplay}</td>
+      <td>${statusHtml}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('targetsPanel').innerHTML = `
+    <div class="targets-head">
+      <h2><em>Birmingham</em> targets · 2026/27</h2>
+      <span class="anchor">Benchmark: <b>3rd–8th on xB Index</b> · matching wage rank <b>${bham?ord(bham.finRank):'—'}</b></span>
+    </div>
+    <p class="targets-sub">A ${bham?ord(bham.finRank):'—'} wage rank should earn a top-8 process. This is what that would look like. Peer band shows the <b>middle value</b> across the six clubs currently ranked 3rd–8th — the honest bar for Birmingham. ↓ marks metrics where lower is better; the status is direction-aware.</p>
+    <table class="targets-table">
+      <colgroup>
+        <col class="c-metric"><col class="c-val"><col class="c-val col-peer"><col class="c-val"><col class="c-status">
+      </colgroup>
+      <thead><tr>
+        <th>Metric</th>
+        <th>Birmingham now</th>
+        <th class="col-peer">Peer average (3rd–8th)</th>
+        <th>Target 26/27</th>
+        <th>Status</th>
+      </tr></thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+    <div class="targets-foot">
+      <span><span class="sw h"></span>On target</span>
+      <span><span class="sw s"></span>On target · soft (target below peer band)</span>
+      <span><span class="sw c"></span>Close (within 10%)</span>
+      <span><span class="sw m"></span>Off target · gap shown</span>
+    </div>`;
+}
 
-    // Club
-    tr.innerHTML += `<td class="col-club">
-      <div class="club-row">
-        <div class="club-mono" style="background:${color}">${mono}</div>
-        <span class="club-name">${d.club.replace(/ FC$| AFC$/, '')}</span>
-        <span class="club-name-short">${short}</span>
-      </div>
-    </td>`;
+// ── league table ──
+function rankArrow(club, rank){
+  const prev = ACTIVE_PREV[club];
+  if(!isNum(prev) || !isNum(rank)) return '';
+  const diff = prev - rank; // positive = moved up (rank number got smaller)
+  if(diff > 0) return `<span class="rank-arrow up" title="Up from ${ord(prev)}">▲${diff}</span>`;
+  if(diff < 0) return `<span class="rank-arrow down" title="Down from ${ord(prev)}">▼${Math.abs(diff)}</span>`;
+  return `<span class="rank-arrow same" title="Unchanged from ${ord(prev)}">–</span>`;
+}
 
-    // xB Index — colour coded green (high) to red (low)
-    const xbiMin = Math.min(...data.map(x=>x.xbIndex));
-    const xbiMax = Math.max(...data.map(x=>x.xbIndex));
-    const xbiBg  = metricColor(d.xbIndex, xbiMin, xbiMax, true);
-    const xbiFg  = textColorFor(xbiBg);
-    tr.innerHTML += `<td class="col-xbi" style="background:${xbiBg};color:${xbiFg}">${fmt(d.xbIndex, 1)}</td>`;
-
-    // Fin Rank
-    tr.innerHTML += `<td class="col-fin hide-mobile">${d.finRank}</td>`;
-
-    // Fin Gap
-    const gapAbs = Math.abs(d.finGap);
-    const barPct = Math.round((gapAbs / MAX_FINGAP) * 50);
-    const gapClass = d.finGap >= 0 ? 'positive' : 'negative';
-    const gapSign = d.finGap > 0 ? '+' : '';
-    tr.innerHTML += `<td>
-      <div class="fin-gap-cell">
-        <span class="fin-gap-val ${gapClass}">${gapSign}${d.finGap}</span>
-        <div class="fin-gap-bar-wrap">
-          <div class="fin-gap-bar ${gapClass}" style="width:${barPct}%"></div>
+function render(){
+  const d=[...tableRows].sort((a,b)=>{
+    let av=a[sortK],bv=b[sortK];
+    if(av==null) return 1; if(bv==null) return -1;
+    if(typeof av==='string'){av=av.toLowerCase();bv=bv.toLowerCase();}
+    return (av<bv?-1:av>bv?1:0)*(sortAsc?1:-1);
+  });
+  const tb=document.getElementById('tbody'); tb.innerHTML='';
+  d.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.className='datarow'+(r.club==='Birmingham City FC'?' bham':'')+(openClub===r.club?' open':'');
+    tr.tabIndex=0; tr.setAttribute('role','button');
+    tr.setAttribute('aria-expanded', openClub===r.club);
+    const color = CLUB_COLORS[r.club] || '#555';
+    tr.innerHTML=`<td class="rk">${r.rank??'—'}${rankArrow(r.club, r.rank)}</td>
+      <td class="club">
+        <div class="club-row">
+          <div class="club-mono" style="background:${color}">${monogram(r.club)}</div>
+          <span class="club-name-full">${r.club.replace(/ FC$| AFC$/,'')}</span>
+          <span class="club-name-short">${CLUB_SHORT[r.club]||r.club.slice(0,3).toUpperCase()}</span>
+          <span class="chev">▶</span>
         </div>
-      </div>
-    </td>`;
+      </td>
+      <td class="xbi">${fmtOrDash(r.xbi,1)}</td>
+      <td><span class="tierbar"><span class="bw"><span class="bf" style="width:${isNum(r.t1)?r.t1:0}%"></span></span><span class="bv">${isNum(r.t1)?r.t1.toFixed(0):'—'}</span></span></td>
+      <td><span class="tierbar"><span class="bw"><span class="bf" style="width:${isNum(r.t2)?r.t2:0}%"></span></span><span class="bv">${isNum(r.t2)?r.t2.toFixed(0):'—'}</span></span></td>
+      <td><span class="tierbar"><span class="bw"><span class="bf" style="width:${isNum(r.t3)?r.t3:0}%"></span></span><span class="bv">${isNum(r.t3)?r.t3.toFixed(0):'—'}</span></span></td>
+      ${VIEW==='overall'
+        ? `<td class="hide-phone ${r.finGap>0?'gap-pos':r.finGap<0?'gap-neg':''}">${r.finGap==null?'—':r.finGap>0?'↑ '+r.finGap:r.finGap<0?'↓ '+Math.abs(r.finGap):'—'}</td>`
+        : `<td class="hide-phone gp-cell${(r.played||0)-(r.gp||0)>1?' thin':''}" title="${r.gp||0} of ${r.played??'?'} ${VIEW} matches in the data">${r.gp||0} of ${r.played??'—'}</td>`}`;
+    const toggle=()=>{openClub=openClub===r.club?null:r.club;render();};
+    tr.addEventListener('click',toggle);
+    tr.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}});
+    tb.appendChild(tr);
+    if(openClub===r.club) tb.appendChild(detailRow(r));
+  });
+  document.querySelectorAll('.dm-name').forEach(n=>{
+    n.addEventListener('click',e=>{ e.stopPropagation(); openDrawer(n.dataset.k); });
+    n.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.stopPropagation(); openDrawer(n.dataset.k);} });
+  });
+}
 
-    // Metric cells
-    METRIC_COLS.forEach(({ key, higherBetter }, idx) => {
-      const { min, max } = METRIC_RANGES[key];
-      const bg = metricColor(d[key], min, max, higherBetter);
-      const fg = textColorFor(bg);
-      const tierClass = idx < 4 ? 'tier1-group' : idx < 8 ? 'tier2-group' : 'tier3-group';
-      const decimals = key === 'xgSh' ? 3 : key === 'shotAcc' ? 1 : 2;
-      tr.innerHTML += `<td class="metric-cell hide-mobile ${idx===0?'tier1-group':idx===4?'tier2-group':idx===8?'tier3-group':''}"
-        style="background:${bg};color:${fg}">${fmt(d[key], decimals)}</td>`;
+function detailRow(r){
+  const tr=document.createElement('tr'); tr.className='detail';
+  const isPhone = document.getElementById('frame').classList.contains('phone');
+  const colspan = isPhone ? 6 : 7;
+  const groups={1:['Tier 1 · Shot quality & suppression','50%'],2:['Tier 2 · Build-up','30%'],3:['Tier 3 · Set pieces & pressing','20%']};
+  const dp = k => k==='xgShD'||k==='xgShAtk'?3 : k==='spXga'?2 : k==='shotAcc'||k==='ppda'||k==='cross90'?1 : 2;
+  const ordSup = n => { const s=['th','st','nd','rd'],v=n%100; return `${n}<sup>${s[(v-20)%10]||s[v]||s[0]}</sup>`; };
+  const barWidth = rank => ((25 - rank) / 24) * 100;
+  let html=`<td colspan="${colspan}"><div class="detail-inner">
+    <div class="rank-legend">
+      <span class="rl-label">Bar colour = rank</span>
+      <span class="rl-scale"><span class="rl-swatch" style="background:rgb(46,110,80)"></span>best</span>
+      <span class="rl-arrow">→</span>
+      <span class="rl-scale"><span class="rl-swatch" style="background:rgb(201,144,42)"></span>mid</span>
+      <span class="rl-arrow">→</span>
+      <span class="rl-scale"><span class="rl-swatch" style="background:rgb(150,58,58)"></span>worst</span>
+      <span class="rl-note">longer + greener = better · numbers shown so colour is never the only signal</span>
+    </div>`;
+  [1,2,3].forEach(t=>{
+    html+=`<div class="dtier"><b>${groups[t][0]}</b><span class="wt">${groups[t][1]} weight</span><span class="rule"></span></div>`;
+    SCORED.filter(m=>m.t===t).forEach(m=>{
+      const rk = r[m.k+'_rk'];
+      const pool = m.poolSize || 24;
+      html+=`<div class="dm-row">
+        <span class="dm-name" tabindex="0" data-k="${m.k}">${m.name}${m.hi===false?'<span class="dir-arrow" title="Lower is better">↓</span>':''}<span class="tt">${m.tip}</span></span>
+        <div class="dm-rank-vis">
+          ${rk!=null
+            ? `<span class="dm-rank">${ordSup(rk)}<small>of ${pool}</small></span><span class="rank-bar"><span class="rank-fill" style="width:${((pool+1-rk)/pool)*100}%;background:${rankColor(rk,pool)}"></span></span>`
+            : `<span class="dm-rank" style="color:#b8b2a8">—</span>`}
+        </div>
+        <span class="dm-val">${fmtOrDash(r[m.k],dp(m.k))}</span>
+      </div>`;
     });
-
-    tbody.appendChild(tr);
   });
+  html+=`<div class="dtier"><b>Displayed, not scored</b><span class="rule"></span></div>`;
+  DISPLAY_ONLY.forEach(m=>{
+    html+=`<div class="dm-row unscored">
+      <span class="dm-name" tabindex="0" data-k="${m.k}">${m.name} <span class="tag-ns">not scored</span><span class="tt">${m.tip}</span></span>
+      <div class="dm-rank-vis"><span class="dm-rank" style="color:#b8b2a8">—</span></div>
+      <span class="dm-val">${fmtOrDash(r[m.k],dp(m.k))}</span>
+    </div>`;
+  });
+  html+='</div></td>'; tr.innerHTML=html; return tr;
 }
 
-function getSortedData() {
-  const d = [...DATA];
-  d.sort((a, b) => {
-    let av = a[sortCol], bv = b[sortCol];
-    if (typeof av === 'string') av = av.toLowerCase(), bv = bv.toLowerCase();
-    let cmp = av < bv ? -1 : av > bv ? 1 : 0;
-    return sortDir === 'asc' ? cmp : -cmp;
+// ── glossary drawer (wired once) ──
+document.getElementById('gloss').innerHTML=ALL_METRICS.map(m=>`
+ <div class="gitem" id="g-${m.k}"><b>${m.name}</b><span class="dir">${m.hi===true?'higher = better':m.hi===false?'lower = better':'displayed, not scored'}</span>
+ <p>${m.why}</p></div>`).join('');
+const drawer=document.getElementById('drawer'),scrim=document.getElementById('scrim');
+function openDrawer(k){
+  drawer.classList.add('open'); scrim.classList.add('show');
+  document.querySelectorAll('.gitem').forEach(g=>g.classList.remove('active'));
+  if(k){ const el=document.getElementById('g-'+k); if(el){ el.classList.add('active'); el.scrollIntoView({block:'center'}); } }
+}
+function closeDrawer(){drawer.classList.remove('open');scrim.classList.remove('show');}
+document.getElementById('drawerClose').addEventListener('click',closeDrawer);
+scrim.addEventListener('click',closeDrawer);
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDrawer(); });
+
+// ── sort (wired once) ──
+document.querySelectorAll('table.rank thead th').forEach(th=>{
+  th.querySelector('button').addEventListener('click',()=>{
+    const k=th.dataset.k;
+    if(sortK===k) sortAsc=!sortAsc; else {sortK=k; sortAsc=(k==='rank'||k==='club');}
+    document.querySelectorAll('table.rank thead th').forEach(h=>h.removeAttribute('aria-sort'));
+    th.setAttribute('aria-sort',sortAsc?'ascending':'descending');
+    render();
   });
-  return d;
+});
+
+// ── viewport toggle (wired once) ──
+const frame=document.getElementById('frame');
+document.getElementById('btnPhone').addEventListener('click',()=>{
+  frame.classList.add('phone');
+  document.getElementById('btnPhone').classList.add('active');
+  document.getElementById('btnDesk').classList.remove('active');
+  render();
+});
+document.getElementById('btnDesk').addEventListener('click',()=>{
+  frame.classList.remove('phone');
+  document.getElementById('btnDesk').classList.add('active');
+  document.getElementById('btnPhone').classList.remove('active');
+  render();
+});
+
+// ── init: everything derived from one teams object ──
+function initAll(teams, labels, trend, source){
+  rows = computeRows(teams);
+  bham = rows.find(r=>r.club==='Birmingham City FC') || null;
+  peers = rows.filter(r=>r.rank>=3 && r.rank<=8);
+  renderHero(labels, trend);
+  renderTargets();
+  buildTableRows();
+  render();
+  const badge = document.getElementById('dataSource');
+  if(badge) badge.textContent = source;
 }
 
-function updateSortHeaders() {
-  document.querySelectorAll('thead th').forEach(th => {
-    const col = th.dataset.col;
-    th.classList.remove('sort-active');
-    const ind = th.querySelector('.sort-indicator');
-    if (!ind) return;
-    if (col === sortCol) {
-      th.classList.add('sort-active');
-      ind.textContent = sortDir === 'asc' ? '↑' : '↓';
-    } else {
-      ind.textContent = '↕';
-    }
-  });
+// ── snapshot dropdown state ──
+// ALL_HISTORY is chronological ascending (oldest first, newest last) — matches data/history.json.
+let ALL_HISTORY = [];
+
+function snapLabel(s){ return s.label || s.date || 'snapshot'; }
+
+// Load a specific snapshot by its index into ALL_HISTORY. The hero's
+// trend line/verdict only uses snapshots up to and including the one
+// picked, so "up X pts over N snapshots" always describes the view on screen.
+function loadSnapshotByIndex(idx){
+  const history = ALL_HISTORY;
+  const snap = history[idx];
+  if(!snap) return;
+  const teams = mapSnapshot(snap);
+  const upToNow = history.slice(0, idx+1);
+  const labels = upToNow.map(snapLabel);
+  const trend = upToNow.map(s=>{
+    const rs = computeRows(mapSnapshot(s));
+    const b = rs.find(r=>r.club==='Birmingham City FC');
+    return b && isNum(b.xbi) ? b.xbi : null;
+  }).filter(isNum);
+
+  // Rank-movement arrows compare this snapshot to the one directly before
+  // it -- so they always describe "vs last time", regardless of which
+  // snapshot is currently selected in the dropdown.
+  if(idx > 0){
+    const prevRows = computeRows(mapSnapshot(history[idx-1]));
+    PREV_RANKS = {};
+    prevRows.forEach(r => { PREV_RANKS[r.club] = r.rank; });
+  } else {
+    PREV_RANKS = {};
+  }
+
+  const isLatest = idx === history.length-1;
+  CUR_DATE = snap.date || null;
+  initAll(teams, labels, trend, (isLatest?'live · ':'past snapshot · ')+snapLabel(snap));
+
+  const stale = document.getElementById('snapStale');
+  if(stale) stale.style.display = isLatest ? 'none' : 'inline';
+
+  const sel = document.getElementById('snapshotSelect');
+  if(sel && sel.value !== String(idx)) sel.value = String(idx);
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────────
-
-// Populate club dropdown -- called after data loads
-function populateClubSelect() {
-  const sel = document.getElementById('highlightSelect');
-  sel.innerHTML = '<option value="">— none —</option>';
-  DATA.slice().sort((a,b) => a.club.localeCompare(b.club)).forEach(d => {
-    if (d.club === 'Birmingham City FC') return;
+function populateSnapshotSelect(history){
+  const sel = document.getElementById('snapshotSelect');
+  if(!sel) return;
+  sel.innerHTML = '';
+  // Newest first in the list, since that's what people scan for.
+  for(let i=history.length-1; i>=0; i--){
     const opt = document.createElement('option');
-    opt.value = d.club;
-    opt.textContent = d.club.replace(/ FC$| AFC$/, '');
+    opt.value = String(i);
+    const dateSuffix = history[i].date ? ' · '+history[i].date : '';
+    opt.textContent = snapLabel(history[i]) + dateSuffix + (i===history.length-1 ? ' (latest)' : '');
     sel.appendChild(opt);
-  });
-  sel.addEventListener('change', () => {
-    highlightClub = sel.value;
-    renderTable(getSortedData());
-  });
+  }
+  sel.value = String(history.length-1);
+  sel.onchange = () => loadSnapshotByIndex(parseInt(sel.value, 10));
 }
 
-// Column sort
-document.querySelectorAll('thead th[data-col]').forEach(th => {
-  th.addEventListener('click', () => {
-    const col = th.dataset.col;
-    if (sortCol === col) {
-      sortDir = sortDir === 'asc' ? 'desc' : 'asc';
-    } else {
-      sortCol = col;
-      sortDir = th.dataset.dir || 'desc';
-    }
-    updateSortHeaders();
-    renderTable(getSortedData());
-  });
-});
+// 1) boot with embedded sample data so the page always shows something.
+// Sample data isn't a real week-by-week history, so the dropdown just shows
+// a single "sample data" entry until live snapshots load in below.
+const sampleSel = document.getElementById('snapshotSelect');
+if(sampleSel){ sampleSel.innerHTML = '<option>sample data</option>'; }
+initAll(TEAMS, SNAPSHOT_LABELS, BHAM_TREND, 'sample data');
 
-// Methodology toggle
-const methBtn = document.getElementById('methBtn');
-const methPanel = document.getElementById('methPanel');
-methBtn.addEventListener('click', () => {
-  const open = methPanel.classList.toggle('open');
-  methBtn.textContent = open ? 'Methodology ↑' : 'Methodology ↓';
-  methBtn.setAttribute('aria-expanded', open);
-  methPanel.setAttribute('aria-hidden', !open);
-});
-
-// ── FETCH & INIT ──────────────────────────────────────────────────────────────
-let HALFTIME_DATA = null;
-
-function renderHalftimeTables() {
-  if (!HALFTIME_DATA) return;
-  ['fha','sha'].forEach(key => {
-    const data = key === 'fha' ? HALFTIME_DATA.first_half_away : HALFTIME_DATA.second_half_away;
-    const tbody = document.getElementById(key+'Body');
-    if (!tbody || !data) return;
-    tbody.innerHTML = data.map((r,i) => {
-      const isBham = r.name && r.name.toLowerCase().includes('birmingham');
-      const bg = isBham ? 'background:#fff8ec;border-left:3px solid #c8902a;' : (i%2===0?'background:#f5f0e8;':'');
-      return `<tr style="${bg}">
-        <td style="padding:5px 8px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5a5550">${r.rank}</td>
-        <td style="padding:5px 8px;font-size:12px;font-weight:${isBham?'600':'400'}">${r.name}</td>
-        <td style="padding:5px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:11px">${r.gp}</td>
-        <td style="padding:5px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#1a7a4a">${r.w}</td>
-        <td style="padding:5px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:11px">${r.d}</td>
-        <td style="padding:5px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#c0392b">${r.l}</td>
-        <td style="padding:5px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:11px">${r.gf}</td>
-        <td style="padding:5px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:11px">${r.ga}</td>
-        <td style="padding:5px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:11px">${r.gd}</td>
-        <td style="padding:5px 4px;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600">${r.pts}</td>
-      </tr>`;
-    }).join('');
-  });
-}
-
-async function loadData() {
-  try {
-    // Fetch halftime data for H1 Away ranks and tables
-    try {
-      const htRes = await fetch('data/halftime.json?t='+Date.now());
-      const htJson = await htRes.json();
-      console.log('halftime raw:', JSON.stringify(htJson).slice(0,200));
-      if (htJson && htJson.length) {
-        // Find entry with most first_half_away entries
-        HALFTIME_DATA = htJson.sort((a,b) => (b.first_half_away||[]).length - (a.first_half_away||[]).length)[0];
-        console.log('Halftime loaded, FHA entries:', HALFTIME_DATA.first_half_away?.length);
-      } else if (htJson && htJson.first_half_away) {
-        // Handle case where it's a single object not an array
-        HALFTIME_DATA = htJson;
-        console.log('Halftime loaded (object), FHA entries:', HALFTIME_DATA.first_half_away?.length);
-      }
-    } catch(e) { console.warn('halftime.json not found', e); }
-
+// 2) then try the live pipeline: data/history.json written by scraper.py
+(async ()=>{
+  try{
     const res = await fetch('data/history.json?t='+Date.now());
+    if(!res.ok) throw new Error('http '+res.status);
     const history = await res.json();
-    if (!history || !history.length) throw new Error('empty');
-    ALL_SNAPSHOTS = history.slice().reverse(); // newest first
-
-    // Populate snapshot selector if it exists
-    const snapSel = document.getElementById('snapshotSelect');
-    if (snapSel) {
-      snapSel.innerHTML = '';
-      ALL_SNAPSHOTS.forEach((snap, i) => {
-        const opt = document.createElement('option');
-        opt.value = i;
-        const snapLabel = snap.label || snap.date || ('Snapshot '+(ALL_SNAPSHOTS.length-i));
-        const snapDate  = snap.label && snap.date ? ' · ' + snap.date.slice(5).replace('-','/') : '';
-        opt.textContent = snapLabel + snapDate;
-        if (i===0) opt.selected = true;
-        snapSel.appendChild(opt);
-      });
-      snapSel.addEventListener('change', () => {
-        CURRENT_SNAPSHOT_IDX = parseInt(snapSel.value);
-        DATA = buildDataFromSnapshot(ALL_SNAPSHOTS[CURRENT_SNAPSHOT_IDX], HALFTIME_DATA);
-        // update header timestamp
-        const ts = document.getElementById('headerTimestamp');
-        if (ts) {
-          const snap = ALL_SNAPSHOTS[CURRENT_SNAPSHOT_IDX];
-          ts.textContent = (snap.label ? snap.label + (snap.date ? ' · '+snap.date : '') : 'Updated '+(snap.date||''));
-        }
-        updateBhamCard();
-        renderTable(getSortedData());
-      });
-    }
-
-    DATA = buildDataFromSnapshot(ALL_SNAPSHOTS[0], HALFTIME_DATA);
-    // update timestamp
-    const ts = document.getElementById('headerTimestamp');
-    if (ts) {
-          const s0 = ALL_SNAPSHOTS[0];
-          ts.textContent = (s0.label ? s0.label + (s0.date ? ' · '+s0.date : '') : 'Updated '+(s0.date||''));
-        }
-  } catch(e) {
-    console.warn('history.json not found, using static data', e);
+    if(!Array.isArray(history) || !history.length) throw new Error('empty history');
+    ALL_HISTORY = history;
+    try{
+      const vr = await fetch('data/venue.json?t='+Date.now());
+      if(vr.ok){ VENUE = await vr.json(); setVenueAvailable(!!(VENUE&&VENUE.snapshots&&VENUE.snapshots.length)); }
+    }catch(err){ console.warn('xB v4: venue split unavailable —', err.message); }
+    populateSnapshotSelect(ALL_HISTORY);
+    loadSnapshotByIndex(ALL_HISTORY.length-1);
+    console.log('xB v4: live data loaded,', ALL_HISTORY.length, 'snapshots');
+  }catch(e){
+    console.warn('xB v4: live data unavailable, showing sample data —', e.message);
   }
-  populateClubSelect();
-  initTrendChart();
-  updateBhamCard();
-  updateSortHeaders();
-  renderTable(getSortedData());
-  renderHalftimeTables();
-}
+})();
 
-function updateBhamCard() {
-  const bham = DATA.find(d=>d.club==='Birmingham City FC');
-  if (!bham) return;
-  const xbiEl = document.getElementById('bhamXbi');
-  const rkEl  = document.getElementById('bhamRank');
-  if (xbiEl) xbiEl.textContent = bham.xbIndex.toFixed(1);
-  if (rkEl)  rkEl.textContent  = 'Rank '+bham.rank+'/24';
-}
-
-
-// ── TREND CHART ────────────────────────────────────────────────────────────────
-
-const METRIC_LABELS = {
-  xbIndex: 'xB Index', sotAtk: 'SOT ATK', sotDef: 'SOT DEF', xgSh: 'XG/SH',
-  shotAcc: 'Shot Acc%', fb90: 'FB/90', da90: 'DA/90', bu90: 'BU/90',
-  h1Away: 'H1 Away Rank', spXga: 'SP XGA', ppda: 'PPDA',
-  tball90: 'TBall/90', cross90: 'Cross/90'
-};
-
-// Lower is better for these metrics
-const TREND_LOWER_BETTER = new Set(['sotDef','h1Away','ppda','cross90']);
-
-function renderTrendChart() {
-  const clubSel   = document.getElementById('trendClub');
-  const metricSel = document.getElementById('trendMetric');
-  const canvas    = document.getElementById('trendCanvas');
-  const emptyMsg  = document.getElementById('trendEmpty');
-  const legend    = document.getElementById('trendLegend');
-  if (!clubSel || !canvas) return;
-
-  const club   = clubSel.value;
-  const metric = metricSel.value;
-  if (!club || !metric || ALL_SNAPSHOTS.length < 2) {
-    canvas.style.display = 'none';
-    emptyMsg.style.display = 'block';
-    return;
-  }
-
-  // Build time series: one point per snapshot (oldest first)
-  const points = [];
-  const snapshots = [...ALL_SNAPSHOTS].reverse(); // oldest first
-  snapshots.forEach(snap => {
-    const d = buildDataFromSnapshot(snap, HALFTIME_DATA);
-    const team = d.find(r => r.club === club);
-    if (team && team[metric] != null) {
-      points.push({ date: snap.date||'', label: snap.label||'', value: team[metric] });
-    }
-  });
-
-  if (points.length < 2) {
-    canvas.style.display = 'none';
-    emptyMsg.style.display = 'block';
-    return;
-  }
-
-  canvas.style.display = 'block';
-  emptyMsg.style.display = 'none';
-
-  // Draw chart
-  const dpr = window.devicePixelRatio || 1;
-  const W = canvas.offsetWidth;
-  const H = 200;
-  canvas.width  = W * dpr;
-  canvas.height = H * dpr;
-  canvas.style.height = H + 'px';
-  const ctx = canvas.getContext('2d');
-  ctx.scale(dpr, dpr);
-  ctx.clearRect(0, 0, W, H);
-
-  const PAD = { top: 20, right: 20, bottom: 36, left: 52 };
-  const cW = W - PAD.left - PAD.right;
-  const cH = H - PAD.top  - PAD.bottom;
-
-  const vals  = points.map(p => p.value);
-  const minV  = Math.min(...vals);
-  const maxV  = Math.max(...vals);
-  const range = maxV - minV || 1;
-  const pad   = range * 0.2;
-
-  const yMin = minV - pad;
-  const yMax = maxV + pad;
-
-  const xOf = i  => PAD.left + (i / (points.length - 1)) * cW;
-  const yOf = v  => PAD.top  + (1 - (v - yMin) / (yMax - yMin)) * cH;
-
-  // Grid lines
-  ctx.strokeStyle = '#e8e2d8';
-  ctx.lineWidth   = 1;
-  for (let g = 0; g <= 4; g++) {
-    const y = PAD.top + (g / 4) * cH;
-    ctx.beginPath(); ctx.moveTo(PAD.left, y); ctx.lineTo(PAD.left + cW, y); ctx.stroke();
-    const val = yMax - (g / 4) * (yMax - yMin);
-    ctx.fillStyle = '#8a8070';
-    ctx.font = '10px IBM Plex Mono, monospace';
-    ctx.textAlign = 'right';
-    ctx.fillText(metric === 'h1Away' ? Math.round(val) : val.toFixed(metric === 'xgSh' ? 3 : 2), PAD.left - 6, y + 3);
-  }
-
-  // Shade area under line
-  const lowerBetter = TREND_LOWER_BETTER.has(metric);
-  const lineCol = '#1a3a6b';
-  const fillCol = 'rgba(26,58,107,0.07)';
-
-  ctx.beginPath();
-  ctx.moveTo(xOf(0), yOf(points[0].value));
-  points.forEach((p, i) => ctx.lineTo(xOf(i), yOf(p.value)));
-  ctx.lineTo(xOf(points.length - 1), PAD.top + cH);
-  ctx.lineTo(xOf(0), PAD.top + cH);
-  ctx.closePath();
-  ctx.fillStyle = fillCol;
-  ctx.fill();
-
-  // Line
-  ctx.beginPath();
-  ctx.strokeStyle = lineCol;
-  ctx.lineWidth   = 2;
-  ctx.lineJoin    = 'round';
-  ctx.moveTo(xOf(0), yOf(points[0].value));
-  points.forEach((p, i) => ctx.lineTo(xOf(i), yOf(p.value)));
-  ctx.stroke();
-
-  // Dots + date labels
-  points.forEach((p, i) => {
-    const x = xOf(i);
-    const y = yOf(p.value);
-
-    // Colour dot by improvement
-    let dotCol = '#1a3a6b';
-    if (i > 0) {
-      const prev = points[i-1].value;
-      const improved = lowerBetter ? p.value < prev : p.value > prev;
-      dotCol = improved ? '#6b7c45' : '#8b4040';
-    }
-
-    ctx.beginPath();
-    ctx.arc(x, y, 4, 0, Math.PI * 2);
-    ctx.fillStyle = 'white';
-    ctx.fill();
-    ctx.strokeStyle = dotCol;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // Date label
-    const tickLbl = p.label || (p.date ? p.date.slice(5) : '');
-    if (tickLbl) {
-      ctx.fillStyle = '#8a8070';
-      ctx.font = '9px IBM Plex Mono, monospace';
-      ctx.textAlign = 'center';
-      ctx.fillText(tickLbl, x, H - PAD.bottom + 14);
-    }
-  });
-
-  // Trend summary in legend
-  const first = points[0].value;
-  const last  = points[points.length - 1].value;
-  const diff  = last - first;
-  const improved = lowerBetter ? diff < 0 : diff > 0;
-  const dirStr  = improved ? '▲ Improving' : diff === 0 ? '— Stable' : '▼ Declining';
-  const dirCol  = improved ? '#6b7c45' : diff === 0 ? '#8a8070' : '#8b4040';
-  const metricLabel = METRIC_LABELS[metric] || metric;
-
-  legend.innerHTML = `
-    <span style="color:var(--navy);font-weight:500">${club.replace(/ (FC|AFC)$/, '')}</span>
-    <span style="color:var(--text-secondary)">${metricLabel}</span>
-    <span style="color:${dirCol};font-weight:500">${dirStr}</span>
-    <span style="color:var(--text-secondary)">First: <strong style="color:var(--text-primary)">${first.toFixed(metric==='xgSh'?3:2)}</strong></span>
-    <span style="color:var(--text-secondary)">Latest: <strong style="color:var(--text-primary)">${last.toFixed(metric==='xgSh'?3:2)}</strong></span>
-    <span style="color:var(--text-secondary)">${points.length} snapshots</span>
-  `;
-}
-
-function initTrendChart() {
-  const clubSel = document.getElementById('trendClub');
-  if (!clubSel) return;
-
-  // Populate club dropdown
-  const clubs = [...new Set(ALL_SNAPSHOTS.flatMap(s => Object.keys(s.teams || {})))].sort();
-  clubSel.innerHTML = clubs.map(c =>
-    `<option value="${c}" ${c==='Birmingham City FC'?'selected':''}>${c.replace(/ (FC|AFC)$/,'')}</option>`
-  ).join('');
-
-  clubSel.addEventListener('change', renderTrendChart);
-  document.getElementById('trendMetric').addEventListener('change', renderTrendChart);
-  window.addEventListener('resize', renderTrendChart);
-  renderTrendChart();
-}
-
-
-loadData();
 </script>
 </body>
 </html>
