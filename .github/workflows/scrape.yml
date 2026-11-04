@@ -30,6 +30,9 @@ jobs:
       - name: Run SoccerStats halftime scraper
         run: python scraper_halftime.py || echo "Halftime scraper failed - continuing"
 
+      - name: Build home/away venue split
+        run: python venue_split.py || echo "Venue split failed - continuing"
+
       - name: Check if data changed
         id: changed
         run: |
@@ -44,7 +47,7 @@ jobs:
         run: |
           git config user.name  "xB Stats Bot"
           git config user.email "expectedbirmingham@gmail.com"
-          git add data/history.json data/halftime.json
+          git add data/history.json data/halftime.json data/venue.json
           git diff --cached --quiet && exit 0
           git commit -m "chore: stats snapshot $(date -u +%Y-%m-%d)"
           git pull --rebase origin main || true
