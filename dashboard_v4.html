@@ -120,6 +120,9 @@ h1 em{font-style:italic;color:var(--amber-light)}
 h2.sec{font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy)}
 .hint{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.03em}
 .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+/* position:sticky on the header only works when no ancestor scrolls. The table fits
+   without sideways scrolling on phones and on wide screens, so drop the scroller there. */
+@media(max-width:640px),(min-width:900px){.tablewrap{overflow-x:visible}}
 table.rank{width:100%;border-collapse:collapse}
 table.rank thead th{background:var(--navy);color:var(--cream);font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:9px 8px;text-align:right;white-space:nowrap;position:sticky;top:0;z-index:2}
 table.rank thead th:first-child{text-align:center;width:38px}
