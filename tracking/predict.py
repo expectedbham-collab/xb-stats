@@ -59,7 +59,8 @@ def score(rows):
         for c in rows:
             v = rows[c][k]
             if v is None: continue
-            p = vals.index(v) / (len(vals) - 1) * 100
+            lo = vals.index(v); hi_i = len(vals) - 1 - vals[::-1].index(v)   # ties share the middle
+            p = (lo + hi_i) / 2 / (len(vals) - 1) * 100
             pct[c][k] = p if hi else 100 - p
     out = {}
     for c in rows:

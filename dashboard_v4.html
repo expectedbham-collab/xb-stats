@@ -881,7 +881,8 @@ function computeRows(teams){
     const vals = pool.map(r=>r[m.k]).sort((a,b)=>a-b);
     rows.forEach(r=>{
       if(!isNum(r[m.k])){ r[m.k+'_p']=null; return; }
-      const i=vals.indexOf(r[m.k]);
+      // tied clubs share the middle of their block, whichever way the metric points
+      const i=(vals.indexOf(r[m.k])+vals.lastIndexOf(r[m.k]))/2;
       const p=vals.length>1? i/(vals.length-1)*100 : 50;
       r[m.k+'_p']= m.hi? p : 100-p;
     });
