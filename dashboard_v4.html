@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>xB Index — v4</title>
+<title>xB Index | Expected Birmingham</title>
+<meta name="description" content="The xB Index ranks all 24 Championship clubs on process quality. Goals, points and wins are never inputs.">
+<meta property="og:title" content="xB Index | Expected Birmingham">
+<meta property="og:description" content="All 24 Championship clubs ranked on process quality, not results.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -16,13 +21,8 @@ body{background:#e6e1d7;color:var(--ink);font-family:'Barlow',sans-serif;font-si
 button{font-family:inherit;cursor:pointer}
 :focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 
-/* ── prototype chrome (viewport simulator) ── */
-.proto-bar{background:#111;color:#eee;padding:10px 16px;display:flex;gap:12px;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:11px;flex-wrap:wrap}
-.proto-bar b{color:var(--amber-light)}
-.proto-bar button{background:#333;color:#eee;border:1px solid #555;padding:5px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px}
-.proto-bar button.active{background:var(--amber);color:#111;border-color:var(--amber)}
-#frame{margin:0 auto;background:var(--cream);transition:max-width .25s}
-#frame.phone{max-width:390px;box-shadow:0 0 0 10px #111,0 20px 60px rgba(0,0,0,.4);margin:16px auto 40px}
+/* .phone is set on #frame by script whenever the viewport is 640px wide or less */
+#frame{margin:0 auto;background:var(--cream)}
 .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
 #frame.phone .wrap{padding:0 14px}
 
@@ -120,6 +120,9 @@ h1 em{font-style:italic;color:var(--amber-light)}
 h2.sec{font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy)}
 .hint{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.03em}
 .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+/* position:sticky on the header only works when no ancestor scrolls. The table fits
+   without sideways scrolling on phones and on wide screens, so drop the scroller there. */
+@media(max-width:640px),(min-width:900px){.tablewrap{overflow-x:visible}}
 table.rank{width:100%;border-collapse:collapse}
 table.rank thead th{background:var(--navy);color:var(--cream);font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:9px 8px;text-align:right;white-space:nowrap;position:sticky;top:0;z-index:2}
 table.rank thead th:first-child{text-align:center;width:38px}
@@ -158,6 +161,14 @@ td.xbi{font-family:'DM Serif Display',serif;font-size:16px;color:var(--navy)}
 .chev{display:inline-block;transition:transform .15s;color:var(--muted);font-size:10px;margin-left:6px}
 tr.open .chev{transform:rotate(90deg)}
 #frame.phone .hide-phone{display:none}
+#frame.phone .snap-select{font-size:12px;padding:10px 26px 10px 10px}
+#frame.phone table.rank thead th{white-space:normal;padding:9px 5px}
+#frame.phone .targets-table th{white-space:normal;padding:7px 6px 6px}
+#frame.phone .tg-status{white-space:normal;text-align:left}
+#frame.phone .targets-table td:first-child{font-size:13px}
+#frame.phone .viewtog button{padding:12px 16px}
+#frame.phone table.rank thead th button{padding:8px 0}
+.verdict .down{color:#e3a79f}
 
 /* ── EXPANDED ROW: single-column compact list ── */
 tr.detail td{padding:0;background:#fff;border-bottom:2px solid var(--navy)}
@@ -224,13 +235,6 @@ footer{padding:14px 0 32px;font-family:'IBM Plex Mono',monospace;font-size:9px;l
 </head>
 <body>
 
-<div class="proto-bar">
-  <b>xB Index v4.</b>
-  <span>Live data from data/history.json when deployed · sample data otherwise:</span>
-  <button id="btnDesk" class="active">Desktop</button>
-  <button id="btnPhone">Phone (390px)</button>
-</div>
-
 <div id="frame">
   <header><div class="wrap">
     <div class="kicker">Expected Birmingham · Analytics</div>
@@ -292,16 +296,14 @@ footer{padding:14px 0 32px;font-family:'IBM Plex Mono',monospace;font-size:9px;l
 
   <div class="wrap appendix">
     <details>
-      <summary>Methodology — what's scored, what isn't</summary>
+      <summary>Methodology: what's scored and what isn't</summary>
       <div class="dbody">
-        <p><strong>What's new in this version.</strong> Three changes from the previous dashboard: (1) H1 Away rank is no longer scored — it's a results-derived metric (W/D/L/Pts), which contradicts the process-only positioning. It may return as context, but never as an index input. (2) Cross accuracy % is now scored in T2 — cross <em>volume</em> stays displayed-but-not-scored (it's a style choice), but cross <em>accuracy</em> measures execution and is a fair process signal. (3) Shots in box % added to T1 — a shot-selection signal that complements xG per shot.</p>
-        <p><strong>xG per shot is now non-penalty (this version).</strong> Both the attacking and defending halves of the xG-per-shot differential now exclude penalties on both sides. A penalty is a near-guaranteed high-value chance handed out by a decision, not created or conceded through open-play process — leaving them in rewards or punishes sides for winning or conceding spot-kicks rather than for shot-creation or -suppression quality. Note: the Birmingham target for attacking xG per shot (currently 0.12) was calibrated against the old with-penalty scale and now needs re-checking against real non-penalty peer-band data before it can be trusted — treat it as stale until then.</p>
-        <p>The <strong>xB Index</strong> ranks each club against the other 23 on 13 process metrics across three weighted tiers (T1 shot quality 50% · T2 build-up 30% · T3 context 20%). Each metric produces a score from <strong>0 to 100</strong> — 100 = best in league, 50 = middle of the pack, 0 = worst. For metrics where lower is better (like PPDA and shots conceded), the direction is flipped before scoring, so a higher score always means better process. When you tap a team, you'll see their <strong>rank out of 24</strong> for every metric, which is easier to grasp than the raw percentile. <strong>Outcomes are excluded by design</strong>: no goals, no points, no win/draw/loss records anywhere in the inputs. Cross volume is <strong>displayed but not scored</strong> — how much a team crosses tells you about style, not quality. Wage-bill ranks are estimates compiled from published accounts (source &amp; date shown here in production). Where a data point is missing for a club it shows as “—” and is excluded from that club's score, never silently imputed.</p>
+        <p>The <strong>xB Index</strong> ranks each Championship club against the other 23 on 13 process measures. The measures sit in three tiers. Tier 1 covers shot quality and shot suppression and carries 50% of the score. It includes the quality of chances a side creates and the quality of chances it concedes. Tier 2 covers build-up and carries 30%. Tier 3 covers set pieces and pressing and carries 20%.</p>
+        <p style="margin-top:10px">Each measure gives a club a score from <strong>0 to 100</strong>. The best club in the league scores 100, the middle of the pack scores about 50 and the worst scores 0. Where lower is better, as with shots conceded and PPDA, we flip the scale first. A higher score always means better process. Tap a club to see its <strong>rank out of 24</strong> on every measure.</p>
+        <p style="margin-top:10px"><strong>Results are never inputs.</strong> The Index uses no goals, no points and no win, draw or loss records. xG per shot leaves out penalties for both sides, because a penalty comes from a decision and not from open play. Cross volume is shown but not scored. How much a team crosses tells you about style, not quality. Cross accuracy is scored.</p>
+        <p style="margin-top:10px"><strong>Budget rank</strong> combines Transfermarkt squad values with estimated wage bills and orders the 24 clubs from biggest budget to smallest. Budget efficiency is the gap between budget rank and Index rank. A club marked ↑ 5 sits five places higher on process than on budget.</p>
+        <p style="margin-top:10px">The stats come from Opta via The Analyst. A weekend's matches usually reach the Index on Monday morning. If a figure is missing for a club, we leave it out of that club's score. We never fill gaps with estimates.</p>
       </div>
-    </details>
-    <details>
-      <summary>Data appendix — half-time away tables</summary>
-      <div class="dbody"><p>The first/second-half away tables live here as supporting context. Because they're derived from results, they never feed the index — keeping them here keeps the ranking clean.</p></div>
     </details>
   </div>
 
@@ -783,7 +785,7 @@ const CLUB_SHORT = {
   'Burnley FC':'BUR','Cardiff City FC':'CAR',
   'Lincoln City FC':'LIN','Bolton Wanderers FC':'BOL',
 };
-// same wage-rank map as the live dashboard
+// budget rank: Transfermarkt squad value + estimated wage bill, 1 = biggest budget
 const FIN_RANK_MAP = {
   'Wolverhampton Wanderers FC':1,'West Ham United FC':2,'Southampton FC':3,'Burnley FC':4,
   'Middlesbrough FC':5,'Sheffield United FC':6,'Norwich City FC':7,'Birmingham City FC':8,
@@ -826,9 +828,9 @@ const SCORED = [
   {k:'sotDef', hi:false, t:1, name:'SOT conceded /90',
    tip:'On-target chances allowed per game — fewer is better.',
    why:'On-target shots conceded per game. The purest suppression signal: a defence that limits clean looks is doing its job regardless of what the scoreline says. Lower is better; the score is already flipped.'},
-  {k:'xgShD',  hi:true,  t:1, name:'xG per shot diff. (non-pen)',
-   tip:'Chance quality created minus conceded, penalties excluded — the headline signal.',
-   why:'Average non-penalty chance quality created minus average non-penalty chance quality conceded. Penalties are excluded on both sides so a couple of spot-kicks for or against don\u2019t distort a process signal that\u2019s meant to capture open-play chance quality. The single best process signal in the index: a positive number means the side systematically manufactures better chances than it gives up.'},
+  {k:'xgShDef',hi:false, t:1, name:'xG per shot conceded (non-pen)',
+   tip:'Average quality of each chance allowed, penalties excluded. Lower is better.',
+   why:'The average expected-goals value of each non-penalty shot a side concedes. A low figure means opponents are kept to hopeful efforts from poor positions. It pairs with shots on target conceded: one measures how often a side is tested, this measures how good those chances are. Lower is better and the score is already flipped.'},
   {k:'xgShAtk',hi:true,  t:1, name:'xG per shot, attacking (non-pen)',
    tip:'Average quality of each open-play chance created.',
    why:'The average expected-goals value of each non-penalty shot taken. Penalties are excluded because they\u2019re a near-guaranteed high-xG event unrelated to attacking process quality; including them inflates the figure for sides that simply win more spot-kicks. High xG per shot means the side works the ball into genuinely dangerous positions rather than settling for hopeful efforts.'},
@@ -879,7 +881,8 @@ function computeRows(teams){
     const vals = pool.map(r=>r[m.k]).sort((a,b)=>a-b);
     rows.forEach(r=>{
       if(!isNum(r[m.k])){ r[m.k+'_p']=null; return; }
-      const i=vals.indexOf(r[m.k]);
+      // tied clubs share the middle of their block, whichever way the metric points
+      const i=(vals.indexOf(r[m.k])+vals.lastIndexOf(r[m.k]))/2;
       const p=vals.length>1? i/(vals.length-1)*100 : 50;
       r[m.k+'_p']= m.hi? p : 100-p;
     });
@@ -1042,15 +1045,16 @@ function renderHero(labels, trend){
   if(bham && isNum(bham.t1)&&isNum(bham.t2)&&isNum(bham.t3)){
     const bt=[['t1',bham.t1],['t2',bham.t2],['t3',bham.t3]].sort((a,b)=>b[1]-a[1]);
     const td = (trend&&trend.length>1)? trend[trend.length-1]-trend[0] : null;
+    const cap = w => w[0].toUpperCase()+w.slice(1);
     document.getElementById('heroVerdict').innerHTML=
-      `Birmingham's underlying process ranks <b>${ord(bham.rank)}</b> of 24`+
-      (td!=null?` — <span class="up">${td>=0?'up':'down'} ${Math.abs(td).toFixed(1)} pts over ${trend.length} snapshots</span>,`:' —')+
-      ` carried by ${tierPlain[bt[0][0]]}, held back by ${tierPlain[bt[2][0]]}.`;
+      `Birmingham's underlying process ranks <b>${ord(bham.rank)}</b> of 24. `+
+      (td!=null?`<span class="${td>=0?'up':'down'}">It is ${td>=0?'up':'down'} ${Math.abs(td).toFixed(1)} pts since ${labels[0]}.</span> `:'')+
+      `${cap(tierPlain[bt[0][0]])} is the strongest area and ${tierPlain[bt[2][0]]} the weakest.`;
     document.getElementById('heroFacts').innerHTML=
       `<span class="fact">T1 shots <b>${bham.t1.toFixed(0)}</b> · ${ord(tierRank('t1'))}</span>`+
       `<span class="fact">T2 build-up <b>${bham.t2.toFixed(0)}</b> · ${ord(tierRank('t2'))}</span>`+
       `<span class="fact">T3 context <b>${bham.t3.toFixed(0)}</b> · ${ord(tierRank('t3'))}</span>`+
-      `<span class="fact">wage rank <b>${ord(bham.finRank)}</b> · process rank <b>${ord(bham.rank)}</b></span>`;
+      `<span class="fact">budget rank <b>${ord(bham.finRank)}</b> · process rank <b>${ord(bham.rank)}</b></span>`;
   }
 }
 
@@ -1059,7 +1063,7 @@ const BHAM_TARGETS = [
   {k:'sotAtk',  label:'Shots on target /90',       target:5.00,  hi:true,  fmt:v=>v.toFixed(2)},
   {k:'sotDef',  label:'SOT conceded /90',          target:3.80,  hi:false, fmt:v=>v.toFixed(2)},
   {k:'xgShAtk', label:'xG per shot (attacking)',   target:0.12,  hi:true,  fmt:v=>v.toFixed(3)},
-  {k:'xgShD',   label:'xG per shot differential',  target:0.010, hi:true,  fmt:v=>(v>=0?'+':'')+v.toFixed(3)},
+  {k:'xgShDef', label:'xG per shot conceded',      target:'peerMedian', hi:false, fmt:v=>v.toFixed(3)},
   {k:'shotAcc', label:'Shot accuracy %',           target:33.0,  hi:true,  fmt:v=>v.toFixed(1)+'%'},
   {k:'shotsInBox', label:'Shots in box %',         target:65.0,  hi:true,  fmt:v=>v.toFixed(1)+'%'},
   {k:'fb90',    label:'Fast breaks /90',           target:1.00,  hi:true,  fmt:v=>v.toFixed(2)},
@@ -1113,9 +1117,9 @@ function renderTargets(){
   document.getElementById('targetsPanel').innerHTML = `
     <div class="targets-head">
       <h2><em>Birmingham</em> targets · 2026/27</h2>
-      <span class="anchor">Benchmark: <b>3rd–8th on xB Index</b> · matching wage rank <b>${bham?ord(bham.finRank):'—'}</b></span>
+      <span class="anchor">Benchmark: <b>3rd–8th on xB Index</b> · matching budget rank <b>${bham?ord(bham.finRank):'—'}</b></span>
     </div>
-    <p class="targets-sub">A ${bham?ord(bham.finRank):'—'} wage rank should earn a top-8 process. This is what that would look like. Peer band shows the <b>middle value</b> across the six clubs currently ranked 3rd–8th — the honest bar for Birmingham. ↓ marks metrics where lower is better; the status is direction-aware.</p>
+    <p class="targets-sub">A budget ranked ${bham?ord(bham.finRank):'—'} should earn a top-8 process. This is what that would look like. Peer band shows the <b>middle value</b> across the six clubs currently ranked 3rd–8th — the honest bar for Birmingham. ↓ marks metrics where lower is better; the status is direction-aware.</p>
     <table class="targets-table">
       <colgroup>
         <col class="c-metric"><col class="c-val"><col class="c-val col-peer"><col class="c-val"><col class="c-status">
@@ -1192,7 +1196,7 @@ function detailRow(r){
   const isPhone = document.getElementById('frame').classList.contains('phone');
   const colspan = (isPhone || VENUE_ACTIVE) ? 6 : 7;
   const groups={1:['Tier 1 · Shot quality & suppression','50%'],2:['Tier 2 · Build-up','30%'],3:['Tier 3 · Set pieces & pressing','20%']};
-  const dp = k => k==='xgShD'||k==='xgShAtk'?3 : k==='spXga'?2 : k==='shotAcc'||k==='ppda'||k==='cross90'?1 : 2;
+  const dp = k => k==='xgShD'||k==='xgShAtk'||k==='xgShDef'?3 : k==='spXga'?2 : k==='shotAcc'||k==='ppda'||k==='cross90'?1 : 2;
   const ordSup = n => { const s=['th','st','nd','rd'],v=n%100; return `${n}<sup>${s[(v-20)%10]||s[v]||s[0]}</sup>`; };
   const barWidth = rank => ((25 - rank) / 24) * 100;
   let html=`<td colspan="${colspan}"><div class="detail-inner">
@@ -1258,20 +1262,15 @@ document.querySelectorAll('table.rank thead th').forEach(th=>{
   });
 });
 
-// ── viewport toggle (wired once) ──
+// ── phone layout follows the real viewport width ──
 const frame=document.getElementById('frame');
-document.getElementById('btnPhone').addEventListener('click',()=>{
-  frame.classList.add('phone');
-  document.getElementById('btnPhone').classList.add('active');
-  document.getElementById('btnDesk').classList.remove('active');
-  render();
-});
-document.getElementById('btnDesk').addEventListener('click',()=>{
-  frame.classList.remove('phone');
-  document.getElementById('btnDesk').classList.add('active');
-  document.getElementById('btnPhone').classList.remove('active');
-  render();
-});
+const phoneMQ=window.matchMedia('(max-width:640px)');
+function applyViewport(){
+  frame.classList.toggle('phone', phoneMQ.matches);
+  if(tableRows.length) render();
+}
+phoneMQ.addEventListener('change', applyViewport);
+applyViewport();
 
 // ── init: everything derived from one teams object ──
 function initAll(teams, labels, trend, source){
@@ -1300,19 +1299,27 @@ function loadSnapshotByIndex(idx){
   const snap = history[idx];
   if(!snap) return;
   const teams = mapSnapshot(snap);
-  const upToNow = history.slice(0, idx+1);
-  const labels = upToNow.map(snapLabel);
-  const trend = upToNow.map(s=>{
-    const rs = computeRows(mapSnapshot(s));
-    const b = rs.find(r=>r.club==='Birmingham City FC');
-    return b && isNum(b.xbi) ? b.xbi : null;
-  }).filter(isNum);
+  // Only compare with snapshots from the same season. A season is the run of
+  // snapshots that share the same 24 clubs, so last season's entries (and any
+  // stray one sitting between them) never feed the trend or the rank arrows.
+  const seasonKey = s => Object.keys(s.teams||{}).sort().join('|');
+  const key = seasonKey(snap);
+  const seasonIdx = history.map((s,i)=>i).filter(i=>i<=idx && seasonKey(history[i])===key);
+  // Trend window: the last six snapshots, so one-match samples from August
+  // don't set the baseline.
+  const pts = seasonIdx.slice(-6).map(i=>{
+    const b = computeRows(mapSnapshot(history[i])).find(r=>r.club==='Birmingham City FC');
+    return {label:snapLabel(history[i]), xbi:b && isNum(b.xbi) ? b.xbi : null};
+  }).filter(p=>isNum(p.xbi));
+  const labels = pts.map(p=>p.label);
+  const trend = pts.map(p=>p.xbi);
+  const prevIdx = seasonIdx.length>1 ? seasonIdx[seasonIdx.length-2] : -1;
 
   // Rank-movement arrows compare this snapshot to the one directly before
   // it -- so they always describe "vs last time", regardless of which
   // snapshot is currently selected in the dropdown.
-  if(idx > 0){
-    const prevRows = computeRows(mapSnapshot(history[idx-1]));
+  if(prevIdx >= 0){
+    const prevRows = computeRows(mapSnapshot(history[prevIdx]));
     PREV_RANKS = {};
     prevRows.forEach(r => { PREV_RANKS[r.club] = r.rank; });
   } else {
@@ -1338,7 +1345,9 @@ function populateSnapshotSelect(history){
   for(let i=history.length-1; i>=0; i--){
     const opt = document.createElement('option');
     opt.value = String(i);
-    const dateSuffix = history[i].date ? ' · '+history[i].date : '';
+    // last_updated is when Opta last refreshed the stats; date is only when the scraper ran
+    const statsDate = String(history[i].last_updated||history[i].date||'').slice(0,10);
+    const dateSuffix = statsDate ? ' · stats to '+statsDate : '';
     opt.textContent = snapLabel(history[i]) + dateSuffix + (i===history.length-1 ? ' (latest)' : '');
     sel.appendChild(opt);
   }
@@ -1346,12 +1355,17 @@ function populateSnapshotSelect(history){
   sel.onchange = () => loadSnapshotByIndex(parseInt(sel.value, 10));
 }
 
-// 1) boot with embedded sample data so the page always shows something.
-// Sample data isn't a real week-by-week history, so the dropdown just shows
-// a single "sample data" entry until live snapshots load in below.
+// 1) sample data is for opening the file straight from disk only. On the live
+// site a visitor must never see made-up numbers, so we wait for history.json.
 const sampleSel = document.getElementById('snapshotSelect');
-if(sampleSel){ sampleSel.innerHTML = '<option>sample data</option>'; }
-initAll(TEAMS, SNAPSHOT_LABELS, BHAM_TREND, 'sample data');
+const IS_LOCAL_FILE = location.protocol === 'file:';
+if(IS_LOCAL_FILE){
+  if(sampleSel){ sampleSel.innerHTML = '<option>sample data</option>'; }
+  initAll(TEAMS, SNAPSHOT_LABELS, BHAM_TREND, 'sample data');
+} else {
+  if(sampleSel){ sampleSel.innerHTML = '<option>loading</option>'; }
+  document.getElementById('heroVerdict').textContent = 'Loading the latest data.';
+}
 
 // 2) then try the live pipeline: data/history.json written by scraper.py
 (async ()=>{
@@ -1369,7 +1383,11 @@ initAll(TEAMS, SNAPSHOT_LABELS, BHAM_TREND, 'sample data');
     loadSnapshotByIndex(ALL_HISTORY.length-1);
     console.log('xB v4: live data loaded,', ALL_HISTORY.length, 'snapshots');
   }catch(e){
-    console.warn('xB v4: live data unavailable, showing sample data —', e.message);
+    console.warn('xB v4: live data unavailable —', e.message);
+    if(!IS_LOCAL_FILE){
+      document.getElementById('heroVerdict').textContent = 'The latest data did not load. Refresh the page to try again.';
+      document.getElementById('dataSource').textContent = 'data unavailable';
+    }
   }
 })();
 

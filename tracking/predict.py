@@ -36,7 +36,7 @@ CALLS = {
 }
 
 # ── Index (same calculation as dashboard_v4) ──
-SCORED = [("sotAtk",1,1),("sotDef",0,1),("xgShD",1,1),("xgShAtk",1,1),("shotAcc",1,1),("shotsInBox",1,1),
+SCORED = [("sotAtk",1,1),("sotDef",0,1),("xgShDef",0,1),("xgShAtk",1,1),("shotAcc",1,1),("shotsInBox",1,1),
           ("fb90",1,2),("da90",1,2),("bu90",1,2),("tball90",1,2),("crossAcc",1,2),("spXga",1,3),("ppda",0,3)]
 
 def mapteam(t):
@@ -59,7 +59,8 @@ def score(rows):
         for c in rows:
             v = rows[c][k]
             if v is None: continue
-            p = vals.index(v) / (len(vals) - 1) * 100
+            lo = vals.index(v); hi_i = len(vals) - 1 - vals[::-1].index(v)   # ties share the middle
+            p = (lo + hi_i) / 2 / (len(vals) - 1) * 100
             pct[c][k] = p if hi else 100 - p
     out = {}
     for c in rows:
