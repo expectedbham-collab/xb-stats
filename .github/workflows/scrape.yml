@@ -8,6 +8,11 @@ on:
 permissions:
   contents: write
 
+# never let two scrapes run (and push) at the same time
+concurrency:
+  group: scrape
+  cancel-in-progress: false
+
 jobs:
   scrape:
     runs-on: ubuntu-latest
@@ -50,6 +55,13 @@ jobs:
           git add data/history.json data/halftime.json data/venue.json
           git diff --cached --quiet && exit 0
           git commit -m "chore: stats snapshot $(date -u +%Y-%m-%d)"
-          git pull --rebase origin main || true
-          git pull --rebase origin ${{ github.ref_name }} || true
-          git push origin HEAD:${{ github.ref_name }}
+          # Rebase onto anything pushed while the scrape ran, then push. If the
+          # rebase conflicts, fail the job so the snapshot is not lost silently.
+          for attempt in 1 2 3; do
+            if git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }}; then
+              exit 0
+            fi
+            git rebase --abort 2>/dev/null || true
+            sleep 10
+          done
+          echo "Could not push the snapshot after 3 attempts" && exit 1

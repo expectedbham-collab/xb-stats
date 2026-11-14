@@ -7,11 +7,14 @@ Auto-fetches session cookie via Playwright on each run.
 
 import hashlib, json, os, sys
 from datetime import date
-import requests
 
-STATS_URL     = "https://theanalyst.com/wp-json/sdapi/v1/soccerdata/tournamentstats?tmcl=al48ooi8acoibema226051250"
-STANDINGS_URL = "https://theanalyst.com/wp-json/sdapi/v1/soccerdata/standings?tmcl=al48ooi8acoibema226051250"
-XPTS_URL      = "https://dataviz.theanalyst.com/project-data/soccer/al48ooi8acoibema226051250/expected-points.json"
+# The Analyst gives each season a new tournament ID. At season rollover this
+# is the only line to change.
+TMCL = "al48ooi8acoibema226051250"   # Championship 2026/27
+
+STATS_URL     = f"https://theanalyst.com/wp-json/sdapi/v1/soccerdata/tournamentstats?tmcl={TMCL}"
+STANDINGS_URL = f"https://theanalyst.com/wp-json/sdapi/v1/soccerdata/standings?tmcl={TMCL}"
+XPTS_URL      = f"https://dataviz.theanalyst.com/project-data/soccer/{TMCL}/expected-points.json"
 HISTORY_PATH  = os.path.join(os.path.dirname(__file__), "data", "history.json")
 
 BASE_HEADERS = {
@@ -318,10 +321,35 @@ def parse_xpts(raw):
     return result
 
 
+# Every field the dashboard scores. If Opta renames one, sf()/si() quietly turn
+# it into 0 for all 24 clubs, so check before anything is saved.
+REQUIRED_FIELDS = ["atk_played", "atk_shots", "atk_shots_ot", "atk_xg", "atk_shots_in_box_perc",
+                   "def_shots_faced", "def_sot_faced", "def_xga", "atk_fast_break_shots",
+                   "seq_direct_attacks", "seq_buildups", "pass_through_balls", "pass_cross_acc",
+                   "sp_atk_xg", "sp_def_xga", "press_ppda"]
+
+def validate(teams):
+    """Stop the run (non-zero exit, so GitHub emails you) if the payload is
+    not a usable Championship table."""
+    problems = []
+    if len(teams) != 24:
+        problems.append(f"expected 24 clubs, got {len(teams)}")
+    for k in REQUIRED_FIELDS:
+        vals = [t.get(k) for t in teams.values()]
+        if not any(v for v in vals):
+            problems.append(f"'{k}' is missing or zero for every club")
+    if problems:
+        sys.exit("Scrape rejected: " + "; ".join(problems))
+
+
 def snap_hash(data):
     return hashlib.md5(json.dumps(data, sort_keys=True).encode()).hexdigest()
 
 def infer_label(history, teams):
+    # Label by the stats' own games-played count, not the standings. Opta
+    # refreshes standings straight after a match but the stats a day or two
+    # later, so on a Saturday or Sunday the standings are one match ahead of
+    # the numbers this snapshot actually holds.
     from collections import Counter
     played_counts = [s.get("atk_played") for s in teams.values() if s.get("atk_played")]
     if played_counts:
@@ -330,13 +358,24 @@ def infer_label(history, teams):
     return date.today().isoformat()
 
 
-def meets_threshold(teams, min_teams=20):
+MIN_TEAMS_SAME_PLAYED = 16
+
+def meets_threshold(teams, min_teams=MIN_TEAMS_SAME_PLAYED):
     from collections import Counter
     played_counts = [t.get("atk_played", 0) for t in teams.values() if t.get("atk_played")]
     if not played_counts:
         return False
     most_common_count = Counter(played_counts).most_common(1)[0][1]
-    return most_common_count >= 16
+    return most_common_count >= min_teams
+
+
+def is_stale(stats_json, history):
+    """True if Opta's stats are older than the newest snapshot we already hold.
+    This is what happened on 2 Sept 2026: the API served last season's final
+    table (last updated in July) and it overwrote the GW46 entry."""
+    new = str(stats_json.get("team", {}).get("lastUpdated", ""))[:10]
+    held = max((str(s.get("last_updated", ""))[:10] for s in history), default="")
+    return bool(new and held and new < held)
 
 
 def run(dry_run=False, force=False):
@@ -344,6 +383,7 @@ def run(dry_run=False, force=False):
     stats_json, standings_json, xpts_json = fetch_all_via_browser()
 
     teams     = build_team_stats(stats_json)
+    validate(teams)
     standings = parse_standings(standings_json)
     xpts      = parse_xpts(xpts_json)
 
@@ -363,12 +403,17 @@ def run(dry_run=False, force=False):
         open("/tmp/xb_no_change", "w").write("no_change")
         return
 
+    if not force and is_stale(stats_json, history):
+        print("Stats are older than the newest snapshot already saved. Skipping.")
+        open("/tmp/xb_no_change", "w").write("no_change")
+        return
+
     if not force and not meets_threshold(teams):
         from collections import Counter
         played_counts = [t.get("atk_played", 0) for t in teams.values() if t.get("atk_played")]
         dist = Counter(played_counts).most_common(3)
         print(f"Threshold not met -- games played distribution: {dist}")
-        print("Fewer than 20 teams share the same games-played count. Skipping snapshot.")
+        print(f"Fewer than {MIN_TEAMS_SAME_PLAYED} teams share the same games-played count. Skipping snapshot.")
         open("/tmp/xb_no_change", "w").write("no_change")
         return
 
@@ -388,7 +433,10 @@ def run(dry_run=False, force=False):
         **payload,
     }
 
-    existing = next((i for i, s in enumerate(history) if s.get("label") == label), None)
+    # Same label AND same 24 clubs: next August's GW1 must not overwrite this
+    # season's GW1 if history.json has not been reset.
+    existing = next((i for i, s in enumerate(history)
+                     if s.get("label") == label and set(s.get("teams", {})) == set(teams)), None)
     if existing is not None:
         history[existing] = snapshot
         print(f"Updated snapshot for {label} ({today}) -- refreshed stats, same gameweek")
