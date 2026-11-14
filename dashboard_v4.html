@@ -298,7 +298,7 @@ footer{padding:14px 0 32px;font-family:'IBM Plex Mono',monospace;font-size:9px;l
     <details>
       <summary>Methodology: what's scored and what isn't</summary>
       <div class="dbody">
-        <p>The <strong>xB Index</strong> ranks each Championship club against the other 23 on 13 process measures. The measures sit in three tiers. Tier 1 covers shot quality and shot suppression and carries 50% of the score. Tier 2 covers build-up and carries 30%. Tier 3 covers set pieces and pressing and carries 20%.</p>
+        <p>The <strong>xB Index</strong> ranks each Championship club against the other 23 on 13 process measures. The measures sit in three tiers. Tier 1 covers shot quality and shot suppression and carries 50% of the score. It includes the quality of chances a side creates and the quality of chances it concedes. Tier 2 covers build-up and carries 30%. Tier 3 covers set pieces and pressing and carries 20%.</p>
         <p style="margin-top:10px">Each measure gives a club a score from <strong>0 to 100</strong>. The best club in the league scores 100, the middle of the pack scores about 50 and the worst scores 0. Where lower is better, as with shots conceded and PPDA, we flip the scale first. A higher score always means better process. Tap a club to see its <strong>rank out of 24</strong> on every measure.</p>
         <p style="margin-top:10px"><strong>Results are never inputs.</strong> The Index uses no goals, no points and no win, draw or loss records. xG per shot leaves out penalties for both sides, because a penalty comes from a decision and not from open play. Cross volume is shown but not scored. How much a team crosses tells you about style, not quality. Cross accuracy is scored.</p>
         <p style="margin-top:10px"><strong>Budget rank</strong> combines Transfermarkt squad values with estimated wage bills and orders the 24 clubs from biggest budget to smallest. Budget efficiency is the gap between budget rank and Index rank. A club marked ↑ 5 sits five places higher on process than on budget.</p>
@@ -828,9 +828,9 @@ const SCORED = [
   {k:'sotDef', hi:false, t:1, name:'SOT conceded /90',
    tip:'On-target chances allowed per game — fewer is better.',
    why:'On-target shots conceded per game. The purest suppression signal: a defence that limits clean looks is doing its job regardless of what the scoreline says. Lower is better; the score is already flipped.'},
-  {k:'xgShD',  hi:true,  t:1, name:'xG per shot diff. (non-pen)',
-   tip:'Chance quality created minus conceded, penalties excluded — the headline signal.',
-   why:'Average non-penalty chance quality created minus average non-penalty chance quality conceded. Penalties are excluded on both sides so a couple of spot-kicks for or against don\u2019t distort a process signal that\u2019s meant to capture open-play chance quality. The single best process signal in the index: a positive number means the side systematically manufactures better chances than it gives up.'},
+  {k:'xgShDef',hi:false, t:1, name:'xG per shot conceded (non-pen)',
+   tip:'Average quality of each chance allowed, penalties excluded. Lower is better.',
+   why:'The average expected-goals value of each non-penalty shot a side concedes. A low figure means opponents are kept to hopeful efforts from poor positions. It pairs with shots on target conceded: one measures how often a side is tested, this measures how good those chances are. Lower is better and the score is already flipped.'},
   {k:'xgShAtk',hi:true,  t:1, name:'xG per shot, attacking (non-pen)',
    tip:'Average quality of each open-play chance created.',
    why:'The average expected-goals value of each non-penalty shot taken. Penalties are excluded because they\u2019re a near-guaranteed high-xG event unrelated to attacking process quality; including them inflates the figure for sides that simply win more spot-kicks. High xG per shot means the side works the ball into genuinely dangerous positions rather than settling for hopeful efforts.'},
@@ -1063,7 +1063,7 @@ const BHAM_TARGETS = [
   {k:'sotAtk',  label:'Shots on target /90',       target:5.00,  hi:true,  fmt:v=>v.toFixed(2)},
   {k:'sotDef',  label:'SOT conceded /90',          target:3.80,  hi:false, fmt:v=>v.toFixed(2)},
   {k:'xgShAtk', label:'xG per shot (attacking)',   target:0.12,  hi:true,  fmt:v=>v.toFixed(3)},
-  {k:'xgShD',   label:'xG per shot differential',  target:0.010, hi:true,  fmt:v=>(v>=0?'+':'')+v.toFixed(3)},
+  {k:'xgShDef', label:'xG per shot conceded',      target:'peerMedian', hi:false, fmt:v=>v.toFixed(3)},
   {k:'shotAcc', label:'Shot accuracy %',           target:33.0,  hi:true,  fmt:v=>v.toFixed(1)+'%'},
   {k:'shotsInBox', label:'Shots in box %',         target:65.0,  hi:true,  fmt:v=>v.toFixed(1)+'%'},
   {k:'fb90',    label:'Fast breaks /90',           target:1.00,  hi:true,  fmt:v=>v.toFixed(2)},
@@ -1196,7 +1196,7 @@ function detailRow(r){
   const isPhone = document.getElementById('frame').classList.contains('phone');
   const colspan = (isPhone || VENUE_ACTIVE) ? 6 : 7;
   const groups={1:['Tier 1 · Shot quality & suppression','50%'],2:['Tier 2 · Build-up','30%'],3:['Tier 3 · Set pieces & pressing','20%']};
-  const dp = k => k==='xgShD'||k==='xgShAtk'?3 : k==='spXga'?2 : k==='shotAcc'||k==='ppda'||k==='cross90'?1 : 2;
+  const dp = k => k==='xgShD'||k==='xgShAtk'||k==='xgShDef'?3 : k==='spXga'?2 : k==='shotAcc'||k==='ppda'||k==='cross90'?1 : 2;
   const ordSup = n => { const s=['th','st','nd','rd'],v=n%100; return `${n}<sup>${s[(v-20)%10]||s[v]||s[0]}</sup>`; };
   const barWidth = rank => ((25 - rank) / 24) * 100;
   let html=`<td colspan="${colspan}"><div class="detail-inner">

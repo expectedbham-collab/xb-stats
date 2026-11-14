@@ -36,7 +36,7 @@ CALLS = {
 }
 
 # ── Index (same calculation as dashboard_v4) ──
-SCORED = [("sotAtk",1,1),("sotDef",0,1),("xgShD",1,1),("xgShAtk",1,1),("shotAcc",1,1),("shotsInBox",1,1),
+SCORED = [("sotAtk",1,1),("sotDef",0,1),("xgShDef",0,1),("xgShAtk",1,1),("shotAcc",1,1),("shotsInBox",1,1),
           ("fb90",1,2),("da90",1,2),("bu90",1,2),("tball90",1,2),("crossAcc",1,2),("spXga",1,3),("ppda",0,3)]
 
 def mapteam(t):
