@@ -23,15 +23,27 @@ date,home,away,snapshot,home_idx,away_idx,gap,away_side_away_ppg,call,confidence
 2026-11-21,Lincoln City FC,Wrexham FC,2026-11-19,38.5,35.3,3.2,0.86,NO_CALL,none,2.85,3.3,2.55,0.335,0.29,0.375,,0,1,A,
 2026-11-21,Bolton Wanderers FC,Portsmouth FC,2026-11-19,41.0,36.7,4.3,1.29,NO_CALL,none,2.8,3.4,2.55,0.342,0.282,0.376,,1,1,D,
 2026-11-22,Burnley FC,Blackburn Rovers FC,2026-11-19,27.8,40.3,-12.5,0.86,NO_CALL,none,1.9,3.8,4.0,0.506,0.253,0.241,,2,2,D,
-2026-11-24,Bristol City FC,Wrexham FC,2026-11-22,50.9,35.3,15.6,1.12,HOME_NOT_LOSE,medium,2.5,3.25,2.8,0.376,0.289,0.335,0.665,,,,
-2026-11-24,Cardiff City FC,Preston North End FC,2026-11-22,64.3,35.3,29.0,0.25,HOME_WIN,medium,1.53,4.33,5.5,0.613,0.217,0.171,0.613,,,,
-2026-11-24,Charlton Athletic FC,Lincoln City FC,2026-11-22,39.9,38.5,1.4,1.25,NO_CALL,none,2.7,3.25,2.6,0.349,0.29,0.362,,,,,
-2026-11-24,Middlesbrough FC,Swansea City AFC,2026-11-22,82.4,53.4,29.0,1.5,HOME_NOT_LOSE,medium,1.44,4.33,7.0,0.65,0.216,0.134,0.866,,,,
-2026-11-24,Norwich City FC,Queens Park Rangers FC,2026-11-22,51.8,56.3,-4.5,1.5,NO_CALL,none,2.0,3.6,3.5,0.47,0.261,0.269,,,,,
-2026-11-24,Portsmouth FC,West Ham United FC,2026-11-22,36.7,79.6,-42.9,1.62,HOME_NOT_WIN,strong,4.0,3.6,1.85,0.234,0.26,0.506,0.766,,,,
-2026-11-24,Sheffield United FC,Southampton FC,2026-11-22,54.5,62.4,-7.9,1.12,NO_CALL,none,2.6,3.25,2.7,0.362,0.29,0.349,,,,,
-2026-11-24,Wolverhampton Wanderers FC,Derby County FC,2026-11-22,61.8,35.7,26.1,0.62,HOME_WIN,medium,1.29,5.0,11.0,0.727,0.188,0.085,0.727,,,,
-2026-11-25,Bolton Wanderers FC,West Bromwich Albion FC,2026-11-22,41.0,51.2,-10.2,1.75,HOME_NOT_WIN,strong,3.75,3.6,1.95,0.252,0.263,0.485,0.748,,,,
-2026-11-25,Burnley FC,Birmingham City FC,2026-11-22,27.8,68.9,-41.1,1.62,HOME_NOT_WIN,strong,2.63,3.5,2.6,0.362,0.272,0.366,0.638,,,,
-2026-11-25,Watford FC,Blackburn Rovers FC,2026-11-22,31.5,40.3,-8.8,0.88,NO_CALL,none,2.5,3.4,2.75,0.378,0.278,0.344,,,,,
-2026-11-25,Stoke City FC,Millwall FC,2026-11-22,39.5,61.2,-21.7,0.88,NO_CALL,none,2.3,3.25,2.9,0.4,0.283,0.317,,,,,
+2026-11-24,Bristol City FC,Wrexham FC,2026-11-22,50.9,35.3,15.6,1.12,HOME_NOT_LOSE,medium,2.5,3.25,2.8,0.376,0.289,0.335,0.665,1,1,D,1
+2026-11-24,Cardiff City FC,Preston North End FC,2026-11-22,64.3,35.3,29.0,0.25,HOME_WIN,medium,1.53,4.33,5.5,0.613,0.217,0.171,0.613,0,4,A,0
+2026-11-24,Charlton Athletic FC,Lincoln City FC,2026-11-22,39.9,38.5,1.4,1.25,NO_CALL,none,2.7,3.25,2.6,0.349,0.29,0.362,,4,0,H,
+2026-11-24,Middlesbrough FC,Swansea City AFC,2026-11-22,82.4,53.4,29.0,1.5,HOME_NOT_LOSE,medium,1.44,4.33,7.0,0.65,0.216,0.134,0.866,2,1,H,1
+2026-11-24,Norwich City FC,Queens Park Rangers FC,2026-11-22,51.8,56.3,-4.5,1.5,NO_CALL,none,2.0,3.6,3.5,0.47,0.261,0.269,,1,1,D,
+2026-11-24,Portsmouth FC,West Ham United FC,2026-11-22,36.7,79.6,-42.9,1.62,HOME_NOT_WIN,strong,4.0,3.6,1.85,0.234,0.26,0.506,0.766,1,0,H,0
+2026-11-24,Sheffield United FC,Southampton FC,2026-11-22,54.5,62.4,-7.9,1.12,NO_CALL,none,2.6,3.25,2.7,0.362,0.29,0.349,,1,1,D,
+2026-11-24,Wolverhampton Wanderers FC,Derby County FC,2026-11-22,61.8,35.7,26.1,0.62,HOME_WIN,medium,1.29,5.0,11.0,0.727,0.188,0.085,0.727,3,0,H,1
+2026-11-25,Bolton Wanderers FC,West Bromwich Albion FC,2026-11-22,41.0,51.2,-10.2,1.75,HOME_NOT_WIN,strong,3.75,3.6,1.95,0.252,0.263,0.485,0.748,1,3,A,1
+2026-11-25,Burnley FC,Birmingham City FC,2026-11-22,27.8,68.9,-41.1,1.62,HOME_NOT_WIN,strong,2.63,3.5,2.6,0.362,0.272,0.366,0.638,0,2,A,1
+2026-11-25,Watford FC,Blackburn Rovers FC,2026-11-22,31.5,40.3,-8.8,0.88,NO_CALL,none,2.5,3.4,2.75,0.378,0.278,0.344,,0,1,A,
+2026-11-25,Stoke City FC,Millwall FC,2026-11-22,39.5,61.2,-21.7,0.88,NO_CALL,none,2.3,3.25,2.9,0.4,0.283,0.317,,2,1,H,
+2026-11-27,Southampton FC,Middlesbrough FC,2026-11-26,61.1,86.8,-25.7,1.5,HOME_NOT_WIN,strong,2.85,3.85,2.3,0.336,0.248,0.416,0.664,,,,
+2026-11-28,Preston North End FC,Norwich City FC,2026-11-26,37.4,52.2,-14.8,1.5,HOME_NOT_WIN,strong,4.75,4.2,1.68,0.202,0.228,0.57,0.798,,,,
+2026-11-28,Lincoln City FC,Wolverhampton Wanderers FC,2026-11-26,29.8,65.2,-35.4,1.75,HOME_NOT_WIN,strong,6.0,4.3,1.6,0.163,0.227,0.61,0.837,,,,
+2026-11-28,Blackburn Rovers FC,Charlton Athletic FC,2026-11-26,47.8,45.3,2.5,0.62,NO_CALL,none,2.05,3.65,3.6,0.469,0.264,0.267,,,,,
+2026-11-28,Wrexham FC,Portsmouth FC,2026-11-26,37.3,32.9,4.4,1.25,NO_CALL,none,2.1,3.4,3.65,0.456,0.282,0.262,,,,,
+2026-11-28,West Ham United FC,Stoke City FC,2026-11-26,81.1,42.3,38.8,2.0,HOME_NOT_LOSE,medium,1.64,4.4,5.0,0.588,0.219,0.193,0.807,,,,
+2026-11-28,West Bromwich Albion FC,Bristol City FC,2026-11-26,56.1,48.8,7.3,1.5,NO_CALL,none,1.76,3.9,4.8,0.55,0.248,0.202,,,,,
+2026-11-28,Queens Park Rangers FC,Sheffield United FC,2026-11-26,56.6,61.0,-4.4,1.38,NO_CALL,none,2.0,3.7,3.6,0.477,0.258,0.265,,,,,
+2026-11-28,Millwall FC,Burnley FC,2026-11-26,56.6,24.7,31.9,0.62,HOME_WIN,medium,2.15,3.7,3.35,0.45,0.261,0.289,0.45,,,,
+2026-11-28,Derby County FC,Watford FC,2026-11-26,31.2,28.3,2.9,0.12,NO_CALL,none,2.25,3.4,3.3,0.427,0.282,0.291,,,,,
+2026-11-28,Birmingham City FC,Bolton Wanderers FC,2026-11-26,70.8,38.6,32.2,1.38,HOME_NOT_LOSE,medium,1.57,4.5,5.75,0.617,0.215,0.168,0.832,,,,
+2026-11-29,Swansea City AFC,Cardiff City FC,2026-11-26,47.8,60.3,-12.5,0.25,NO_CALL,none,2.05,4.0,3.2,0.464,0.238,0.298,,,,,
